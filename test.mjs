@@ -87,3 +87,18 @@ test("веб-хук, callback и опрос задания работают вм
     await close(jiraMock);
   }
 });
+
+test("главная страница сразу отдаёт приложение, а не README", async () => {
+  const app = createAppServer();
+  const appPort = await listen(app);
+  try {
+    const response = await fetch(`http://127.0.0.1:${appPort}/`);
+    const html = await response.text();
+    assert.equal(response.status, 200);
+    assert.match(html, /data-release-form/);
+    assert.match(html, /Карта релиза EkoCrop/);
+    assert.doesNotMatch(html, /<h1[^>]*>\s*Карта релизов EkoCrop/);
+  } finally {
+    await close(app);
+  }
+});

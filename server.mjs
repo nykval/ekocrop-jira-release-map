@@ -348,8 +348,10 @@ function jobStatus(response, id) {
 async function serveStatic(response, pathname) {
   const requested = pathname === "/" ? "index.html" : pathname.slice(1);
   const safePath = normalize(requested).replace(/^(\.\.(\/|\\|$))+/, "");
-  const filePath = join(publicDirectory, safePath);
-  if (!filePath.startsWith(publicDirectory)) {
+  const filePath = pathname === "/"
+    ? join(moduleDirectory, "index.html")
+    : join(publicDirectory, safePath);
+  if (pathname !== "/" && !filePath.startsWith(publicDirectory)) {
     response.writeHead(403).end("Forbidden");
     return;
   }

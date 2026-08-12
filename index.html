@@ -1,0 +1,2372 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src 'self' blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Карта релиза EkoCrop</title>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255),rgb(24 24 24));font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:light-dark(rgb(26 28 31),rgb(255 255 255))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}.release-toolbar{display:flex;align-items:end;gap:.75rem;flex-wrap:wrap;margin:0 0 .75rem}.release-field{display:grid;gap:.3rem;min-width:220px}.release-field label{font-size:.85rem;color:light-dark(rgb(80 84 90),rgb(190 194 200))}.release-field select,.release-toolbar button{box-sizing:border-box;min-height:40px;border:1px solid light-dark(rgb(205 208 214),rgb(80 84 90));border-radius:8px;padding:.55rem .75rem;font:inherit}.release-field select{background:light-dark(rgb(255 255 255),rgb(38 38 38));color:inherit}.release-toolbar button{border-color:light-dark(rgb(0 126 58),rgb(64 201 119));background:light-dark(rgb(0 126 58),rgb(64 201 119));color:light-dark(rgb(255 255 255),rgb(13 13 13));cursor:pointer}.release-toolbar button:disabled{opacity:.55;cursor:wait}.release-status{min-height:40px;display:flex;align-items:center;color:light-dark(rgb(80 84 90),rgb(190 194 200))}iframe{display:block;width:100%;height:calc(100vh - 7rem);min-height:420px;margin:0 auto;border:0}@media(max-width:520px){.release-field{flex:1 1 100%}.release-toolbar button{flex:1}.release-status{flex-basis:100%;height:auto;min-height:0}}</style>
+</head>
+<body>
+<form class="release-toolbar" data-release-form>
+  <div class="release-field">
+    <label for="release-select">Релиз</label>
+    <select id="release-select" data-release-select disabled>
+      <option value="10.0">10.0</option>
+    </select>
+  </div>
+  <button type="submit" data-release-submit disabled>Построить диаграмму</button>
+  <span class="release-status" data-release-status role="status" aria-live="polite">Загрузка списка релизов…</span>
+</form>
+<iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" title="Карта релиза EkoCrop" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
+&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
+&lt;title&gt;Карта релиза EkoCrop&lt;/title&gt;
+&lt;style&gt;:root {
+  color-scheme: light dark;
+  background-color: var(
+    --background,
+    var(--color-background-primary, light-dark(rgb(255 255 255), rgb(24 24 24)))
+  ) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: var(
+    --color-background-primary,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --card: color-mix(in oklab, var(--foreground) 5%, var(--background));
+  --card-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --popover: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255), rgb(45 45 45))
+  );
+  --popover-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --primary: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --primary-foreground: var(
+    --color-text-inverse,
+    light-dark(rgb(255 255 255), rgb(13 13 13))
+  );
+  --secondary: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%))
+  );
+  --secondary-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: var(
+    --color-text-secondary,
+    light-dark(rgb(26 28 31 / 49.4%), rgb(255 255 255 / 49.8%))
+  );
+  --accent: var(
+    --color-background-info,
+    light-dark(rgb(229 242 255), rgb(13 39 63))
+  );
+  --accent-foreground: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --destructive: var(
+    --color-text-warning,
+    light-dark(rgb(226 85 7), rgb(255 133 73))
+  );
+  --border: var(
+    --color-border-secondary,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+  --input: var(
+    --color-border-primary,
+    light-dark(
+      rgb(26 28 31 / 11.8%),
+      color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+    )
+  );
+  --ring: var(
+    --color-ring-primary,
+    light-dark(rgb(51 156 255), rgb(131 195 255 / 76%))
+  );
+  --font-size-base: var(--font-text-md-size, 14px);
+  --blue: light-dark(rgb(51 156 255), rgb(51 156 255));
+  --orange: light-dark(rgb(226 85 7), rgb(251 106 34));
+  --green: light-dark(rgb(0 162 64), rgb(64 201 119));
+  --red: light-dark(rgb(224 46 42), rgb(255 103 100));
+  --purple: light-dark(rgb(146 79 247), rgb(173 123 249));
+  --yellow: light-dark(rgb(255 195 0), rgb(255 210 64));
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, &quot;Segoe UI&quot;, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, &quot;SF Mono&quot;, Menlo, Consolas, &quot;Liberation Mono&quot;,
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --radius: var(--border-radius-lg, 12.5px);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 17 17&#x27;%3E%3Cpath d=&#x27;M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z&#x27;/%3E%3C/svg%3E&quot;);
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+}
+
+:root[data-theme=&quot;light&quot;] {
+  color-scheme: light;
+}
+
+:root[data-theme=&quot;dark&quot;] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html &gt; body {
+  /* Preserve MCP aliases for older inline renderers without creating :root cycles. */
+  --color-background-primary: var(
+    --background,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --color-text-primary: var(
+    --foreground,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --color-border-secondary: var(
+    --border,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+
+  margin: 0;
+  padding: 5px;
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium, 500);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-responsive &gt; .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead th {
+  padding-block: 8px;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 6px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align=&quot;right&quot;]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align=&quot;center&quot;]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: superellipse(1.5);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget &gt; :not(.card) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls &gt; .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls &gt; .form-label &gt; :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type=&quot;file&quot;] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type=&quot;file&quot;]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type=&quot;file&quot;]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type=&quot;color&quot;] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: superellipse(1.5);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type=&quot;checkbox&quot;]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: &quot;&quot;;
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type=&quot;radio&quot;] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type=&quot;radio&quot;]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: &quot;&quot;;
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+    [aria-pressed=&quot;true&quot;],
+    [aria-selected=&quot;true&quot;],
+    .is-selected
+  ) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed=&quot;true&quot;], [aria-selected=&quot;true&quot;], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget &gt; svg {
+  width: 100%;
+}
+
+/* Model-authored chart rules can otherwise stretch icons after these styles load. */
+svg.lucide {
+  display: block;
+  width: 16px !important;
+  height: 16px !important;
+  flex: none;
+  margin: 0 !important;
+  stroke-width: 1.6;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html&gt;body{padding:0}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;jira-release-10-hierarchy&quot;&gt;
+  &lt;style&gt;
+    #jira-release-10-hierarchy {
+      width: 100%;
+      color: var(--foreground);
+      font-size: var(--font-size-base);
+      overflow-anchor: none;
+    }
+    #jira-release-10-hierarchy .jrh-title {
+      margin: 0 0 8px;
+      font-weight: 500;
+    }
+    #jira-release-10-hierarchy .jrh-summary {
+      color: var(--muted-foreground);
+      margin-bottom: 10px;
+    }
+    #jira-release-10-hierarchy .jrh-legend {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 16px;
+      margin-bottom: 8px;
+      color: var(--muted-foreground);
+    }
+    #jira-release-10-hierarchy .jrh-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    #jira-release-10-hierarchy .jrh-level-line {
+      display: inline-block;
+      width: 24px;
+      height: 0;
+      border-top: 2px solid;
+    }
+    #jira-release-10-hierarchy .jrh-level-line-0 {
+      border-color: var(--viz-series-1);
+    }
+    #jira-release-10-hierarchy .jrh-level-line-1 {
+      border-color: var(--viz-series-2);
+    }
+    #jira-release-10-hierarchy .jrh-level-line-2 {
+      border-color: var(--viz-series-3);
+    }
+    #jira-release-10-hierarchy .jrh-canvas {
+      width: 100%;
+      overflow-anchor: none;
+    }
+    #jira-release-10-hierarchy .jrh-svg {
+      display: block;
+      width: 100%;
+      overflow: visible;
+      overflow-anchor: none;
+    }
+    #jira-release-10-hierarchy .jrh-svg foreignObject {
+      overflow-anchor: none;
+      will-change: transform;
+    }
+    #jira-release-10-hierarchy .jrh-grid-dot {
+      fill: var(--border);
+      opacity: .24;
+    }
+    #jira-release-10-hierarchy .jrh-link {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 1.35px;
+      stroke-dasharray: none;
+      stroke-linecap: butt;
+      vector-effect: non-scaling-stroke;
+    }
+    #jira-release-10-hierarchy .jrh-fo-wrap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+    #jira-release-10-hierarchy .jrh-node-main {
+      height: 100%;
+      justify-content: flex-start;
+      gap: 7px;
+      padding: 6px 38px 6px 8px;
+      text-align: left;
+      white-space: normal;
+    }
+    #jira-release-10-hierarchy .jrh-node-main[data-has-info=&quot;false&quot;] {
+      padding-right: 8px;
+    }
+    #jira-release-10-hierarchy .jrh-node-main[data-node-kind=&quot;release&quot;],
+    #jira-release-10-hierarchy .jrh-node-main[data-node-kind=&quot;release&quot;][aria-pressed=&quot;true&quot;] {
+      justify-content: center;
+      padding: 6px 8px;
+      text-align: center;
+      background: var(--green);
+      color: var(--primary-foreground);
+      border-color: var(--green);
+      box-shadow: none;
+    }
+    #jira-release-10-hierarchy .jrh-node-main[data-node-kind=&quot;group&quot;][aria-pressed=&quot;true&quot;] {
+      background: var(--background);
+      color: var(--foreground);
+      border-color: color-mix(in srgb, var(--green) 72%, var(--foreground));
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green) 72%, var(--foreground));
+    }
+    #jira-release-10-hierarchy .jrh-node-main[data-node-kind=&quot;task&quot;][aria-pressed=&quot;true&quot;] {
+      background: var(--background);
+      color: var(--foreground);
+      border-color: color-mix(in srgb, var(--green) 55%, var(--background));
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green) 55%, var(--background));
+    }
+    #jira-release-10-hierarchy .jrh-node-copy {
+      min-width: 0;
+      display: block;
+      line-height: 1.15;
+    }
+    #jira-release-10-hierarchy .jrh-node-key,
+    #jira-release-10-hierarchy .jrh-node-tags,
+    #jira-release-10-hierarchy .jrh-node-short {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+    #jira-release-10-hierarchy .jrh-node-key {
+      font-weight: 500;
+    }
+    #jira-release-10-hierarchy .jrh-node-tags,
+    #jira-release-10-hierarchy .jrh-node-short {
+      margin-top: 2px;
+      font-size: 12px;
+    }
+    #jira-release-10-hierarchy .jrh-node-short {
+      color: var(--muted-foreground);
+    }
+    #jira-release-10-hierarchy .jrh-info-button {
+      position: absolute;
+      top: 50%;
+      right: 7px;
+      z-index: 2;
+      width: 25px;
+      height: 25px;
+      padding: 0;
+      transform: translateY(-50%);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--background);
+      color: var(--muted-foreground);
+      font: 600 14px/1 ui-sans-serif, system-ui, sans-serif;
+      cursor: pointer;
+    }
+    #jira-release-10-hierarchy .jrh-info-button:hover {
+      color: var(--foreground);
+      border-color: var(--foreground);
+    }
+    #jira-release-10-hierarchy .jrh-info-button:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 1px;
+    }
+    #jira-release-10-hierarchy .jrh-priority-inline {
+      flex: 0 0 24px;
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #jira-release-10-hierarchy .jrh-priority-inline svg {
+      display: block;
+      width: 24px;
+      height: 24px;
+    }
+    #jira-release-10-hierarchy .jrh-priority-highest,
+    #jira-release-10-hierarchy .jrh-priority-high,
+    #jira-release-10-hierarchy .jrh-priority-blocker {
+      color: var(--red);
+    }
+    #jira-release-10-hierarchy .jrh-priority-medium {
+      color: var(--orange);
+    }
+    #jira-release-10-hierarchy .jrh-priority-low,
+    #jira-release-10-hierarchy .jrh-priority-lowest {
+      color: var(--blue);
+    }
+    #jira-release-10-hierarchy .jrh-priority-unknown {
+      color: var(--muted-foreground);
+    }
+    #jira-release-10-hierarchy .jrh-relation-line {
+      display: inline-block;
+      width: 28px;
+      height: 0;
+      border-top: 2px solid var(--muted-foreground);
+    }
+    #jira-release-10-hierarchy .jrh-relation-line-story {
+      border-top-style: dashed;
+    }
+    #jira-release-10-hierarchy .jrh-relation-line-epic {
+      border-top-style: dotted;
+    }
+    #jira-release-10-hierarchy .jrh-relation-line-grouping {
+      height: 2px;
+      border: 0;
+      background: repeating-linear-gradient(90deg, var(--muted-foreground) 0 9px, transparent 9px 13px, var(--muted-foreground) 13px 15px, transparent 15px 19px);
+    }
+    #jira-release-10-hierarchy .jrh-dialog {
+      width: min(560px, calc(100% - 32px));
+      max-width: none;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--foreground);
+    }
+    #jira-release-10-hierarchy .jrh-dialog::backdrop {
+      background: color-mix(in srgb, var(--foreground) 24%, transparent);
+    }
+    #jira-release-10-hierarchy .jrh-dialog-content {
+      display: grid;
+      gap: 8px;
+    }
+    #jira-release-10-hierarchy .jrh-dialog-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    #jira-release-10-hierarchy .jrh-dialog-title {
+      font-weight: 500;
+    }
+    #jira-release-10-hierarchy .jrh-dialog-summary {
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    #jira-release-10-hierarchy .jrh-dialog-meta {
+      display: grid;
+      grid-template-columns: minmax(108px, 140px) minmax(0, 1fr);
+      gap: 10px 16px;
+      margin: 4px 0;
+    }
+    #jira-release-10-hierarchy .jrh-dialog-meta dt,
+    #jira-release-10-hierarchy .jrh-dialog-meta dd {
+      margin: 0;
+    }
+    #jira-release-10-hierarchy .jrh-dialog-meta dt {
+      color: var(--muted-foreground);
+    }
+    #jira-release-10-hierarchy .jrh-detail-value {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #jira-release-10-hierarchy .jrh-detail-text {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+    #jira-release-10-hierarchy .jrh-type-icon,
+    #jira-release-10-hierarchy .jrh-detail-glyph {
+      flex: 0 0 24px;
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #jira-release-10-hierarchy .jrh-type-icon {
+      border-radius: 4px;
+      color: var(--primary-foreground);
+    }
+    #jira-release-10-hierarchy .jrh-type-icon svg,
+    #jira-release-10-hierarchy .jrh-detail-glyph svg {
+      width: 18px;
+      height: 18px;
+    }
+    #jira-release-10-hierarchy .jrh-type-blue {
+      background: var(--blue);
+    }
+    #jira-release-10-hierarchy .jrh-type-green {
+      background: var(--green);
+    }
+    #jira-release-10-hierarchy .jrh-type-red {
+      background: var(--red);
+    }
+    #jira-release-10-hierarchy .jrh-type-purple {
+      background: var(--purple);
+    }
+    #jira-release-10-hierarchy .jrh-type-muted {
+      background: var(--muted-foreground);
+    }
+    #jira-release-10-hierarchy .jrh-detail-glyph {
+      color: var(--muted-foreground);
+    }
+    #jira-release-10-hierarchy .jrh-components-value {
+      align-items: flex-start;
+    }
+    #jira-release-10-hierarchy .jrh-component-list {
+      min-width: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    #jira-release-10-hierarchy .jrh-dialog-link {
+      justify-self: start;
+      overflow-wrap: anywhere;
+    }
+    #jira-release-10-hierarchy .jrh-dialog-link[hidden] {
+      display: none;
+    }
+    @media (max-width: 480px) {
+      #jira-release-10-hierarchy .jrh-dialog-meta {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+      #jira-release-10-hierarchy .jrh-dialog-meta dd + dt {
+        margin-top: 6px;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #jira-release-10-hierarchy .jrh-svg {
+        scroll-behavior: auto;
+      }
+    }
+  &lt;/style&gt;
+
+  &lt;section aria-labelledby=&quot;jrh-heading&quot;&gt;
+    &lt;h2 id=&quot;jrh-heading&quot; class=&quot;jrh-title&quot;&gt;Релиз EkoCrop 10.0&lt;/h2&gt;
+    &lt;div class=&quot;jrh-summary text-small&quot; data-summary&gt;&lt;/div&gt;
+    &lt;div class=&quot;jrh-canvas&quot; data-canvas&gt;&lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;dialog class=&quot;jrh-dialog&quot; data-dialog&gt;
+    &lt;div class=&quot;card&quot;&gt;
+      &lt;div class=&quot;jrh-dialog-content&quot;&gt;
+        &lt;div class=&quot;jrh-dialog-top&quot;&gt;
+          &lt;span class=&quot;jrh-dialog-title&quot; data-dialog-title&gt;&lt;/span&gt;
+          &lt;button type=&quot;button&quot; class=&quot;btn btn-ghost&quot; data-dialog-close&gt;Закрыть&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;jrh-dialog-summary&quot; data-dialog-summary&gt;&lt;/div&gt;
+        &lt;dl class=&quot;jrh-dialog-meta&quot; data-dialog-meta&gt;&lt;/dl&gt;
+        &lt;a class=&quot;btn btn-primary jrh-dialog-link&quot; data-dialog-link target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Открыть задачу в Jira ↗&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/dialog&gt;
+
+  &lt;script&gt;
+    (() =&gt; {
+      const root = document.getElementById(&quot;jira-release-10-hierarchy&quot;);
+      const data = {&quot;release&quot;:{&quot;id&quot;:&quot;EkoCrop-10.0&quot;,&quot;summary&quot;:&quot;Релиз EkoCrop 10.0&quot;,&quot;taskType&quot;:&quot;Релиз&quot;,&quot;status&quot;:&quot;В работе&quot;,&quot;url&quot;:null,&quot;external&quot;:false,&quot;synthetic&quot;:true},&quot;groups&quot;:[{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-409&quot;,&quot;summary&quot;:&quot;[EkoCrop][Акты полная культура] Изменить в актах списания ТМЦ выведение полного наименования культуры&quot;,&quot;taskType&quot;:&quot;История&quot;,&quot;status&quot;:&quot;Новый&quot;,&quot;priority&quot;:&quot;High&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-409&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5943&quot;,&quot;summary&quot;:&quot;[Backend] Полное наименование культуры в актах списания ТМЦ&quot;,&quot;taskType&quot;:&quot;Улучшение&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5943&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-401&quot;,&quot;summary&quot;:&quot;[EkoCrop][Уведомления в актах] Добавить понятные пользователю уведомления по статусам ошибок в актах списания ТМЦ&quot;,&quot;taskType&quot;:&quot;История&quot;,&quot;status&quot;:&quot;Новый&quot;,&quot;priority&quot;:&quot;Lowest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-401&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5883&quot;,&quot;summary&quot;:&quot;[BACK][Списание ТМЦ] Добавить передачу кодов и описаний ошибок по актам списания&quot;,&quot;taskType&quot;:&quot;Улучшение&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Lowest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5883&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-385&quot;,&quot;summary&quot;:&quot;[WEB][EkoCrop][global] Подключить Яндекс.Метрику с тепловыми картами для UX-аналитики&quot;,&quot;taskType&quot;:&quot;История&quot;,&quot;status&quot;:&quot;Новый&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-385&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5786&quot;,&quot;summary&quot;:&quot;[Web][global] Подключить Яндрекс Метрику с тепловыми картами для UX аналитики&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5786&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-381&quot;,&quot;summary&quot;:&quot;[EkoCrop][Переключение ПХ и года в списании ТМЦ] Сделать возможным переключать ПХ и сезон на странице списания ТМЦ&quot;,&quot;taskType&quot;:&quot;История&quot;,&quot;status&quot;:&quot;Новый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-381&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5704&quot;,&quot;summary&quot;:&quot;[WEB] Обновить пресет фильтрации \&quot;За сезон\&quot; на странице \&quot;Списание ТМЦ\&quot; (с дат на сезон)&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Ожидает обратной связи&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;n.isakhanov@iotos.ru&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5704&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5674&quot;,&quot;summary&quot;:&quot;[Сезон и ПХ в актах ТМЦ] Подготовить бэк для отображения списаний за выбранный сезон и ПХ&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5674&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4311&quot;,&quot;summary&quot;:&quot;[WEB] На странице Списание ТМЦ пользователь не может изменить Сезон или Хозяйство&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4311&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-375&quot;,&quot;summary&quot;:&quot;[EkoCrop][Синхронизация МОБ] Перейти на синхронизацию мобильного приложения через предподготовленные данные на сервере&quot;,&quot;taskType&quot;:&quot;История&quot;,&quot;status&quot;:&quot;Новый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-375&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5680&quot;,&quot;summary&quot;:&quot;[EkoCrop][Backend] Разработать механизм ночной генерации SQLite дампа словарей для каждого из хозяйств&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Черновик&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5680&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-370&quot;,&quot;summary&quot;:&quot;[EkoCrop][Админка | Срок списания] Разработка функционала управления сроком списания ТМЦ через админку&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;Новый&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-370&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5846&quot;,&quot;summary&quot;:&quot;[BACK][Админка | Срок списания] Открытие периода редактирования агроработ&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5846&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5847&quot;,&quot;summary&quot;:&quot;[FRONT][Админка | Срок списания] Создание функционала управления сроком редактирования&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5847&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5848&quot;,&quot;summary&quot;:&quot;[BACK][Админка | Срок списания] Хранение и логирование изменений&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5848&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-364&quot;,&quot;summary&quot;:&quot;[EkoCrop][Пар в Списание ТМЦ] Если на поле нет Сева, то в 1С по этому полю посылать \&quot;пар\&quot; вместо культуры этого поля&quot;,&quot;taskType&quot;:&quot;История&quot;,&quot;status&quot;:&quot;Новый&quot;,&quot;priority&quot;:&quot;High&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-364&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5772&quot;,&quot;summary&quot;:&quot;[Пар][Списание ТМЦ] Создать блок подмены культуры на ПАР согласно условию&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5772&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-357&quot;,&quot;summary&quot;:&quot;[EkoCrop][Перс.данные] Минимально необходимый вариант – Переформотировать данные и сервисы ЭкоКроп для соответствия требованиям о хранении персональных данных&quot;,&quot;taskType&quot;:&quot;Epic&quot;,&quot;status&quot;:&quot;В работе&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;m.ovchinnikov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-357&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5762&quot;,&quot;summary&quot;:&quot;[Перс.данные] Employees – Внести изменения для сущности&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;В работе&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5762&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5805&quot;,&quot;summary&quot;:&quot;[Перс.данные] AppUsers – Внести изменения для сущности&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5805&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-342&quot;,&quot;summary&quot;:&quot;[Админка][Семена через excel] Добавить возможность загрузки привязки семян через excel&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;В работе&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;m.ovchinnikov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-342&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5044&quot;,&quot;summary&quot;:&quot;[Семена][Этап №1][Front] Добавить кнопку выгрузки / загрузки семян через Excel&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Не доделано&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;n.isakhanov@iotos.ru&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5044&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5798&quot;,&quot;summary&quot;:&quot;[Семена][Этап №1][Back] Реализовать API для импорта семян через Excel&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5798&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5799&quot;,&quot;summary&quot;:&quot;[Семена][Этап №1][Back] Реализовать API экспорта семян в Excel&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5799&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5530&quot;,&quot;summary&quot;:&quot;[Backend] Реализовать проверку связей таблицы CropSeed при удалении/восстановлении Семян и Культуры из 1C&quot;,&quot;taskType&quot;:&quot;Улучшение&quot;,&quot;status&quot;:&quot;В работе&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;d.navrotskii@iotos.ru&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5530&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-333&quot;,&quot;summary&quot;:&quot;[EkoCrop][Остатки на складах] Разработать раздел остатков ТМЦ на складах&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;В работе&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;m.ovchinnikov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-333&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;PROJECTS-349&quot;,&quot;summary&quot;:&quot;[EkoCrop][Склады ТМЦ] Разработать раздел остатков ТМЦ по СКЛАДАМ/ Этап №2&quot;,&quot;taskType&quot;:&quot;История&quot;,&quot;status&quot;:&quot;Новый&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-349&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5977&quot;,&quot;summary&quot;:&quot;[EkoCrop][Остатки ТМЦ по складам] Реализовать web-интерфейс списка складов&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5977&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5978&quot;,&quot;summary&quot;:&quot;[EkoCrop][Остатки ТМЦ по складам] Реализовать web-интерфейс страницы склада&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5978&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5979&quot;,&quot;summary&quot;:&quot;[EkoCrop][Остатки ТМЦ по складам] Реализовать API получения складов и складских остатков&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5979&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5980&quot;,&quot;summary&quot;:&quot;[EkoCrop][Остатки ТМЦ по складам] Реализовать фильтрацию складов и остатков&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5980&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5981&quot;,&quot;summary&quot;:&quot;[EkoCrop][Остатки ТМЦ по складам] Реализовать экспорт складских остатков в Excel&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5981&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-317&quot;,&quot;summary&quot;:&quot;[Mob] Новая версия мобильного приложения&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;В работе&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;a.belozerov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-317&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5249&quot;,&quot;summary&quot;:&quot;[Mob][Новая версия] API-контракты, моки и слой интеграции с backend&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5249&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5250&quot;,&quot;summary&quot;:&quot;[Mob][Новая версия] Auth и сессия — бизнес-логика&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5250&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5260&quot;,&quot;summary&quot;:&quot;[Mob][Новая версия] Offline-first инфраструктура&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5260&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5261&quot;,&quot;summary&quot;:&quot;[Mob][Новая версия] Осмотры — бизнес-логика&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5261&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5262&quot;,&quot;summary&quot;:&quot;[Mob][Новая версия] Агроработы / техоперации — бизнес-логика&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5262&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5267&quot;,&quot;summary&quot;:&quot;[Mob][Новая версия] Карта — движок и offline&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5267&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5273&quot;,&quot;summary&quot;:&quot;[Mob][Новая версия]  Отчёты — логика и API&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5273&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5274&quot;,&quot;summary&quot;:&quot;[Mob][Новая версия] Уведомления — интеграция&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5274&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5275&quot;,&quot;summary&quot;:&quot;[Mob][Новая версия] Обратная связь — логика отправки&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5275&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5452&quot;,&quot;summary&quot;:&quot;[Mob][Новая версия] Аналитика, логирование, мониторинг&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5452&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5455&quot;,&quot;summary&quot;:&quot;[Mob][Новая версия]  Безопасность приложения&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5455&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5456&quot;,&quot;summary&quot;:&quot;[Mob][Новая версия] Подготовка к публикации&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5456&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5463&quot;,&quot;summary&quot;:&quot;[Mob][Новая версия] Уведомления / новостная лента&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;a.besedin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5463&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5464&quot;,&quot;summary&quot;:&quot;[Mob][Новая версия] Обратная связь — форма&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5464&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-311&quot;,&quot;summary&quot;:&quot;[Планы в CropDaily_total] Добавить плановые/прогнозные данные в отчет CropDaily_total&quot;,&quot;taskType&quot;:&quot;История&quot;,&quot;status&quot;:&quot;В работе&quot;,&quot;priority&quot;:&quot;High&quot;,&quot;assignee&quot;:&quot;m.ovchinnikov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-311&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5290&quot;,&quot;summary&quot;:&quot;[CropDaily_total_new] Разделение CropDaily_total_new на 3 файла&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5290&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4979&quot;,&quot;summary&quot;:&quot;[Reporting] В одном письме присылать данные по всем сезонам&quot;,&quot;taskType&quot;:&quot;Улучшение&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;d.voronin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4979&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-305&quot;,&quot;summary&quot;:&quot;[Админка][сор, бол, вр] Добавить новый тип Вредного объекта в Отчет осмотров – «Посторонние предметы»&quot;,&quot;taskType&quot;:&quot;История&quot;,&quot;status&quot;:&quot;Новый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-305&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5350&quot;,&quot;summary&quot;:&quot;[Mobile][Посторонний объект] Добавить возможность указания Постороннего предмета в ПО&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Не доделано&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;a.besedin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5350&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5351&quot;,&quot;summary&quot;:&quot;[WEB][EkoCrop][observations] Добавить тип вредного объекта \&quot;Посторонний предмет\&quot; в полевое обследование&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5351&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5352&quot;,&quot;summary&quot;:&quot;[Back][Посторонний объект] Добавить возможность указания Постороннего предмета в ПО&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5352&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-270&quot;,&quot;summary&quot;:&quot;[EkoCrop][Акты списания ТМЦ] Создать веб-интерфейс отображения печатной формы актов списания ТМЦ&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;Новый&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-270&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5773&quot;,&quot;summary&quot;:&quot;[Акты списания ТМЦ][API] Подготовить API для заполнения подробной информации о списанных актах ТМЦ&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5773&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5774&quot;,&quot;summary&quot;:&quot;[Акты списания ТМЦ][Фильтры] Реализовать на бэке фильтры для нового раздела списанных актов ТМЦ в EkoCrop&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5774&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5775&quot;,&quot;summary&quot;:&quot;[Акты списания ТМЦ][Экспорт данных] Реализовать функционал экспорта выбранных актов списания ТМЦ в формате .xlsx&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5775&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5794&quot;,&quot;summary&quot;:&quot;[EkoCrop][Акты списания ТМЦ] Реализация веб-интерфейса для отображения информации об актах списания ТМЦ&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5794&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-264&quot;,&quot;summary&quot;:&quot;[Синхронизация][ArcGIS .Net] Перевод синхронизации Аркгис на рельсы .Net с помощью API&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;Новый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;m.ovchinnikov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-264&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-4326&quot;,&quot;summary&quot;:&quot;[.Net]Синхронизация участков: протягивать Field1cId из предшественников (изменеие геометрии 1-1 или смена сезона)&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;d.navrotskii@iotos.ru&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4326&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4529&quot;,&quot;summary&quot;:&quot;[API] Загрузка THL из ГИС для процедуры восстановления кодов 1с&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4529&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-205&quot;,&quot;summary&quot;:&quot;[EkoCrop][Поля] Реализовать функционал «Избранное поле», «Эталонное поле» и «Текстовые тэги»&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;Новый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;k.kapiturov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-205&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5823&quot;,&quot;summary&quot;:&quot;[Web][Поля] Отображение избранности и эталонности поля&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Черновик&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5823&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5824&quot;,&quot;summary&quot;:&quot;[Web][Поля] Функционал тэгов&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Черновик&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5824&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5825&quot;,&quot;summary&quot;:&quot;[Back][Поля] Реализовать api «Избранное поле», «Эталонное поле» и «Текстовые тэги»&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Черновик&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5825&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-194&quot;,&quot;summary&quot;:&quot;[EkoCrop][Логирование] Создать систему логирования и хранения проблем синхронизаций&quot;,&quot;taskType&quot;:&quot;История&quot;,&quot;status&quot;:&quot;Новый&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-194&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-3680&quot;,&quot;summary&quot;:&quot;[Api]Cоздать таблицу с фиксацией проблем синхронизации  с ERP&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Lowest&quot;,&quot;assignee&quot;:&quot;d.voronin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-3680&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-190&quot;,&quot;summary&quot;:&quot;[EkoCrop][Запрет ОО и АР] Сделать возможность закрыть создание и редактирование ОО и АР в старых версиях&quot;,&quot;taskType&quot;:&quot;История&quot;,&quot;status&quot;:&quot;Новый&quot;,&quot;priority&quot;:&quot;High&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-190&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5504&quot;,&quot;summary&quot;:&quot;[EkoCrop][Запрет ОО и АР] Блокирование возможности создания и закрытия ОО и АР в устаревших версиях EkoCrop&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;High&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5504&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;DEVELOP-5908&quot;,&quot;summary&quot;:&quot;Проект вне выгрузки&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;Вне выгрузки&quot;,&quot;priority&quot;:&quot;Нет данных&quot;,&quot;assignee&quot;:&quot;Нет данных&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5908&quot;,&quot;external&quot;:true,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5910&quot;,&quot;summary&quot;:&quot;[WEB][EkoCrop][techoperations] Настраиваемые колонки таблицы агроработ&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5910&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5915&quot;,&quot;summary&quot;:&quot;[WEB][EkoCrop][techoperations] Экспорт агроработ в Excel&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5915&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-408&quot;,&quot;summary&quot;:&quot;Проект вне выгрузки&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;Вне выгрузки&quot;,&quot;priority&quot;:&quot;Нет данных&quot;,&quot;assignee&quot;:&quot;Нет данных&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-408&quot;,&quot;external&quot;:true,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5951&quot;,&quot;summary&quot;:&quot;[API] Подбор подходящей техники и механизатора для указанных в работе техники&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;a.tsuprik&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5951&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-407&quot;,&quot;summary&quot;:&quot;Проект вне выгрузки&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;Вне выгрузки&quot;,&quot;priority&quot;:&quot;Нет данных&quot;,&quot;assignee&quot;:&quot;Нет данных&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-407&quot;,&quot;external&quot;:true,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-4888&quot;,&quot;summary&quot;:&quot;[Backend] Запрос cropRotations возвращает некорректные даты сева и уборки из таблицы FarmLands&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4888&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-402&quot;,&quot;summary&quot;:&quot;Проект вне выгрузки&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;Вне выгрузки&quot;,&quot;priority&quot;:&quot;Нет данных&quot;,&quot;assignee&quot;:&quot;Нет данных&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-402&quot;,&quot;external&quot;:true,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5882&quot;,&quot;summary&quot;:&quot;[Агроработы][Редизайн] Доработка API раздела «Агроработы»&quot;,&quot;taskType&quot;:&quot;Улучшение&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;m.ovchinnikov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5882&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-386&quot;,&quot;summary&quot;:&quot;Проект вне выгрузки&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;Вне выгрузки&quot;,&quot;priority&quot;:&quot;Нет данных&quot;,&quot;assignee&quot;:&quot;Нет данных&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-386&quot;,&quot;external&quot;:true,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-4670&quot;,&quot;summary&quot;:&quot;[API][Техоперации][Arcgis] Добавить отчет о выполнении синхронизации техопераций c ArcGis в .Net&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;d.voronin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4670&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-347&quot;,&quot;summary&quot;:&quot;Проект вне выгрузки&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;Вне выгрузки&quot;,&quot;priority&quot;:&quot;Нет данных&quot;,&quot;assignee&quot;:&quot;Нет данных&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-347&quot;,&quot;external&quot;:true,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5633&quot;,&quot;summary&quot;:&quot;[web][Остатки на складах] Разработать раздел «Расход ТМЦ» / Этап №0 / Реализация web интерфейса&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Закрыт&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;s.yarovoy&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5633&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5650&quot;,&quot;summary&quot;:&quot;[API][Остатки на складах] Экспорт в Excel агрегированых данных о расходах ТМЦ&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Закрыт&quot;,&quot;priority&quot;:&quot;Highest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5650&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-314&quot;,&quot;summary&quot;:&quot;Проект вне выгрузки&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;Вне выгрузки&quot;,&quot;priority&quot;:&quot;Нет данных&quot;,&quot;assignee&quot;:&quot;Нет данных&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-314&quot;,&quot;external&quot;:true,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5950&quot;,&quot;summary&quot;:&quot;Собрать требования к ролевой модели для EkoCrop в рамках внедрения IMS&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;В работе&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;m.balanov@iotos.ru&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5950&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-294&quot;,&quot;summary&quot;:&quot;Проект вне выгрузки&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;Вне выгрузки&quot;,&quot;priority&quot;:&quot;Нет данных&quot;,&quot;assignee&quot;:&quot;Нет данных&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-294&quot;,&quot;external&quot;:true,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5365&quot;,&quot;summary&quot;:&quot;[API][SyncGIS] Автоматически создавать новые сезоны&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Черновик&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;d.navrotskii@iotos.ru&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5365&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-263&quot;,&quot;summary&quot;:&quot;Проект вне выгрузки&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;Вне выгрузки&quot;,&quot;priority&quot;:&quot;Нет данных&quot;,&quot;assignee&quot;:&quot;Нет данных&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-263&quot;,&quot;external&quot;:true,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-5284&quot;,&quot;summary&quot;:&quot;[CropTotal] Изменение логики группировки культур в отчёте CropDaily_total&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5284&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4953&quot;,&quot;summary&quot;:&quot;[EkoCrop][CropTotal] Корректировка отчета CropTotal&quot;,&quot;taskType&quot;:&quot;Улучшение&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4953&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-130&quot;,&quot;summary&quot;:&quot;Проект вне выгрузки&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;Вне выгрузки&quot;,&quot;priority&quot;:&quot;Нет данных&quot;,&quot;assignee&quot;:&quot;Нет данных&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-130&quot;,&quot;external&quot;:true,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-4574&quot;,&quot;summary&quot;:&quot;[API] Перенос в .Net из ekocrop-data-sync-srv обновления справочников из 1С&quot;,&quot;taskType&quot;:&quot;Рефакторинг&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;a.tsuprik&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4574&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;PROJECTS-104&quot;,&quot;summary&quot;:&quot;Проект вне выгрузки&quot;,&quot;taskType&quot;:&quot;Проект&quot;,&quot;status&quot;:&quot;Вне выгрузки&quot;,&quot;priority&quot;:&quot;Нет данных&quot;,&quot;assignee&quot;:&quot;Нет данных&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-104&quot;,&quot;external&quot;:true,&quot;synthetic&quot;:false},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-4324&quot;,&quot;summary&quot;:&quot;[API][.Net]Синхронизация участков: Синхронизация культур: отправить письмо с новыми культурами&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4324&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:false},{&quot;group&quot;:{&quot;id&quot;:&quot;group-bugs&quot;,&quot;summary&quot;:&quot;Ошибки без проекта&quot;,&quot;taskType&quot;:&quot;Служебная группа&quot;,&quot;status&quot;:&quot;Группа&quot;,&quot;priority&quot;:&quot;—&quot;,&quot;assignee&quot;:&quot;—&quot;,&quot;url&quot;:null,&quot;external&quot;:false,&quot;synthetic&quot;:true},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-3600&quot;,&quot;summary&quot;:&quot;[MOBILE] Открытие карточки поля двойным тапом&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;a.belozerov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-3600&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-3823&quot;,&quot;summary&quot;:&quot;[MOBILE] Закрывается мобильное приложение при введении спецсимвола без числа в поле \&quot;количество на м²\&quot; на страницах Вредители, Болезни или Сорняки при добавлении Осмотра поля&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Lowest&quot;,&quot;assignee&quot;:&quot;a.belozerov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-3823&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4071&quot;,&quot;summary&quot;:&quot;Отчёты осмотров загружаются 30-35 секунд&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;a.tsuprik&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4071&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4105&quot;,&quot;summary&quot;:&quot;[MOBILE] Количество знаков после запятой при указании площади выполненных работ в мобильном приложении отличается от web.&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;a.belozerov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4105&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4121&quot;,&quot;summary&quot;:&quot;[Web] Разобраться с большим количеством 400 ошибок при обращении к сайту&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Не доделано&quot;,&quot;priority&quot;:&quot;Lowest&quot;,&quot;assignee&quot;:&quot;a.zvezdin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4121&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4274&quot;,&quot;summary&quot;:&quot;[Mobile] При загрузке хозяйства ЭНА Восточное в мобильном приложении на подложке карты не отрисовываются контуры полей и при попытке поиска приложение вылетает.&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;a.belozerov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4274&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4468&quot;,&quot;summary&quot;:&quot;[Mobil] Мобильное приложение при загрузке/обновлении запрашивает фотографии удаленные из осмотров&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;High&quot;,&quot;assignee&quot;:&quot;a.belozerov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4468&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4548&quot;,&quot;summary&quot;:&quot;[WEB] Агроработы некорректно сортируются по текстовым полям&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4548&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4614&quot;,&quot;summary&quot;:&quot;У АР при сохранении изменяются значения в поле \&quot;Общий расход ТМЦ\&quot;&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4614&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4620&quot;,&quot;summary&quot;:&quot;[Mobile] В ПХ с возможностью списать ТМЦ, отображаются ТМЦ другого ПХ&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;a.belozerov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4620&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4860&quot;,&quot;summary&quot;:&quot;[Web]Неверно отсылается кол-во ТМЦ при фильтре \&quot;Только несформированные акты\&quot;&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4860&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4900&quot;,&quot;summary&quot;:&quot;[Web] [Техоперации] При фильтрации по дате отображаются только те агроработы, у которых и начало, и конец периода работ попадают под фильтр&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4900&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4909&quot;,&quot;summary&quot;:&quot;[backend] В карточке техоперации отсутствует культура-наследник после изменения FarmLand.ID&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4909&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4927&quot;,&quot;summary&quot;:&quot;[Web] Система неверно фокусируется на карте при выборе ПХ&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Lowest&quot;,&quot;assignee&quot;:&quot;a.zvezdin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4927&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5052&quot;,&quot;summary&quot;:&quot;[MOBILE] Карта не загружается после получения некорректных данных из getFarmLandGeometriesBySeasonAndFarm&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;a.besedin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5052&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5088&quot;,&quot;summary&quot;:&quot;[Mobile] Не загружаются справочники при нажатии кнопки \&quot;Загрузить для хозяйств\&quot;&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5088&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5089&quot;,&quot;summary&quot;:&quot;[Mobile] В Осмотрах полей при заполнении Вредителей/Болезней выводится список всех значений, не отфильтрованный по культуре поля&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5089&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5091&quot;,&quot;summary&quot;:&quot;[Web] В Осмотрах полей при заполнении Вредителей/Болезней выводится список всех значений, не отфильтрованный по культуре поля&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5091&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5117&quot;,&quot;summary&quot;:&quot;Web Отсутствует ПХ и сезон в фильтре при загрузке без кэша&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Можно тестировать&quot;,&quot;priority&quot;:&quot;Lowest&quot;,&quot;assignee&quot;:&quot;a.zvezdin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5117&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5213&quot;,&quot;summary&quot;:&quot;[MOBILE] Если создать АР с одним № в мобильном приложении и веб, то после обновления справочников АР созданная на веб, в мобильном приложении не содержит значения TechOperationValues&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;a.besedin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5213&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5278&quot;,&quot;summary&quot;:&quot;В 1С не удаляется акт с ТМЦ удаленной агроработы, если у АР было 2 типа ТМЦ и один из актов в 1С содержал ТМЦ разных агроработ&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Lowest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5278&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5280&quot;,&quot;summary&quot;:&quot;[Mobile] Система должна отображать признак загруженного ПХ после того, когда выполнится обновление всех справочников (неактуальность справочников более 12 часов)&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5280&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5315&quot;,&quot;summary&quot;:&quot;[API][SyncGIS] Теряются даты сева и уборки&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Черновик&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5315&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5343&quot;,&quot;summary&quot;:&quot;Некоторые АР используют удаленные ТМЦ в следствии этого они не попадают в отчет «Сводка по региону»&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5343&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5373&quot;,&quot;summary&quot;:&quot;[MOBILE] Привести к единообразию предупреждения при создании\\редактировании АР на шаге 5&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Lowest&quot;,&quot;assignee&quot;:&quot;a.besedin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5373&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5478&quot;,&quot;summary&quot;:&quot;[Web] Ошибка 404 при переходе на поле с изменённым farmLandId из раздела \&quot;Списание ТМЦ\&quot;&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Не доделано&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;a.zvezdin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5478&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5498&quot;,&quot;summary&quot;:&quot;[ЕжеднСводка] В XLSX-документе: на вкладке «Уборка (кормов)» у крайних правых столбцов без данных отсутствуют границы ячеек&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;a.tsuprik&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5498&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5555&quot;,&quot;summary&quot;:&quot;Внедрить log retention / rotation для Chucker и логирующих подсистем&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;High&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5555&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5677&quot;,&quot;summary&quot;:&quot;[MOBILE] Приложение вылетает при двойном тапе на кнопку создания новой АР в карточке поля&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;a.besedin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5677&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5699&quot;,&quot;summary&quot;:&quot;[Отчеты] [CropDaily] В отчет CropDaily_total_new попадают ТО завершенные после даты отчета&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5699&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5702&quot;,&quot;summary&quot;:&quot;Ошибка фильтрации механизаторов по хозяйству&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5702&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5716&quot;,&quot;summary&quot;:&quot;[Backend]Техника недоступна для выбора в агроработе при отключенном тоггле \&quot;из всех ПХ\&quot; из-за отсутствия связи в TechAssetFarm&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;m.balanov@iotos.ru&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5716&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5742&quot;,&quot;summary&quot;:&quot;[Mobile] При создании агроработы на шаге выбора звеньев отображается техника, привязанная к другим подтипам операции&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;High&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5742&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5754&quot;,&quot;summary&quot;:&quot;[API] [.Net] При GET запросах без pageNumber формируется ссылка на пустую страницу, если дойти до края списка&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;a.tsuprik&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5754&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5875&quot;,&quot;summary&quot;:&quot;[Web] Ошибка валидации площади при создании и редактировании АР&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;High&quot;,&quot;assignee&quot;:&quot;a.zvezdin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5875&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5902&quot;,&quot;summary&quot;:&quot;[Web] Реализовать страницу-заглушку 404 при переходе на несуществующую карточку поля&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;High&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5902&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5934&quot;,&quot;summary&quot;:&quot;[Mobile] После удаления агроработы из отчётов карточка остаётся открытой&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5934&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5938&quot;,&quot;summary&quot;:&quot;[Web] При удалении отчёта осмотра на vnext возвращается ошибка 400&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;High&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5938&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5946&quot;,&quot;summary&quot;:&quot;Заполнить значение базовой влажности и сорности для чечевицы&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Протестировано&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;m.ovchinnikov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5946&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5947&quot;,&quot;summary&quot;:&quot;Добавить обязательные поля для типа АР «Прочее – Протравка» в БД, Web и мобильное приложение&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5947&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5959&quot;,&quot;summary&quot;:&quot;[MOBILE] Нажатие на кнопки \&quot;+\&quot; или \&quot;-\&quot; на вкладке \&quot;Карта\&quot; при запуске приложения приводит к многократному увеличению масштаба&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5959&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5986&quot;,&quot;summary&quot;:&quot;[EkoCrop][API] TechAssetsV2 отдаёт одно хозяйство на единицу техники&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;m.balanov@iotos.ru&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5986&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5987&quot;,&quot;summary&quot;:&quot;[Mobile] [Map] Не показывается Tooltip (информационная всплывашка) при длительном нажатии на Поле&quot;,&quot;taskType&quot;:&quot;Ошибка&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;a.belozerov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5987&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:true},{&quot;group&quot;:{&quot;id&quot;:&quot;group-refactoring&quot;,&quot;summary&quot;:&quot;Рефакторинг без проекта&quot;,&quot;taskType&quot;:&quot;Служебная группа&quot;,&quot;status&quot;:&quot;Группа&quot;,&quot;priority&quot;:&quot;—&quot;,&quot;assignee&quot;:&quot;—&quot;,&quot;url&quot;:null,&quot;external&quot;:false,&quot;synthetic&quot;:true},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-4191&quot;,&quot;summary&quot;:&quot;[API][.Net] отчеты о выполнении джобов&quot;,&quot;taskType&quot;:&quot;Рефакторинг&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;a.tsuprik&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4191&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4233&quot;,&quot;summary&quot;:&quot;[API] Исследовать возможность использования существующих вариантов реализации паттерна Result&quot;,&quot;taskType&quot;:&quot;Рефакторинг&quot;,&quot;status&quot;:&quot;Черновик&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;m.ovchinnikov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4233&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4273&quot;,&quot;summary&quot;:&quot;[Web] Изменить наименования файлов после изменения тех операций на агроработы&quot;,&quot;taskType&quot;:&quot;Рефакторинг&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Lowest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4273&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4436&quot;,&quot;summary&quot;:&quot;[API][.Net] проставить комментарии для связи вью с таблицами и моделями&quot;,&quot;taskType&quot;:&quot;Рефакторинг&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4436&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4449&quot;,&quot;summary&quot;:&quot;[API][.Net] проверить что все методы, возвращающие запрос, возвращают IQueriable и это отражено в названии&quot;,&quot;taskType&quot;:&quot;Рефакторинг&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Lowest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4449&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4547&quot;,&quot;summary&quot;:&quot;[Infrastructure] вызвать в докере скрипт раскатки базы из бэкапа&quot;,&quot;taskType&quot;:&quot;Рефакторинг&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4547&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4566&quot;,&quot;summary&quot;:&quot;[API] Разобраться почему _context.MateriallyAccountableEmployees не возвращает удаленные записи&quot;,&quot;taskType&quot;:&quot;Рефакторинг&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;d.navrotskii@iotos.ru&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4566&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4581&quot;,&quot;summary&quot;:&quot;[API] рефакторинг SyncMateriallyAccountableEmployeesHandler&quot;,&quot;taskType&quot;:&quot;Рефакторинг&quot;,&quot;status&quot;:&quot;Черновик&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4581&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4623&quot;,&quot;summary&quot;:&quot;[API] Сделать ретраи джобов&quot;,&quot;taskType&quot;:&quot;Рефакторинг&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4623&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4687&quot;,&quot;summary&quot;:&quot;[API] Добавить cancellationToken в ErpClientFacade&quot;,&quot;taskType&quot;:&quot;Рефакторинг&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;a.tsuprik&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4687&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4757&quot;,&quot;summary&quot;:&quot;[API][.Net] Заполнять для ТО пустой FinishDate значением StartDate&quot;,&quot;taskType&quot;:&quot;Рефакторинг&quot;,&quot;status&quot;:&quot;Черновик&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4757&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4867&quot;,&quot;summary&quot;:&quot;[API] Фильтр валидаторов в DI&quot;,&quot;taskType&quot;:&quot;Рефакторинг&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;a.tsuprik&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4867&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5449&quot;,&quot;summary&quot;:&quot;[Back][.Net] Добавить логирование запросов from/to 1С as is в формате XML&quot;,&quot;taskType&quot;:&quot;Рефакторинг&quot;,&quot;status&quot;:&quot;Черновик&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5449&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5841&quot;,&quot;summary&quot;:&quot;[Web][Рефактор] Переделать страницу observation-editing, переделать механизм отправки фото на бекенд&quot;,&quot;taskType&quot;:&quot;Рефакторинг&quot;,&quot;status&quot;:&quot;Черновик&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5841&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:true},{&quot;group&quot;:{&quot;id&quot;:&quot;group-other&quot;,&quot;summary&quot;:&quot;Без проекта&quot;,&quot;taskType&quot;:&quot;Служебная группа&quot;,&quot;status&quot;:&quot;Группа&quot;,&quot;priority&quot;:&quot;—&quot;,&quot;assignee&quot;:&quot;—&quot;,&quot;url&quot;:null,&quot;external&quot;:false,&quot;synthetic&quot;:true},&quot;tasks&quot;:[{&quot;id&quot;:&quot;DEVELOP-2993&quot;,&quot;summary&quot;:&quot;Добавить возможность сортировки по группе для тех.операций в поле&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;a.tsuprik&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-2993&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4044&quot;,&quot;summary&quot;:&quot;Добавить в ручку Observation V3 валидацию фенофаз по аналогии с v2&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Lowest&quot;,&quot;assignee&quot;:&quot;a.tsuprik&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4044&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4175&quot;,&quot;summary&quot;:&quot;[Справочники ] Сделать отправку отчетов после  синхронизации Семян, Удобрений, Химии&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4175&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4608&quot;,&quot;summary&quot;:&quot;[web] Реализация API endpoint для проверки существования записей использования операций&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4608&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4672&quot;,&quot;summary&quot;:&quot;[API] Добавить хелсчеки&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4672&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4699&quot;,&quot;summary&quot;:&quot;[API] отображать AssetUsageRecord без МОЛ&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Lowest&quot;,&quot;assignee&quot;:&quot;d.voronin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4699&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5605&quot;,&quot;summary&quot;:&quot;[WEB][EkoCrop][techoperations] Удалить переключатели в форме создания агроработ по итогам UX-анализа&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5605&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5672&quot;,&quot;summary&quot;:&quot;[Backend] Корректная обработка timezone offset при сохранении даты/времени на .Net&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;a.tsuprik&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5672&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5679&quot;,&quot;summary&quot;:&quot;[EkoCrop][Backend] Реализовать фильтрацию словарей в API v2 по userID из IMS токена&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Черновик&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5679&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5792&quot;,&quot;summary&quot;:&quot;[API] Необходимо перенести функционал проставления дат сева и уборки на .Net&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Черновик&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5792&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5800&quot;,&quot;summary&quot;:&quot;[API] Перенести телеграм-публикацию осмотров из Loopback в .Net&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Не доделано&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;a.tsuprik&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5800&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5802&quot;,&quot;summary&quot;:&quot;[EkoCrop][BackEnd][Arcgis] Переработка синхронизации культур EkoCrop с ArcGis.CROP_LEGEND&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;d.navrotskii@iotos.ru&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5802&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5903&quot;,&quot;summary&quot;:&quot;[Backend] Добавить поле realFarmlandId в ответе эндпоинта AssetUsageRecords&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5903&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5949&quot;,&quot;summary&quot;:&quot;[Web] Снять обязательность с поля \&quot;Репродукция\&quot; при редактировании связки семян и культур&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5949&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5985&quot;,&quot;summary&quot;:&quot;[Web] Branded-тип Uuid и разбор идентификаторов на границе&quot;,&quot;taskType&quot;:&quot;Задача&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;n.isakhanov@iotos.ru&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5985&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-3282&quot;,&quot;summary&quot;:&quot;[EkoCrop][Web] наличие \&quot;стадий роста\&quot; в исторических отчетах осмотра&quot;,&quot;taskType&quot;:&quot;История&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Lowest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-3282&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;PROJECTS-387&quot;,&quot;summary&quot;:&quot;[EkoCrop][Добавить заглушку на 404 АР] Добавить страницу заглушку при отсутствии АР&quot;,&quot;taskType&quot;:&quot;История&quot;,&quot;status&quot;:&quot;Новый&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/PROJECTS-387&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4585&quot;,&quot;summary&quot;:&quot;[Mobile] При установке новой версии удалять все ранее загруженные справочники приложения и загружать все справочники заново.&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Не доделано&quot;,&quot;priority&quot;:&quot;High&quot;,&quot;assignee&quot;:&quot;a.besedin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4585&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5347&quot;,&quot;summary&quot;:&quot;[MOBILE] Добавить в CI-CD настройку релизной сборки из папки hotfix аналогично папке realese&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Черновик&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;a.belozerov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5347&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5676&quot;,&quot;summary&quot;:&quot;[API][Отчеты, прогнозные данные] Опциональная отправка daily/weekly-отчетов в зависимости от прогнозных данных&quot;,&quot;taskType&quot;:&quot;Новая функциональность&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5676&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4178&quot;,&quot;summary&quot;:&quot;[Оптимизация] Оптимизировать изображения на странице логина&quot;,&quot;taskType&quot;:&quot;Оптимизация&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Lowest&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4178&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5714&quot;,&quot;summary&quot;:&quot;[EkoCrop][Backend] Проверить возможную performance issue в отчёте DailyTotal&quot;,&quot;taskType&quot;:&quot;Оптимизация&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5714&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-3602&quot;,&quot;summary&quot;:&quot;Мониторинг email&quot;,&quot;taskType&quot;:&quot;Улучшение&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;m.ovchinnikov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-3602&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4179&quot;,&quot;summary&quot;:&quot;[Оптимизация] полная интеграция с rtk query&quot;,&quot;taskType&quot;:&quot;Улучшение&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Lowest&quot;,&quot;assignee&quot;:&quot;a.zvezdin&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4179&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-4711&quot;,&quot;summary&quot;:&quot;[API] Добавить в swagger метод аналогичный SyncArcGisCompleteJob в quartz. Метод должен запускать синхронизацию геометрий SyncArcGisCompleteJob для всех активных участков без геометрий.&quot;,&quot;taskType&quot;:&quot;Улучшение&quot;,&quot;status&quot;:&quot;Backlog&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-4711&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5221&quot;,&quot;summary&quot;:&quot;[MOBILE] В форме редактирования АР и осмотров дата по умолчанию подставляется текущая, а не сохраненная&quot;,&quot;taskType&quot;:&quot;Улучшение&quot;,&quot;status&quot;:&quot;Открытый&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;a.belozerov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5221&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5272&quot;,&quot;summary&quot;:&quot;[Mobile] Седлать возможность выбора времени (в мин) появления черной стрелочки (признак неактуальности справочников) напротив загруженного ПХ&quot;,&quot;taskType&quot;:&quot;Улучшение&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Low&quot;,&quot;assignee&quot;:&quot;a.belozerov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5272&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5434&quot;,&quot;summary&quot;:&quot;[MOBILE] Защита приложения от изменения системного времени пользователем&quot;,&quot;taskType&quot;:&quot;Улучшение&quot;,&quot;status&quot;:&quot;Черновик&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;a.belozerov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5434&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5516&quot;,&quot;summary&quot;:&quot;[MOBILE] Настройка подписи Android-приложения и интеграция с CI/CD&quot;,&quot;taskType&quot;:&quot;Улучшение&quot;,&quot;status&quot;:&quot;Черновик&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;a.belozerov&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5516&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false},{&quot;id&quot;:&quot;DEVELOP-5945&quot;,&quot;summary&quot;:&quot;[WEB] Создание техопераций копированием для веб&quot;,&quot;taskType&quot;:&quot;Улучшение&quot;,&quot;status&quot;:&quot;Сделать&quot;,&quot;priority&quot;:&quot;Medium&quot;,&quot;assignee&quot;:&quot;Не назначен&quot;,&quot;url&quot;:&quot;https://dev.ekoniva-apk.com/browse/DEVELOP-5945&quot;,&quot;external&quot;:false,&quot;synthetic&quot;:false}],&quot;synthetic&quot;:true}],&quot;summary&quot;:{&quot;releaseIssues&quot;:172,&quot;projectGroups&quot;:29,&quot;serviceGroups&quot;:3,&quot;level2Tasks&quot;:154,&quot;level1ReleaseIssues&quot;:18,&quot;unassigned&quot;:87,&quot;unassignedTypes&quot;:{&quot;История&quot;:2,&quot;Ошибка&quot;:43,&quot;Задача&quot;:15,&quot;Улучшение&quot;:8,&quot;Рефакторинг&quot;:14,&quot;Оптимизация&quot;:2,&quot;Новая функциональность&quot;:3},&quot;ambiguousPairsIgnored&quot;:[],&quot;largestGroups&quot;:[{&quot;id&quot;:&quot;group-bugs&quot;,&quot;count&quot;:43,&quot;summary&quot;:&quot;Ошибки без проекта&quot;},{&quot;id&quot;:&quot;group-other&quot;,&quot;count&quot;:30,&quot;summary&quot;:&quot;Без проекта&quot;},{&quot;id&quot;:&quot;PROJECTS-317&quot;,&quot;count&quot;:14,&quot;summary&quot;:&quot;[Mob] Новая версия мобильного приложения&quot;},{&quot;id&quot;:&quot;group-refactoring&quot;,&quot;count&quot;:14,&quot;summary&quot;:&quot;Рефакторинг без проекта&quot;},{&quot;id&quot;:&quot;PROJECTS-333&quot;,&quot;count&quot;:6,&quot;summary&quot;:&quot;[EkoCrop][Остатки на складах] Разработать раздел остатков ТМЦ на складах&quot;},{&quot;id&quot;:&quot;PROJECTS-270&quot;,&quot;count&quot;:4,&quot;summary&quot;:&quot;[EkoCrop][Акты списания ТМЦ] Создать веб-интерфейс отображения печатной формы актов списания ТМЦ&quot;},{&quot;id&quot;:&quot;PROJECTS-342&quot;,&quot;count&quot;:4,&quot;summary&quot;:&quot;[Админка][Семена через excel] Добавить возможность загрузки привязки семян через excel&quot;},{&quot;id&quot;:&quot;PROJECTS-205&quot;,&quot;count&quot;:3,&quot;summary&quot;:&quot;[EkoCrop][Поля] Реализовать функционал «Избранное поле», «Эталонное поле» и «Текстовые тэги»&quot;},{&quot;id&quot;:&quot;PROJECTS-305&quot;,&quot;count&quot;:3,&quot;summary&quot;:&quot;[Админка][сор, бол, вр] Добавить новый тип Вредного объекта в Отчет осмотров – «Посторонние предметы»&quot;},{&quot;id&quot;:&quot;PROJECTS-370&quot;,&quot;count&quot;:3,&quot;summary&quot;:&quot;[EkoCrop][Админка | Срок списания] Разработка функционала управления сроком списания ТМЦ через админку&quot;}]}};
+      const componentsByIssue = {&quot;DEVELOP-2993&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-3282&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-3600&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-3602&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-3680&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-3823&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4044&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4071&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4105&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4121&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4175&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;arch-tier: backend-srv / data&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4178&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4179&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4191&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4233&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4273&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4274&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4311&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4324&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4326&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4436&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;arch-tier: backend-srv / data&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4449&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4468&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4529&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4547&quot;:[&quot;arch-tier: backend-srv / data&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4548&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4566&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4574&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4581&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4585&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4608&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4614&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4620&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4623&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4670&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4672&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4687&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4699&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4711&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4757&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4860&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4867&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4888&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4900&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4909&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4927&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4953&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-4979&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5044&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5052&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5088&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5089&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5091&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5117&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5213&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5221&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5249&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5250&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5260&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5261&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5262&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5267&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5272&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5273&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5274&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5275&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5278&quot;:[&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5280&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5284&quot;:[&quot;arch-tier: backend-srv / data&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5290&quot;:[&quot;arch-tier: backend-srv / data&quot;,&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5315&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5343&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5347&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5350&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5351&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5352&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5365&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5373&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5434&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5449&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5452&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5455&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5456&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5463&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5464&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5478&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5498&quot;:[&quot;arch-tier: backend-srv / data&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5504&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5516&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5530&quot;:[&quot;arch-tier: backend-srv / data&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5555&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5605&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5633&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5650&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5672&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5674&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5676&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5677&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5679&quot;:[&quot;arch-tier: backend-srv&quot;],&quot;DEVELOP-5680&quot;:[&quot;arch-tier: backend-srv&quot;],&quot;DEVELOP-5699&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5702&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5704&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5714&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5716&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5742&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5754&quot;:[&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5762&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;customer: digit-dept&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5772&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;customer:controlling&amp;accounting&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5773&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5774&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5775&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5786&quot;:[&quot;arch-tier: web-app&quot;,&quot;customer: digit-dept&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5792&quot;:[&quot;arch-tier: backend-srv / data&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5794&quot;:[&quot;arch-tier: web-app&quot;,&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5798&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5799&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5800&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5802&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5805&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;customer: digit-dept&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5823&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5824&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5825&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5841&quot;:[&quot;arch-tier: web-app&quot;,&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5846&quot;:[&quot;arch-tier: backend-srv / data&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5847&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5848&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5875&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5882&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5883&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5902&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5903&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5910&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5915&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5934&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5938&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5943&quot;:[&quot;arch-tier: backend-srv / data&quot;,&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5945&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5946&quot;:[&quot;arch-tier: backend-srv / data&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5947&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;arch-tier: mobile-app&quot;,&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;],&quot;DEVELOP-5949&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5950&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;arch-tier: design&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5951&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5959&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5977&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5978&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5979&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5980&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5981&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5985&quot;:[&quot;arch-tier: web-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5986&quot;:[&quot;arch-tier: backend-srv&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;DEVELOP-5987&quot;:[&quot;arch-tier: mobile-app&quot;,&quot;product-line: ekocrop&quot;,&quot;product: ekocrop-agronomist&quot;],&quot;PROJECTS-190&quot;:[&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;tier: backend&quot;,&quot;tier: mobile&quot;],&quot;PROJECTS-194&quot;:[&quot;customer: digitalization-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;tier: backend&quot;],&quot;PROJECTS-205&quot;:[&quot;product-line: ekocrop&quot;,&quot;system: gis&quot;,&quot;tier: backend&quot;,&quot;tier: frontend-web&quot;,&quot;tier: mobile&quot;],&quot;PROJECTS-264&quot;:[&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;],&quot;PROJECTS-270&quot;:[&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;tier: backend&quot;,&quot;tier: frontend-web&quot;],&quot;PROJECTS-305&quot;:[&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;tier: backend&quot;,&quot;tier: frontend-web&quot;],&quot;PROJECTS-311&quot;:[&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;tier: backend&quot;],&quot;PROJECTS-317&quot;:[&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;tier: mobile&quot;],&quot;PROJECTS-333&quot;:[&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;tier: backend&quot;,&quot;tier: frontend-web&quot;],&quot;PROJECTS-342&quot;:[&quot;product-line: ekocrop&quot;,&quot;tier: backend&quot;,&quot;tier: frontend-web&quot;],&quot;PROJECTS-349&quot;:[&quot;product-line: ekocrop&quot;],&quot;PROJECTS-357&quot;:[&quot;customer: digitalization-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;tier: backend&quot;,&quot;tier: frontend-web&quot;,&quot;tier: mobile&quot;],&quot;PROJECTS-364&quot;:[&quot;customer: controlling&amp;accounting-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;system: 1c&quot;,&quot;tier: backend&quot;],&quot;PROJECTS-370&quot;:[&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;tier: backend&quot;,&quot;tier: frontend-web&quot;],&quot;PROJECTS-375&quot;:[&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;tier: mobile&quot;],&quot;PROJECTS-381&quot;:[&quot;product-line: ekocrop&quot;,&quot;tier: backend&quot;,&quot;tier: frontend-web&quot;],&quot;PROJECTS-385&quot;:[&quot;customer: controlling&amp;accounting-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;tier: frontend-web&quot;],&quot;PROJECTS-387&quot;:[&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;tier: frontend-web&quot;],&quot;PROJECTS-401&quot;:[&quot;customer: agronomist-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;tier: backend&quot;,&quot;tier: frontend-web&quot;],&quot;PROJECTS-409&quot;:[&quot;customer: controlling&amp;accounting-dept&quot;,&quot;product-line: ekocrop&quot;,&quot;tier: backend&quot;]};
+      const canvas = root.querySelector(&quot;[data-canvas]&quot;);
+      const heading = root.querySelector(&quot;#jrh-heading&quot;);
+      const summaryLine = root.querySelector(&quot;[data-summary]&quot;);
+      const dialog = root.querySelector(&quot;[data-dialog]&quot;);
+      const dialogTitle = root.querySelector(&quot;[data-dialog-title]&quot;);
+      const dialogSummary = root.querySelector(&quot;[data-dialog-summary]&quot;);
+      const dialogMeta = root.querySelector(&quot;[data-dialog-meta]&quot;);
+      const dialogLink = root.querySelector(&quot;[data-dialog-link]&quot;);
+      const dialogClose = root.querySelector(&quot;[data-dialog-close]&quot;);
+      const svgNamespace = &quot;http://www.w3.org/2000/svg&quot;;
+      const xhtmlNamespace = &quot;http://www.w3.org/1999/xhtml&quot;;
+      const expanded = new Set();
+      let selectedId = data.release.id;
+      let lastWidth = 0;
+      let motionContext = null;
+      let motionFrameRequest = 0;
+
+      function updateReleaseHeader() {
+        heading.textContent = data.release.summary;
+        summaryLine.textContent = `${data.summary.releaseIssues} задачи релиза · ${data.summary.projectGroups} проектов · ${data.summary.serviceGroups} служебные группы`;
+      }
+
+      updateReleaseHeader();
+
+      function svgElement(name, attributes = {}) {
+        const element = document.createElementNS(svgNamespace, name);
+        for (const [key, value] of Object.entries(attributes)) {
+          element.setAttribute(key, String(value));
+        }
+        return element;
+      }
+
+      const priorityRanks = {
+        &quot;Блокер&quot;: 6,
+        &quot;Blocker&quot;: 6,
+        &quot;Highest&quot;: 5,
+        &quot;High&quot;: 4,
+        &quot;Medium&quot;: 3,
+        &quot;Low&quot;: 2,
+        &quot;Lowest&quot;: 1,
+      };
+
+      function labelPartsFor(item, kind, isExpanded = false, count = 0) {
+        if (kind === &quot;release&quot;) {
+          return {
+            key: item.summary.replace(/^Релиз\s+/i, &quot;&quot;) || item.id,
+            tags: &quot;&quot;,
+            short: &quot;&quot;,
+          };
+        }
+        const tags = item.summary.match(/\[[^\]]+\]/g) || [];
+        const remainder = item.summary.replace(/\[[^\]]+\]/g, &quot; &quot;).replace(/\s+/g, &quot; &quot;).trim();
+        if (kind === &quot;group&quot; &amp;&amp; item.synthetic) {
+          return {
+            key: `${count &gt; 0 ? (isExpanded ? &quot;▾ &quot; : &quot;› &quot;) : &quot;&quot;}${item.summary} (${count})`,
+            tags: &quot;&quot;,
+            short: &quot;&quot;,
+          };
+        }
+        return {
+          key: `${kind === &quot;group&quot; &amp;&amp; count &gt; 0 ? (isExpanded ? &quot;▾ &quot; : &quot;› &quot;) : &quot;&quot;}${item.id}${kind === &quot;group&quot; ? ` (${count})` : &quot;&quot;}`,
+          tags: tags.join(&quot; &quot;),
+          short: kind === &quot;task&quot; ? remainder : &quot;&quot;,
+        };
+      }
+
+      function highestPriority(items) {
+        return items.reduce((best, item) =&gt; {
+          const value = item?.priority || &quot;&quot;;
+          return (priorityRanks[value] || 0) &gt; (priorityRanks[best] || 0) ? value : best;
+        }, &quot;&quot;);
+      }
+
+      function effectivePriority(item, tasks = []) {
+        if (priorityRanks[item.priority]) return item.priority;
+        return highestPriority(tasks) || item.priority || &quot;Не указан&quot;;
+      }
+
+      function sortByPriority(items, priorityForItem) {
+        return items
+          .map((item, index) =&gt; ({item, index, priority: priorityForItem(item)}))
+          .sort((a, b) =&gt; (
+            (priorityRanks[b.priority] || 0) - (priorityRanks[a.priority] || 0)
+            || a.index - b.index
+          ))
+          .map(entry =&gt; entry.item);
+      }
+
+      function priorityPresentation(priority) {
+        const value = String(priority || &quot;Не указан&quot;);
+        if (value === &quot;Блокер&quot; || value === &quot;Blocker&quot;) return {kind: &quot;blocker&quot;, className: &quot;jrh-priority-blocker&quot;};
+        if (value === &quot;Highest&quot;) return {kind: &quot;highest&quot;, className: &quot;jrh-priority-highest&quot;};
+        if (value === &quot;High&quot;) return {kind: &quot;high&quot;, className: &quot;jrh-priority-high&quot;};
+        if (value === &quot;Medium&quot;) return {kind: &quot;medium&quot;, className: &quot;jrh-priority-medium&quot;};
+        if (value === &quot;Low&quot;) return {kind: &quot;low&quot;, className: &quot;jrh-priority-low&quot;};
+        if (value === &quot;Lowest&quot;) return {kind: &quot;lowest&quot;, className: &quot;jrh-priority-lowest&quot;};
+        return {kind: &quot;unknown&quot;, className: &quot;jrh-priority-unknown&quot;};
+      }
+
+      function createPriorityIcon(priority) {
+        const info = priorityPresentation(priority);
+        const wrapper = document.createElementNS(xhtmlNamespace, &quot;span&quot;);
+        wrapper.setAttribute(&quot;class&quot;, `jrh-priority-inline ${info.className}`);
+        wrapper.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
+
+        const icon = svgElement(&quot;svg&quot;, {
+          viewBox: &quot;0 0 24 24&quot;,
+          width: 24,
+          height: 24,
+          &quot;aria-hidden&quot;: &quot;true&quot;,
+        });
+        const addPath = d =&gt; icon.appendChild(svgElement(&quot;path&quot;, {
+          d,
+          fill: &quot;none&quot;,
+          stroke: &quot;currentColor&quot;,
+          &quot;stroke-width&quot;: 3.2,
+          &quot;stroke-linecap&quot;: &quot;round&quot;,
+          &quot;stroke-linejoin&quot;: &quot;round&quot;,
+        }));
+
+        if (info.kind === &quot;blocker&quot;) {
+          icon.appendChild(svgElement(&quot;circle&quot;, {cx: 12, cy: 12, r: 10, fill: &quot;currentColor&quot;}));
+          icon.appendChild(svgElement(&quot;line&quot;, {
+            x1: 7,
+            y1: 12,
+            x2: 17,
+            y2: 12,
+            stroke: &quot;var(--background)&quot;,
+            &quot;stroke-width&quot;: 3,
+            &quot;stroke-linecap&quot;: &quot;round&quot;,
+          }));
+        } else if (info.kind === &quot;highest&quot;) {
+          addPath(&quot;M 5 11 L 12 6 L 19 11 M 5 18 L 12 13 L 19 18&quot;);
+        } else if (info.kind === &quot;high&quot;) {
+          addPath(&quot;M 5 15 L 12 10 L 19 15&quot;);
+        } else if (info.kind === &quot;medium&quot;) {
+          addPath(&quot;M 5 9 L 19 9 M 5 15 L 19 15&quot;);
+        } else if (info.kind === &quot;low&quot;) {
+          addPath(&quot;M 5 9 L 12 14 L 19 9&quot;);
+        } else if (info.kind === &quot;lowest&quot;) {
+          addPath(&quot;M 5 6 L 12 11 L 19 6 M 5 13 L 12 18 L 19 13&quot;);
+        } else {
+          addPath(&quot;M 6 12 L 18 12&quot;);
+        }
+        wrapper.appendChild(icon);
+        return wrapper;
+      }
+
+      function createIssueTypeIcon(taskType) {
+        const value = String(taskType || &quot;&quot;);
+        let color = &quot;muted&quot;;
+        let kind = &quot;circle&quot;;
+        if (value === &quot;Задача&quot;) {
+          color = &quot;blue&quot;;
+          kind = &quot;check&quot;;
+        } else if (value === &quot;Улучшение&quot;) {
+          color = &quot;green&quot;;
+          kind = &quot;arrow&quot;;
+        } else if (value === &quot;Новая функциональность&quot;) {
+          color = &quot;green&quot;;
+          kind = &quot;plus&quot;;
+        } else if (value === &quot;Ошибка&quot;) {
+          color = &quot;red&quot;;
+          kind = &quot;dot&quot;;
+        } else if (value === &quot;Epic&quot;) {
+          color = &quot;purple&quot;;
+          kind = &quot;bolt&quot;;
+        } else if (value === &quot;История&quot;) {
+          color = &quot;green&quot;;
+          kind = &quot;bookmark&quot;;
+        } else if (value === &quot;Проект&quot;) {
+          color = &quot;blue&quot;;
+          kind = &quot;grid&quot;;
+        } else if (value === &quot;Документы&quot;) {
+          color = &quot;purple&quot;;
+          kind = &quot;list&quot;;
+        }
+
+        const wrapper = document.createElement(&quot;span&quot;);
+        wrapper.className = `jrh-type-icon jrh-type-${color}`;
+        wrapper.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
+        const icon = svgElement(&quot;svg&quot;, {viewBox: &quot;0 0 24 24&quot;, &quot;aria-hidden&quot;: &quot;true&quot;});
+        const addStroke = d =&gt; icon.appendChild(svgElement(&quot;path&quot;, {
+          d,
+          fill: &quot;none&quot;,
+          stroke: &quot;currentColor&quot;,
+          &quot;stroke-width&quot;: 2.8,
+          &quot;stroke-linecap&quot;: &quot;round&quot;,
+          &quot;stroke-linejoin&quot;: &quot;round&quot;,
+        }));
+        if (kind === &quot;check&quot;) addStroke(&quot;M 5 12 L 10 17 L 19 7&quot;);
+        else if (kind === &quot;arrow&quot;) addStroke(&quot;M 12 19 V 5 M 6 11 L 12 5 L 18 11&quot;);
+        else if (kind === &quot;plus&quot;) addStroke(&quot;M 12 5 V 19 M 5 12 H 19&quot;);
+        else if (kind === &quot;dot&quot;) icon.appendChild(svgElement(&quot;circle&quot;, {cx: 12, cy: 12, r: 6, fill: &quot;currentColor&quot;}));
+        else if (kind === &quot;bolt&quot;) icon.appendChild(svgElement(&quot;path&quot;, {d: &quot;M 13 2 L 5 14 H 11 L 10 22 L 19 9 H 13 Z&quot;, fill: &quot;currentColor&quot;}));
+        else if (kind === &quot;bookmark&quot;) icon.appendChild(svgElement(&quot;path&quot;, {d: &quot;M 6 3 H 18 V 21 L 12 17 L 6 21 Z&quot;, fill: &quot;currentColor&quot;}));
+        else if (kind === &quot;grid&quot;) {
+          icon.appendChild(svgElement(&quot;rect&quot;, {x: 5, y: 5, width: 5, height: 5, rx: 1, fill: &quot;currentColor&quot;}));
+          icon.appendChild(svgElement(&quot;rect&quot;, {x: 14, y: 5, width: 5, height: 5, rx: 1, fill: &quot;currentColor&quot;}));
+          icon.appendChild(svgElement(&quot;rect&quot;, {x: 5, y: 14, width: 5, height: 5, rx: 1, fill: &quot;currentColor&quot;}));
+          icon.appendChild(svgElement(&quot;rect&quot;, {x: 14, y: 14, width: 5, height: 5, rx: 1, fill: &quot;currentColor&quot;}));
+        } else if (kind === &quot;list&quot;) addStroke(&quot;M 8 7 H 19 M 8 12 H 19 M 8 17 H 19 M 4 7 H 4.1 M 4 12 H 4.1 M 4 17 H 4.1&quot;);
+        else icon.appendChild(svgElement(&quot;circle&quot;, {cx: 12, cy: 12, r: 6, fill: &quot;none&quot;, stroke: &quot;currentColor&quot;, &quot;stroke-width&quot;: 2.6}));
+        wrapper.appendChild(icon);
+        return wrapper;
+      }
+
+      function createDetailGlyph(kind) {
+        const wrapper = document.createElement(&quot;span&quot;);
+        wrapper.className = &quot;jrh-detail-glyph&quot;;
+        wrapper.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
+        const icon = svgElement(&quot;svg&quot;, {viewBox: &quot;0 0 24 24&quot;, &quot;aria-hidden&quot;: &quot;true&quot;});
+        const pathByKind = {
+          status: &quot;M 5 12 L 10 17 L 19 7&quot;,
+          components: &quot;M 4 7 H 20 M 4 12 H 20 M 4 17 H 20&quot;,
+          assignee: &quot;M 12 12 A 4 4 0 1 0 12 4 A 4 4 0 0 0 12 12 M 5 21 C 6 16 9 14 12 14 C 15 14 18 16 19 21&quot;,
+        };
+        icon.appendChild(svgElement(&quot;path&quot;, {
+          d: pathByKind[kind],
+          fill: &quot;none&quot;,
+          stroke: &quot;currentColor&quot;,
+          &quot;stroke-width&quot;: 2,
+          &quot;stroke-linecap&quot;: &quot;round&quot;,
+          &quot;stroke-linejoin&quot;: &quot;round&quot;,
+        }));
+        wrapper.appendChild(icon);
+        return wrapper;
+      }
+
+      function createDetailValue(icon, text) {
+        const value = document.createElement(&quot;span&quot;);
+        value.className = &quot;jrh-detail-value&quot;;
+        if (icon) value.appendChild(icon);
+        const label = document.createElement(&quot;span&quot;);
+        label.className = &quot;jrh-detail-text&quot;;
+        label.textContent = text;
+        value.appendChild(label);
+        return value;
+      }
+
+      function appendDetailRow(label, value) {
+        const term = document.createElement(&quot;dt&quot;);
+        term.textContent = label;
+        const description = document.createElement(&quot;dd&quot;);
+        description.appendChild(value);
+        dialogMeta.append(term, description);
+      }
+
+      function componentsFor(item) {
+        if (componentsByIssue[item.id]?.length) return componentsByIssue[item.id];
+        const group = data.groups.find(entry =&gt; entry.group.id === item.id);
+        if (!group) return [];
+        return [...new Set(group.tasks.flatMap(task =&gt; componentsByIssue[task.id] || []))];
+      }
+
+      function renderDialogDetails(item, priority) {
+        dialogMeta.replaceChildren();
+        appendDetailRow(&quot;Тип:&quot;, createDetailValue(createIssueTypeIcon(item.taskType), item.taskType || &quot;Не заполнено&quot;));
+        appendDetailRow(&quot;Статус:&quot;, createDetailValue(createDetailGlyph(&quot;status&quot;), item.status || &quot;Не заполнено&quot;));
+        if (!item.synthetic) {
+          appendDetailRow(&quot;Приоритет:&quot;, createDetailValue(createPriorityIcon(priority), priority || &quot;Не заполнено&quot;));
+        }
+
+        const componentsValue = document.createElement(&quot;span&quot;);
+        componentsValue.className = &quot;jrh-detail-value jrh-components-value&quot;;
+        componentsValue.appendChild(createDetailGlyph(&quot;components&quot;));
+        const componentList = document.createElement(&quot;span&quot;);
+        componentList.className = &quot;jrh-component-list&quot;;
+        const components = componentsFor(item);
+        if (components.length) {
+          components.forEach(component =&gt; {
+            const chip = document.createElement(&quot;span&quot;);
+            chip.className = &quot;viz-badge&quot;;
+            chip.textContent = component;
+            componentList.appendChild(chip);
+          });
+        } else {
+          componentList.textContent = &quot;Не заполнено&quot;;
+        }
+        componentsValue.appendChild(componentList);
+        appendDetailRow(&quot;Компоненты:&quot;, componentsValue);
+
+        appendDetailRow(&quot;Исполнитель:&quot;, createDetailValue(createDetailGlyph(&quot;assignee&quot;), item.assignee || &quot;Не назначен&quot;));
+      }
+
+      function connectionType(group) {
+        if (group.synthetic) return &quot;grouping&quot;;
+        if (group.taskType === &quot;Epic&quot;) return &quot;epic&quot;;
+        if (group.taskType === &quot;История&quot;) return &quot;story&quot;;
+        return &quot;project&quot;;
+      }
+
+      function openDetails(item, level, displayedPriority = null) {
+        selectedId = item.id;
+        dialogTitle.textContent = item.synthetic ? item.summary : item.id;
+        dialogSummary.textContent = item.summary;
+        const priority = item.synthetic ? null : (displayedPriority || item.priority);
+        renderDialogDetails(item, priority);
+        if (item.url) {
+          dialogLink.hidden = false;
+          dialogLink.href = item.url;
+          dialogLink.textContent = `Открыть ${item.id} в Jira ↗`;
+        } else {
+          dialogLink.hidden = true;
+          dialogLink.removeAttribute(&quot;href&quot;);
+          dialogLink.textContent = &quot;Открыть задачу в Jira ↗&quot;;
+        }
+        updatePressedStates();
+        if (!dialog.open) dialog.showModal();
+      }
+
+      function updatePressedStates() {
+        root.querySelectorAll(&quot;button[data-node-id]&quot;).forEach(button =&gt; {
+          button.setAttribute(&quot;aria-pressed&quot;, button.dataset.nodeId === selectedId ? &quot;true&quot; : &quot;false&quot;);
+        });
+      }
+
+      function selectNode(item) {
+        selectedId = item.id;
+        updatePressedStates();
+      }
+
+      function addLine(svg, x1, y1, x2, y2, level, type = &quot;project&quot;) {
+        const line = svgElement(&quot;line&quot;, {
+          x1, y1, x2, y2,
+          class: `jrh-link jrh-link-level-${level} jrh-link-type-${type}`,
+        });
+        svg.appendChild(line);
+        return line;
+      }
+
+      function wrappedLineCount(text, maxCharacters) {
+        if (!text) return 0;
+        let lines = 1;
+        let current = 0;
+        for (const word of text.trim().split(/\s+/)) {
+          if (!word) continue;
+          const length = word.length;
+          if (length &gt; maxCharacters) {
+            if (current &gt; 0) lines += 1;
+            lines += Math.floor((length - 1) / maxCharacters);
+            current = length % maxCharacters || maxCharacters;
+          } else if (current === 0) {
+            current = length;
+          } else if (current + 1 + length &lt;= maxCharacters) {
+            current += 1 + length;
+          } else {
+            lines += 1;
+            current = length;
+          }
+        }
+        return lines;
+      }
+
+      function nodeHeightFor(labelParts, width, priority) {
+        const availableWidth = Math.max(84, width - 46 - (priority ? 31 : 0));
+        const maxCharacters = Math.max(12, Math.floor(availableWidth / 7));
+        const lines = wrappedLineCount(labelParts.key, maxCharacters)
+          + wrappedLineCount(labelParts.tags, maxCharacters)
+          + wrappedLineCount(labelParts.short, maxCharacters);
+        const extraMargins = (labelParts.tags ? 2 : 0) + (labelParts.short ? 2 : 0);
+        return Math.max(84, 16 + lines * 16 + extraMargins);
+      }
+
+      function createNodeWrapper(item, options) {
+        const {
+          labelParts, ariaLabel, priority, primary = false,
+          expandedState = null, onActivate, onInfo, kind, nodeHeight = 84,
+        } = options;
+        const wrapper = document.createElementNS(xhtmlNamespace, &quot;div&quot;);
+        wrapper.setAttribute(&quot;class&quot;, &quot;jrh-fo-wrap&quot;);
+        const button = document.createElementNS(xhtmlNamespace, &quot;button&quot;);
+        button.setAttribute(&quot;type&quot;, &quot;button&quot;);
+        button.setAttribute(&quot;class&quot;, `${primary ? &quot;btn btn-primary btn-block&quot; : &quot;btn btn-block&quot;} jrh-node-main`);
+        button.setAttribute(&quot;aria-label&quot;, ariaLabel);
+        button.setAttribute(&quot;aria-pressed&quot;, item.id === selectedId ? &quot;true&quot; : &quot;false&quot;);
+        button.dataset.nodeId = item.id;
+        button.dataset.nodeKind = kind;
+        button.dataset.hasInfo = onInfo ? &quot;true&quot; : &quot;false&quot;;
+        if (expandedState !== null) button.setAttribute(&quot;aria-expanded&quot;, String(expandedState));
+        button.addEventListener(&quot;click&quot;, onActivate);
+
+        if (priority) button.appendChild(createPriorityIcon(priority));
+
+        const copy = document.createElementNS(xhtmlNamespace, &quot;span&quot;);
+        copy.setAttribute(&quot;class&quot;, &quot;jrh-node-copy&quot;);
+        const key = document.createElementNS(xhtmlNamespace, &quot;span&quot;);
+        key.setAttribute(&quot;class&quot;, &quot;jrh-node-key&quot;);
+        key.textContent = labelParts.key;
+        copy.appendChild(key);
+        if (labelParts.tags) {
+          const tags = document.createElementNS(xhtmlNamespace, &quot;span&quot;);
+          tags.setAttribute(&quot;class&quot;, &quot;jrh-node-tags&quot;);
+          tags.textContent = labelParts.tags;
+          copy.appendChild(tags);
+        }
+        if (labelParts.short) {
+          const short = document.createElementNS(xhtmlNamespace, &quot;span&quot;);
+          short.setAttribute(&quot;class&quot;, &quot;jrh-node-short&quot;);
+          short.textContent = labelParts.short;
+          copy.appendChild(short);
+        }
+        button.appendChild(copy);
+
+        wrapper.appendChild(button);
+        let infoButton = null;
+        if (onInfo) {
+          infoButton = document.createElementNS(xhtmlNamespace, &quot;button&quot;);
+          infoButton.setAttribute(&quot;type&quot;, &quot;button&quot;);
+          infoButton.setAttribute(&quot;class&quot;, &quot;jrh-info-button&quot;);
+          infoButton.setAttribute(&quot;aria-label&quot;, `Открыть карточку: ${item.summary}`);
+          infoButton.textContent = &quot;i&quot;;
+          infoButton.addEventListener(&quot;click&quot;, event =&gt; {
+            event.stopPropagation();
+            onInfo();
+          });
+          wrapper.appendChild(infoButton);
+        }
+        return {wrapper, button, infoButton};
+      }
+
+      function addNode(svg, item, options) {
+        const {x, y, width, nodeHeight = 84} = options;
+        const bodyWidth = Math.max(56, width);
+        const foreignObject = svgElement(&quot;foreignObject&quot;, {
+          x,
+          y: y - nodeHeight / 2,
+          width: bodyWidth,
+          height: nodeHeight,
+        });
+        const node = createNodeWrapper(item, options);
+        foreignObject.appendChild(node.wrapper);
+        svg.appendChild(foreignObject);
+        return {...node, foreignObject, bodyWidth, nodeHeight, baseCenterY: y};
+      }
+
+      function layout(width) {
+        const compact = width &lt; 520;
+        const rowGap = compact ? 10 : 12;
+        const groupGap = compact ? 18 : 20;
+        const rootNodeHeight = 84;
+
+        const rootWidth = compact ? Math.min(170, width - 24) : 132;
+        const rootX = compact ? (width - rootWidth) / 2 : 8;
+        const trunkX = compact ? 12 : rootX + rootWidth + 14;
+        const projectX = compact ? 26 : trunkX + 20;
+        const projectWidth = compact ? width - projectX - 8 : 220;
+        const subtrunkX = compact ? projectX + 14 : projectX + projectWidth + 18;
+        const taskX = compact ? projectX + 32 : subtrunkX + 18;
+        const taskWidth = compact ? width - taskX - 8 : Math.max(82, width - taskX - 8);
+
+        let cursor = compact ? 112 : 20;
+        const projectGroups = sortByPriority(
+          data.groups.filter(item =&gt; !item.synthetic),
+          item =&gt; effectivePriority(item.group, item.tasks),
+        );
+        const serviceGroupOrder = {
+          &quot;group-bugs&quot;: 0,
+          &quot;group-refactoring&quot;: 1,
+          &quot;group-other&quot;: 2,
+        };
+        const serviceGroups = data.groups
+          .filter(item =&gt; item.synthetic)
+          .sort((a, b) =&gt; (
+            (serviceGroupOrder[a.group.id] ?? 99)
+            - (serviceGroupOrder[b.group.id] ?? 99)
+          ));
+        const orderedGroups = [...projectGroups, ...serviceGroups];
+        const groups = orderedGroups.map((item, groupIndex) =&gt; {
+          if (serviceGroups.length &amp;&amp; groupIndex === projectGroups.length) {
+            cursor += compact ? 28 : 36;
+          }
+          const isExpanded = expanded.has(item.group.id);
+          const orderedTasks = sortByPriority(item.tasks, task =&gt; effectivePriority(task));
+          const visibleTasks = isExpanded ? orderedTasks : [];
+          const groupPriority = item.synthetic
+            ? null
+            : effectivePriority(item.group, item.tasks);
+          const groupLabelParts = labelPartsFor(item.group, &quot;group&quot;, isExpanded, item.tasks.length);
+          const groupHeight = nodeHeightFor(groupLabelParts, projectWidth, groupPriority);
+          const taskLabelParts = visibleTasks.map(task =&gt; labelPartsFor(task, &quot;task&quot;));
+          const taskHeights = visibleTasks.map((task, index) =&gt; (
+            nodeHeightFor(taskLabelParts[index], taskWidth, effectivePriority(task))
+          ));
+
+          if (compact) {
+            const centerY = cursor + groupHeight / 2;
+            let taskCursor = cursor + groupHeight + rowGap;
+            const taskYs = taskHeights.map(height =&gt; {
+              const taskY = taskCursor + height / 2;
+              taskCursor += height + rowGap;
+              return taskY;
+            });
+            const firstTaskY = taskYs[0] ?? centerY;
+            const lastTaskY = taskYs[taskYs.length - 1] ?? centerY;
+            cursor = visibleTasks.length ? taskCursor - rowGap + groupGap : cursor + groupHeight + groupGap;
+            return {
+              ...item, isExpanded, visibleTasks, centerY, firstTaskY, lastTaskY,
+              taskYs, taskHeights, taskLabelParts, groupHeight, groupPriority, groupLabelParts,
+            };
+          }
+          if (!visibleTasks.length) {
+            const centerY = cursor + groupHeight / 2;
+            cursor += groupHeight + groupGap;
+            return {
+              ...item, isExpanded, visibleTasks, centerY, firstTaskY: centerY, lastTaskY: centerY,
+              taskYs: [], taskHeights, taskLabelParts, groupHeight, groupPriority, groupLabelParts,
+            };
+          }
+          let taskCursor = cursor;
+          const taskYs = taskHeights.map(height =&gt; {
+            const taskY = taskCursor + height / 2;
+            taskCursor += height + rowGap;
+            return taskY;
+          });
+          const firstTaskY = taskYs[0];
+          const lastTaskY = taskYs[taskYs.length - 1];
+          const centerY = (firstTaskY + lastTaskY) / 2;
+          cursor = taskCursor - rowGap + groupGap;
+          return {
+            ...item, isExpanded, visibleTasks, centerY, firstTaskY, lastTaskY,
+            taskYs, taskHeights, taskLabelParts, groupHeight, groupPriority, groupLabelParts,
+          };
+        });
+        const height = Math.max(520, cursor + 12);
+        const firstGroupY = groups[0]?.centerY || height / 2;
+        const lastGroupY = groups[groups.length - 1]?.centerY || height / 2;
+        const rootY = compact ? 48 : (firstGroupY + lastGroupY) / 2;
+
+        return {
+          width, height, compact, groups, rootY, rootNodeHeight,
+          rootX, rootWidth, trunkX, projectX, projectWidth, subtrunkX, taskX, taskWidth,
+        };
+      }
+
+      function clamp(value, minimum, maximum) {
+        return Math.min(Math.max(value, minimum), maximum);
+      }
+
+      function setNodeCenter(node, centerY) {
+        const offsetY = centerY - node.baseCenterY;
+        node.foreignObject.style.transform = `translateY(${offsetY}px)`;
+      }
+
+      function setHorizontalLineY(line, centerY) {
+        if (!line) return;
+        line.setAttribute(&quot;y1&quot;, String(centerY));
+        line.setAttribute(&quot;y2&quot;, String(centerY));
+      }
+
+      function syncMovingNodes() {
+        if (!motionContext) return;
+        const {frame, releaseNode, rootLines, groups} = motionContext;
+        const canvasRect = canvas.getBoundingClientRect();
+        const viewportCenterY = window.innerHeight / 2 - canvasRect.top;
+        const releaseY = clamp(
+          viewportCenterY,
+          frame.rootNodeHeight / 2 + 8,
+          frame.height - frame.rootNodeHeight / 2 - 8,
+        );
+        setNodeCenter(releaseNode, releaseY);
+
+        if (!frame.groups.length) return;
+        if (frame.compact) {
+          const releaseBottom = releaseY + frame.rootNodeHeight / 2;
+          const elbowY = releaseBottom + 16;
+          rootLines.stem.setAttribute(&quot;y1&quot;, String(releaseBottom));
+          rootLines.stem.setAttribute(&quot;y2&quot;, String(elbowY));
+          setHorizontalLineY(rootLines.elbow, elbowY);
+          rootLines.trunk.setAttribute(&quot;y1&quot;, String(elbowY));
+        } else {
+          setHorizontalLineY(rootLines.connector, releaseY);
+          rootLines.trunk.setAttribute(&quot;y1&quot;, String(Math.min(frame.groups[0].centerY, releaseY)));
+          rootLines.trunk.setAttribute(&quot;y2&quot;, String(Math.max(
+            frame.groups[frame.groups.length - 1].centerY,
+            releaseY,
+          )));
+        }
+
+        groups.forEach(entry =&gt; {
+          const {groupLayout, node, inbound, outbound} = entry;
+          let groupY = groupLayout.centerY;
+          if (groupLayout.visibleTasks.length) {
+            groupY = clamp(viewportCenterY, groupLayout.firstTaskY, groupLayout.lastTaskY);
+          }
+          setNodeCenter(node, groupY);
+          setHorizontalLineY(inbound, groupY);
+          if (!outbound) return;
+          if (frame.compact) {
+            outbound.setAttribute(&quot;y1&quot;, String(Math.min(
+              groupY + groupLayout.groupHeight / 2,
+              groupLayout.lastTaskY,
+            )));
+          } else {
+            setHorizontalLineY(outbound, groupY);
+          }
+        });
+      }
+
+      function scheduleMotionSync() {
+        if (motionFrameRequest) return;
+        motionFrameRequest = requestAnimationFrame(() =&gt; {
+          motionFrameRequest = 0;
+          syncMovingNodes();
+        });
+      }
+
+      function render() {
+        const width = Math.max(320, Math.floor(canvas.clientWidth));
+        lastWidth = width;
+        const frame = layout(width);
+        canvas.replaceChildren();
+        const groupMotion = [];
+        const svg = svgElement(&quot;svg&quot;, {
+          class: &quot;jrh-svg&quot;,
+          viewBox: `0 0 ${frame.width} ${frame.height}`,
+          width: frame.width,
+          height: frame.height,
+          role: &quot;group&quot;,
+          &quot;aria-label&quot;: `Иерархия ${data.release.summary}: ${data.summary.projectGroups} проектов, ${data.summary.serviceGroups} служебные группы и ${data.summary.releaseIssues} задачи`,
+        });
+        svg.style.height = `${frame.height}px`;
+        canvas.appendChild(svg);
+
+        const defs = svgElement(&quot;defs&quot;);
+        const pattern = svgElement(&quot;pattern&quot;, {
+          id: &quot;jrh-grid-pattern&quot;,
+          width: 30,
+          height: 30,
+          patternUnits: &quot;userSpaceOnUse&quot;,
+        });
+        pattern.appendChild(svgElement(&quot;circle&quot;, {
+          cx: 1,
+          cy: 1,
+          r: .8,
+          class: &quot;jrh-grid-dot&quot;,
+        }));
+        defs.appendChild(pattern);
+        svg.appendChild(defs);
+        svg.appendChild(svgElement(&quot;rect&quot;, {
+          x: 0,
+          y: 0,
+          width: frame.width,
+          height: frame.height,
+          fill: &quot;url(#jrh-grid-pattern)&quot;,
+          &quot;aria-hidden&quot;: &quot;true&quot;,
+        }));
+
+        const rootLines = {};
+        if (frame.groups.length) {
+          if (frame.compact) {
+            const elbowY = frame.rootY + frame.rootNodeHeight / 2 + 16;
+            const rootCenterX = frame.rootX + frame.rootWidth / 2;
+            rootLines.stem = addLine(svg, rootCenterX, frame.rootY + frame.rootNodeHeight / 2, rootCenterX, elbowY, 1);
+            rootLines.elbow = addLine(svg, frame.trunkX, elbowY, rootCenterX, elbowY, 1);
+            rootLines.trunk = addLine(svg, frame.trunkX, elbowY, frame.trunkX, frame.groups[frame.groups.length - 1].centerY, 1);
+          } else {
+            rootLines.trunk = addLine(svg, frame.trunkX, frame.groups[0].centerY, frame.trunkX, frame.groups[frame.groups.length - 1].centerY, 1);
+            rootLines.connector = addLine(svg, frame.rootX + frame.rootWidth, frame.rootY, frame.trunkX, frame.rootY, 1);
+          }
+        }
+
+        const releaseOptions = {
+          x: frame.rootX,
+          y: frame.rootY,
+          width: frame.rootWidth,
+          labelParts: labelPartsFor(data.release, &quot;release&quot;),
+          ariaLabel: `${data.release.summary}, уровень 0`,
+          kind: &quot;release&quot;,
+          nodeHeight: frame.rootNodeHeight,
+          primary: true,
+          onActivate: () =&gt; selectNode(data.release),
+        };
+        const releaseNode = addNode(svg, data.release, releaseOptions);
+
+        frame.groups.forEach(groupLayout =&gt; {
+          const group = groupLayout.group;
+          const relationType = connectionType(group);
+          const groupPriority = groupLayout.groupPriority;
+          const groupLabelParts = groupLayout.groupLabelParts;
+          const inbound = addLine(
+            svg,
+            frame.trunkX,
+            groupLayout.centerY,
+            frame.projectX,
+            groupLayout.centerY,
+            1,
+            relationType,
+          );
+          const options = {
+            x: frame.projectX,
+            y: groupLayout.centerY,
+            width: frame.projectWidth,
+            labelParts: groupLabelParts,
+            ariaLabel: group.synthetic
+              ? `${group.summary}, служебная группа, ${groupLayout.tasks.length} задач`
+              : `${group.summary}, приоритет ${groupPriority}, уровень 1, ${groupLayout.tasks.length} задач`,
+            priority: groupPriority,
+            kind: &quot;group&quot;,
+            nodeHeight: groupLayout.groupHeight,
+            expandedState: groupLayout.tasks.length ? groupLayout.isExpanded : null,
+            onActivate: event =&gt; {
+              selectedId = group.id;
+              if (groupLayout.tasks.length) {
+                if (expanded.has(group.id)) expanded.delete(group.id);
+                else expanded.add(group.id);
+                render();
+              } else {
+                updatePressedStates();
+              }
+              event.stopPropagation();
+            },
+            onInfo: () =&gt; openDetails(group, 1, groupPriority),
+          };
+          const groupNode = addNode(svg, group, options);
+
+          let outbound = null;
+          if (groupLayout.visibleTasks.length) {
+            if (frame.compact) {
+              outbound = addLine(svg, frame.subtrunkX, groupLayout.centerY + groupLayout.groupHeight / 2, frame.subtrunkX, groupLayout.lastTaskY, 2, relationType);
+            } else {
+              outbound = addLine(svg, frame.projectX + frame.projectWidth, groupLayout.centerY, frame.subtrunkX, groupLayout.centerY, 2, relationType);
+              addLine(svg, frame.subtrunkX, groupLayout.firstTaskY, frame.subtrunkX, groupLayout.lastTaskY, 2, relationType);
+            }
+          }
+          groupMotion.push({groupLayout, node: groupNode, inbound, outbound});
+
+          groupLayout.visibleTasks.forEach((task, index) =&gt; {
+            const taskY = groupLayout.taskYs[index];
+            const taskPriority = effectivePriority(task);
+            addLine(svg, frame.subtrunkX, taskY, frame.taskX, taskY, 2, relationType);
+            addNode(svg, task, {
+              x: frame.taskX,
+              y: taskY,
+              width: frame.taskWidth,
+              labelParts: groupLayout.taskLabelParts[index],
+              ariaLabel: `${task.id}, ${task.summary}, приоритет ${taskPriority}, статус ${task.status}, уровень 2`,
+              priority: taskPriority,
+              kind: &quot;task&quot;,
+              nodeHeight: groupLayout.taskHeights[index],
+              onActivate: () =&gt; openDetails(task, 2, taskPriority),
+            });
+          });
+        });
+        motionContext = {
+          frame,
+          releaseNode,
+          rootLines,
+          groups: groupMotion,
+        };
+        updatePressedStates();
+        scheduleMotionSync();
+      }
+
+      dialogClose.addEventListener(&quot;click&quot;, () =&gt; dialog.close());
+      dialog.addEventListener(&quot;close&quot;, () =&gt; {
+        const button = [...root.querySelectorAll(`button[data-node-id=&quot;${selectedId}&quot;]`)]
+          .find(candidate =&gt; candidate.getClientRects().length &gt; 0);
+        if (button) button.focus();
+      });
+      dialog.addEventListener(&quot;click&quot;, event =&gt; {
+        if (event.target === dialog) dialog.close();
+      });
+      window.addEventListener(&quot;scroll&quot;, scheduleMotionSync, {passive: true});
+      window.addEventListener(&quot;resize&quot;, scheduleMotionSync, {passive: true});
+      window.addEventListener(&quot;message&quot;, event =&gt; {
+        if (event.data?.type !== &quot;jira-diagram-data&quot;) return;
+        const payload = event.data.payload;
+        const nextData = payload?.data;
+        if (!nextData?.release || !Array.isArray(nextData.groups) || !nextData.summary) return;
+
+        data.release = nextData.release;
+        data.groups = nextData.groups;
+        data.summary = nextData.summary;
+        for (const key of Object.keys(componentsByIssue)) delete componentsByIssue[key];
+        Object.assign(componentsByIssue, payload.componentsByIssue || {});
+        expanded.clear();
+        selectedId = data.release.id;
+        updateReleaseHeader();
+        render();
+      });
+
+      const observer = new ResizeObserver(() =&gt; {
+        const width = Math.max(320, Math.floor(canvas.clientWidth));
+        if (Math.abs(width - lastWidth) &gt; 1) render();
+      });
+      observer.observe(canvas);
+      requestAnimationFrame(render);
+    })();
+  &lt;/script&gt;
+&lt;/div&gt;
+
+&lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set([&quot;top&quot;, &quot;right&quot;, &quot;bottom&quot;, &quot;left&quot;]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+
+  const getTrigger = (target) =&gt;
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest(&quot;[data-tooltip]&quot;)
+      : null;
+  const containsTarget = (trigger, target) =&gt;
+    target?.nodeType != null &amp;&amp; trigger.contains(target);
+  const getContent = (trigger) =&gt;
+    trigger.getAttribute(&quot;data-tooltip&quot;)?.trim() ?? &quot;&quot;;
+  const getPlacement = (trigger) =&gt; {
+    const placement = trigger.getAttribute(&quot;data-tooltip-placement&quot;);
+    return tooltipPlacements.has(placement) ? placement : &quot;top&quot;;
+  };
+  const getTooltip = () =&gt; {
+    if (tooltip == null) {
+      tooltip = document.createElement(&quot;div&quot;);
+      tooltip.id = tooltipId;
+      tooltip.className = &quot;tooltip&quot;;
+      tooltip.setAttribute(&quot;role&quot;, &quot;tooltip&quot;);
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) =&gt; {
+    const ids = new Set(
+      (trigger.getAttribute(&quot;aria-describedby&quot;) ?? &quot;&quot;)
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute(&quot;aria-describedby&quot;);
+    } else {
+      trigger.setAttribute(&quot;aria-describedby&quot;, [...ids].join(&quot; &quot;));
+    }
+  };
+  const clearOpenTimeout = () =&gt; {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) =&gt; {
+    clearOpenTimeout();
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) =&gt; {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-width&quot;,
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-height&quot;,
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: &quot;fixed&quot;,
+    })
+      .then(({ x, y }) =&gt; {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = &quot;visible&quot;;
+      })
+      .catch(() =&gt; {
+        if (activeTrigger === trigger &amp;&amp; request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) =&gt; {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = &quot;hidden&quot;;
+    floating.style.transform = &quot;translate(0, 0)&quot;;
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () =&gt; {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) =&gt; {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() &lt; skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() =&gt; {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) =&gt; {
+    if (event.pointerType === &quot;touch&quot;) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handleLeave = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(&quot;:focus-visible&quot;)) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) =&gt; {
+    if (event.key === &quot;Escape&quot;) {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () =&gt; {
+    closeTooltip(false);
+    document.removeEventListener(&quot;pointerover&quot;, handlePointerOpen);
+    document.removeEventListener(&quot;pointerout&quot;, handleLeave);
+    document.removeEventListener(&quot;focusin&quot;, handleFocusIn);
+    document.removeEventListener(&quot;focusout&quot;, handleLeave);
+    document.removeEventListener(&quot;keydown&quot;, handleKeyDown);
+    document.removeEventListener(&quot;contextmenu&quot;, handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener(&quot;pointerover&quot;, handlePointerOpen);
+  document.addEventListener(&quot;pointerout&quot;, handleLeave);
+  document.addEventListener(&quot;focusin&quot;, handleFocusIn);
+  document.addEventListener(&quot;focusout&quot;, handleLeave);
+  document.addEventListener(&quot;keydown&quot;, handleKeyDown);
+  document.addEventListener(&quot;contextmenu&quot;, handleContextMenu);
+  window.addEventListener(&quot;pagehide&quot;, destroy, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-lucide&quot; async src=&quot;https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  const initialize = () =&gt; {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById(&quot;codex-visualization-lucide&quot;)
+    ?.addEventListener(&quot;load&quot;, initialize, { once: true });
+})();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+<script>
+(() => {
+  const form = document.querySelector("[data-release-form]");
+  const select = document.querySelector("[data-release-select]");
+  const submit = document.querySelector("[data-release-submit]");
+  const status = document.querySelector("[data-release-status]");
+  const diagram = document.querySelector("iframe");
+
+  function setStatus(message) {
+    status.textContent = message;
+  }
+
+  async function json(response) {
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(payload.error || `HTTP ${response.status}`);
+    return payload;
+  }
+
+  async function loadReleases() {
+    try {
+      const payload = await json(await fetch("/api/releases", {headers: {Accept: "application/json"}}));
+      select.replaceChildren();
+      for (const release of payload.releases || []) {
+        const option = document.createElement("option");
+        option.value = release.name;
+        option.textContent = release.released ? `${release.name} · выпущен` : release.name;
+        select.appendChild(option);
+      }
+      if (![...select.options].some(option => option.value === "10.0")) {
+        const option = document.createElement("option");
+        option.value = "10.0";
+        option.textContent = "10.0";
+        select.prepend(option);
+      }
+      select.value = "10.0";
+      select.disabled = false;
+      submit.disabled = false;
+      setStatus(payload.mode === "automation"
+        ? "Выберите релиз и постройте диаграмму"
+        : "Список готов; для загрузки новых данных настройте веб-хук Jira");
+    } catch (error) {
+      select.disabled = false;
+      submit.disabled = false;
+      setStatus(`Сервис недоступен: ${error.message}`);
+    }
+  }
+
+  async function waitForJob(id) {
+    for (let attempt = 0; attempt < 120; attempt += 1) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const job = await json(await fetch(`/api/diagram-jobs/${encodeURIComponent(id)}`, {
+        headers: {Accept: "application/json"},
+      }));
+      if (job.status === "ready") return job.result;
+      if (job.status === "error") throw new Error(job.error || "Jira не смогла сформировать список задач");
+      setStatus(`Jira формирует список задач для релиза ${job.release}…`);
+    }
+    throw new Error("Jira не ответила за две минуты");
+  }
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const release = select.value;
+    if (!release) return;
+    select.disabled = true;
+    submit.disabled = true;
+    setStatus(`Отправляем запрос для релиза ${release}…`);
+    try {
+      const job = await json(await fetch("/api/diagram-jobs", {
+        method: "POST",
+        headers: {"Content-Type": "application/json", Accept: "application/json"},
+        body: JSON.stringify({release}),
+      }));
+      const result = await waitForJob(job.id);
+      diagram.contentWindow.postMessage({type: "jira-diagram-data", payload: result}, "*");
+      const count = result.data?.summary?.releaseIssues ?? 0;
+      setStatus(`Релиз ${release}: загружено ${count} задач`);
+      document.title = `EkoCrop ${release} — карта задач`;
+    } catch (error) {
+      setStatus(`Ошибка: ${error.message}`);
+    } finally {
+      select.disabled = false;
+      submit.disabled = false;
+    }
+  });
+
+  loadReleases();
+})();
+</script>
+</body>
+</html>
