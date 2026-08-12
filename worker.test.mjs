@@ -88,4 +88,5 @@ test("Cloudflare Worker импортирует CSV-экспорт Jira", async (
   assert.equal(result.data.release.summary, "Релиз EkoCrop 9.0");
   assert.equal(result.data.summary.releaseIssues, 2);
   assert.equal(result.data.groups[0].tasks[0].id, "DEVELOP-1");
+  assert.equal(result.data.groups[0].tasks[0].relationLabel, "subtask");
 });

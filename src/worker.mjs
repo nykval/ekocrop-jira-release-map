@@ -34,6 +34,15 @@ function parseCsv(textValue) {
   return rows;
 }
 
+function displayRelationName(value) {
+  const name = text(value);
+  const normalized = name.toLowerCase();
+  if (normalized === "subtasks-custom-link") return "subtask";
+  if (normalized === "relates") return "relates";
+  if (normalized === "ссылка на эпик" || normalized === "epics-custom-link") return "epic";
+  return name;
+}
+
 export function jiraCsvToIssues(csvText) {
   const rows = parseCsv(csvText);
   if (rows.length < 2) throw new Error("CSV-файл не содержит задач");
@@ -54,6 +63,13 @@ export function jiraCsvToIssues(csvText) {
   const issues = rows.slice(1).map(rowValue => {
     const key = value(rowValue, keyIndex);
     if (!key) return null;
+    const relationTypes = {};
+    for (const index of relationIndices) {
+      const linkedKey = value(rowValue, index);
+      const relationName = displayRelationName(headers[index].match(/\(([^()]*)\)\s*$/)?.[1]?.trim());
+      if (!linkedKey || !relationName) continue;
+      relationTypes[linkedKey] = uniqueStrings([relationTypes[linkedKey], relationName]);
+    }
     return {
       key,
       summary: value(rowValue, summaryIndex),
@@ -63,6 +79,7 @@ export function jiraCsvToIssues(csvText) {
       assignee: value(rowValue, assigneeIndex),
       components: uniqueStrings(componentIndices.map(index => rowValue[index])),
       linkedKeys: uniqueStrings(relationIndices.map(index => rowValue[index])),
+      relationTypes,
       parentKey: parentIndices.map(index => value(rowValue, index)).find(Boolean) || "",
     };
   }).filter(Boolean);
@@ -71,6 +88,12 @@ export function jiraCsvToIssues(csvText) {
     for (const linkedKey of issue.linkedKeys) {
       const linked = issuesByKey.get(linkedKey);
       if (linked && !linked.linkedKeys.includes(issue.key)) linked.linkedKeys.push(issue.key);
+      if (linked && issue.relationTypes[linkedKey]?.length) {
+        linked.relationTypes[issue.key] = uniqueStrings([
+          linked.relationTypes[issue.key],
+          issue.relationTypes[linkedKey],
+        ]);
+      }
     }
   }
   return issues;
@@ -143,6 +166,7 @@ function normalizeIssue(raw, jiraBaseUrl) {
     url: text(raw.url, `${jiraBaseUrl.replace(/\/$/, "")}/browse/${encodeURIComponent(key)}`),
     components,
     links,
+    relationTypes: raw.relationTypes || {},
     parentKey,
     external: false,
     synthetic: false,
@@ -174,6 +198,23 @@ function chooseProject(issue, candidates, issuesByKey, parentByProject) {
     selected = candidates.get(parentByProject.get(selected.id)) || selected;
   }
   return selected;
+}
+
+function relationLabelFor(issue, project, candidates, parentByProject) {
+  const belongsToProject = candidate => {
+    const seen = new Set();
+    let current = candidate;
+    while (current && parentByProject.has(current.id) && !seen.has(current.id)) {
+      seen.add(current.id);
+      current = candidates.get(parentByProject.get(current.id)) || current;
+    }
+    return current?.id === project.id;
+  };
+  return uniqueStrings(issue.links.flatMap(linkedKey => {
+    const candidate = candidates.get(linkedKey);
+    if (!candidate || !belongsToProject(candidate)) return [];
+    return issue.relationTypes?.[linkedKey] || candidate.relationTypes?.[issue.id] || [];
+  })).join(", ");
 }
 
 function syntheticGroup(id, summary, taskType, tasks) {
@@ -227,7 +268,10 @@ export function buildDiagramData(release, rawIssues, jiraBaseUrl = "https://dev.
   for (const issue of issues) {
     if (taskBuckets.has(issue.id)) continue;
     const project = chooseProject(issue, candidates, issuesByKey, parentByProject);
-    if (project && taskBuckets.has(project.id)) taskBuckets.get(project.id).push(issue);
+    if (project && taskBuckets.has(project.id)) {
+      issue.relationLabel = relationLabelFor(issue, project, candidates, parentByProject);
+      taskBuckets.get(project.id).push(issue);
+    }
     else unassigned.push(issue);
   }
 

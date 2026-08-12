@@ -140,6 +140,10 @@ test("главная страница сразу отдаёт приложени
     const html = await response.text();
     assert.equal(response.status, 200);
     assert.match(html, /data-release-form/);
+    assert.match(html, /data-fullscreen-button/);
+    assert.match(html, /requestFullscreen/);
+    assert.match(html, /let preparedCsvResult = null/);
+    assert.match(html, /Подготовлено.*Нажмите «Построить диаграмму»/);
     assert.match(html, /Карта релиза EkoCrop/);
     assert.doesNotMatch(html, /<h1[^>]*>\s*Карта релизов EkoCrop/);
   } finally {
@@ -166,6 +170,7 @@ test("локальный сервер импортирует CSV-экспорт 
     assert.equal(result.data.release.summary, "Релиз EkoCrop 9.0");
     assert.equal(result.data.summary.releaseIssues, 2);
     assert.equal(result.data.groups[0].tasks[0].id, "DEVELOP-1");
+    assert.equal(result.data.groups[0].tasks[0].relationLabel, "subtask");
   } finally {
     await close(app);
   }

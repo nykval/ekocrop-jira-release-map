@@ -62,6 +62,7 @@ export function normalizeIssue(raw, jiraBaseUrl = "https://dev.ekoniva-apk.com")
     url: text(raw.url, `${jiraBaseUrl.replace(/\/$/, "")}/browse/${encodeURIComponent(key)}`),
     components,
     links,
+    relationTypes: raw.relationTypes || {},
     parentKey,
     external: false,
     synthetic: false,
@@ -93,6 +94,23 @@ function chooseProject(issue, candidates, issuesByKey, parentByProject) {
     selected = candidates.get(parentByProject.get(selected.id)) || selected;
   }
   return selected;
+}
+
+function relationLabelFor(issue, project, candidates, parentByProject) {
+  const belongsToProject = candidate => {
+    const seen = new Set();
+    let current = candidate;
+    while (current && parentByProject.has(current.id) && !seen.has(current.id)) {
+      seen.add(current.id);
+      current = candidates.get(parentByProject.get(current.id)) || current;
+    }
+    return current?.id === project.id;
+  };
+  return uniqueStrings(issue.links.flatMap(linkedKey => {
+    const candidate = candidates.get(linkedKey);
+    if (!candidate || !belongsToProject(candidate)) return [];
+    return issue.relationTypes?.[linkedKey] || candidate.relationTypes?.[issue.id] || [];
+  })).join(", ");
 }
 
 function syntheticGroup(id, summary, taskType, tasks) {
@@ -140,7 +158,10 @@ export function buildDiagramData(release, rawIssues, jiraBaseUrl = "https://dev.
   for (const issue of issues) {
     if (taskBuckets.has(issue.id)) continue;
     const project = chooseProject(issue, candidates, issuesByKey, parentByProject);
-    if (project && taskBuckets.has(project.id)) taskBuckets.get(project.id).push(issue);
+    if (project && taskBuckets.has(project.id)) {
+      issue.relationLabel = relationLabelFor(issue, project, candidates, parentByProject);
+      taskBuckets.get(project.id).push(issue);
+    }
     else unassigned.push(issue);
   }
 

@@ -4,53 +4,290 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src 'self' blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src 'self' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src 'self' blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
 <title>Карта релиза EkoCrop</title>
-<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255),rgb(24 24 24));font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:light-dark(rgb(26 28 31),rgb(255 255 255));--app-green:light-dark(rgb(0 126 58),rgb(64 201 119));--app-border:light-dark(rgb(226 229 233),rgb(63 67 72));--app-muted:light-dark(rgb(91 96 104),rgb(180 185 192));--app-soft:light-dark(rgb(246 249 247),rgb(31 38 34))}*{box-sizing:border-box}html,body{margin:0}body{background:inherit}.app-header{padding:1.25rem 2rem 0;border-top:3px solid var(--app-green);border-bottom:1px solid var(--app-border);background:inherit}.app-brand{display:flex;align-items:center;gap:.7rem;margin-bottom:1rem}.app-brand-mark{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--app-green);color:light-dark(white,rgb(13 13 13));font-weight:700}.app-brand-copy{display:grid;gap:.1rem}.app-brand-title{font-size:1.05rem;font-weight:650}.app-brand-subtitle{font-size:.78rem;color:var(--app-muted)}.section-tabs{display:flex;gap:.35rem;overflow-x:auto;scrollbar-width:none}.section-tabs::-webkit-scrollbar{display:none}.section-tab{position:relative;display:inline-flex;align-items:center;gap:.5rem;min-height:44px;padding:.65rem .9rem;border:0;background:transparent;color:var(--app-muted);font:inherit;font-weight:550;white-space:nowrap;cursor:pointer}.section-tab:hover{color:inherit;background:var(--app-soft);border-radius:8px 8px 0 0}.section-tab[aria-selected="true"]{color:var(--app-green)}.section-tab[aria-selected="true"]::after{content:"";position:absolute;left:.8rem;right:.8rem;bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:var(--app-green)}.section-tab-count{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 .35rem;border-radius:10px;background:var(--app-soft);color:var(--app-muted);font-size:.7rem}.app-view{padding:1.15rem 2rem 0}.app-view[hidden]{display:none}.release-toolbar{display:flex;align-items:end;gap:.75rem;flex-wrap:wrap;margin:0 0 .75rem}.release-field{display:grid;gap:.3rem;min-width:220px}.release-field label,.import-label{font-size:.85rem;color:var(--app-muted)}.release-field select,.release-toolbar button,.import-file-button{box-sizing:border-box;min-height:44px;border:1px solid var(--app-border);border-radius:10px;padding:.6rem .8rem;font:inherit}.release-field select{background:light-dark(rgb(255 255 255),rgb(38 38 38));color:inherit}.release-toolbar button{border-color:var(--app-green);background:var(--app-green);color:light-dark(rgb(255 255 255),rgb(13 13 13));font-weight:600;cursor:pointer}.release-toolbar button:disabled{opacity:.55;cursor:wait}.release-status{min-height:44px;display:flex;align-items:center;color:var(--app-muted)}.import-panel{display:flex;align-items:end;gap:.75rem;flex-wrap:wrap;margin:-.15rem 0 .8rem}.import-field{display:grid;gap:.3rem}.import-file-button{display:inline-flex;align-items:center;gap:.55rem;background:var(--app-soft);cursor:pointer;font-weight:550}.import-file-button:hover{border-color:var(--app-green)}.import-file-button input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.import-hint{min-height:44px;display:flex;align-items:center;color:var(--app-muted);font-size:.86rem}.future-view{min-height:320px;display:grid;place-items:center;text-align:center}.future-view-inner{max-width:440px}.future-view h2{margin:0 0 .5rem;font-size:1.25rem}.future-view p{margin:0;color:var(--app-muted);line-height:1.55}iframe{display:block;width:100%;height:calc(100vh - 14rem);min-height:420px;margin:0 auto;border:0}@media(max-width:680px){.app-header{padding:1rem 1rem 0}.app-view{padding:1rem 1rem 0}.app-brand-subtitle{display:none}.section-tab{padding:.6rem .7rem}.release-field{flex:1 1 100%}.release-toolbar button{flex:1}.release-status{flex-basis:100%;height:auto;min-height:0}.import-field{width:100%}.import-file-button{width:100%;justify-content:center}.import-hint{min-height:0}iframe{height:calc(100vh - 18rem)}}</style>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255),rgb(24 24 24));font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:light-dark(rgb(26 28 31),rgb(255 255 255));--app-green:light-dark(rgb(0 126 58),rgb(64 201 119));--app-border:light-dark(rgb(226 229 233),rgb(63 67 72));--app-muted:light-dark(rgb(91 96 104),rgb(180 185 192));--app-soft:light-dark(rgb(246 249 247),rgb(31 38 34))}*{box-sizing:border-box}html,body{margin:0}body{background:inherit}.app-header{padding:1.25rem 2rem 0;border-top:3px solid var(--app-green);border-bottom:1px solid var(--app-border);background:inherit}.app-brand{display:flex;align-items:center;gap:.7rem;margin-bottom:1rem}.app-brand-mark{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--app-green);color:light-dark(white,rgb(13 13 13));font-weight:700}.app-brand-copy{display:grid;gap:.1rem}.app-brand-title{font-size:1.05rem;font-weight:650}.app-brand-subtitle{font-size:.78rem;color:var(--app-muted)}.section-tabs{display:flex;gap:.35rem;overflow-x:auto;scrollbar-width:none}.section-tabs::-webkit-scrollbar{display:none}.section-tab{position:relative;display:inline-flex;align-items:center;gap:.5rem;min-height:44px;padding:.65rem .9rem;border:0;background:transparent;color:var(--app-muted);font:inherit;font-weight:550;white-space:nowrap;cursor:pointer}.section-tab:hover{color:inherit;background:var(--app-soft);border-radius:8px 8px 0 0}.section-tab[aria-selected="true"]{color:var(--app-green)}.section-tab[aria-selected="true"]::after{content:"";position:absolute;left:.8rem;right:.8rem;bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:var(--app-green)}.section-tab-count{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 .35rem;border-radius:10px;background:var(--app-soft);color:var(--app-muted);font-size:.7rem}.app-view{padding:1.15rem 2rem 0}.app-view[hidden]{display:none}.release-toolbar{display:flex;align-items:end;gap:.75rem;flex-wrap:wrap;margin:0 0 .75rem}.release-field{display:grid;gap:.3rem;min-width:220px}.release-field label,.import-label{font-size:.85rem;color:var(--app-muted)}.release-field select,.release-toolbar button,.import-file-button{box-sizing:border-box;min-height:44px;border:1px solid var(--app-border);border-radius:10px;padding:.6rem .8rem;font:inherit}.release-field select{background:light-dark(rgb(255 255 255),rgb(38 38 38));color:inherit}.release-toolbar button{border-color:var(--app-green);background:var(--app-green);color:light-dark(rgb(255 255 255),rgb(13 13 13));font-weight:600;cursor:pointer}.release-toolbar button:disabled{opacity:.55;cursor:wait}.release-status{min-height:44px;display:flex;align-items:center;color:var(--app-muted)}.import-panel{display:flex;align-items:end;gap:.75rem;flex-wrap:wrap;margin:-.15rem 0 .8rem}.import-field{display:grid;gap:.3rem}.import-file-button{display:inline-flex;align-items:center;gap:.55rem;background:var(--app-soft);cursor:pointer;font-weight:550}.import-file-button:hover{border-color:var(--app-green)}.import-file-button input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.import-hint{min-height:44px;display:flex;align-items:center;color:var(--app-muted);font-size:.86rem}.future-view{min-height:320px;display:grid;place-items:center;text-align:center}.future-view-inner{max-width:440px}.future-view h2{margin:0 0 .5rem;font-size:1.25rem}.future-view p{margin:0;color:var(--app-muted);line-height:1.55}iframe{display:block;width:100%;height:calc(100vh - 14rem);min-height:420px;margin:0 auto;border:0}@media(max-width:680px){.app-header{padding:1rem 1rem 0}.app-view{padding:1rem 1rem 0}.app-brand-subtitle{display:none}.section-tab{padding:.6rem .7rem}.release-field{flex:1 1 100%}.release-toolbar button{flex:1}.release-status{flex-basis:100%;height:auto;min-height:0}.import-field{width:100%}.import-file-button{width:100%;justify-content:center}.import-hint{min-height:0}iframe{height:calc(100vh - 18rem)}}.app-brand-logo{display:block;width:116px;height:36px;object-fit:contain;object-position:left center}
+.release-control-panel{display:flex;align-items:end;gap:14px;width:100%;margin:0 0 16px;padding:14px 16px;border:1px solid var(--app-border);border-left:4px solid var(--app-green);border-radius:12px;background:var(--app-soft)}.release-control-panel .release-toolbar,.release-control-panel .import-panel{display:flex;align-items:end;gap:12px;flex:0 0 auto;margin:0}.release-control-panel .release-field{position:relative;min-width:210px}.release-control-panel .release-field::after{content:"⌄";position:absolute;right:14px;bottom:10px;color:var(--app-muted);font-size:1.2rem;line-height:1;pointer-events:none}.release-control-panel .release-field select{width:100%;min-height:46px;padding:.65rem 2.65rem .65rem .9rem;appearance:none;border:1.5px solid var(--app-border);border-radius:11px;background:light-dark(rgb(255 255 255),rgb(38 38 38));box-shadow:0 1px 2px color-mix(in srgb,var(--app-muted) 10%,transparent);font-size:1rem;font-weight:600;line-height:1.2;cursor:pointer;transition:border-color .16s ease,box-shadow .16s ease,background-color .16s ease}.release-control-panel .release-field select:hover{border-color:color-mix(in srgb,var(--app-green) 60%,var(--app-border))}.release-control-panel .release-field select:focus-visible{outline:0;border-color:var(--app-green);box-shadow:0 0 0 3px color-mix(in srgb,var(--app-green) 18%,transparent)}.release-control-panel .import-file-button,.release-control-panel .release-toolbar button{min-height:46px;font-size:1rem;line-height:1.2}.release-control-panel .import-hint{max-width:340px;line-height:1.25}.release-control-panel .release-status{min-width:210px;min-height:46px;display:flex;align-items:center;flex:1 1 240px;align-self:flex-end;line-height:1.3}.release-control-panel button:disabled{border-color:var(--app-border);background:var(--app-border);color:var(--app-muted);opacity:1;cursor:not-allowed}@media(max-width:1050px){.release-control-panel{flex-wrap:wrap}.release-control-panel .release-status{flex-basis:100%;min-height:0}.release-control-panel .import-hint{max-width:none}}@media(max-width:680px){.release-control-panel,.release-control-panel .release-toolbar,.release-control-panel .import-panel{align-items:stretch;flex-direction:column;width:100%}.release-control-panel .release-field{min-width:0}.release-control-panel .release-status{min-width:0;min-height:46px;flex-basis:auto;align-self:stretch}}.diagram-toolbar{display:flex;justify-content:flex-end;margin:-8px 0 4px}.fullscreen-button{min-height:36px;padding:6px 10px;border:1px solid var(--app-border);border-radius:8px;background:var(--app-soft);color:inherit;font:inherit;font-size:.85rem;cursor:pointer}.fullscreen-button:hover{border-color:var(--app-green);color:var(--app-green)}.diagram-shell{width:100%;background:inherit}.diagram-shell:fullscreen{position:relative;width:100vw;height:100vh;padding:12px;background:var(--background,Canvas);overflow:auto}.diagram-shell:fullscreen .diagram-toolbar{position:sticky;top:0;z-index:10;margin:0 0 4px;pointer-events:none}.diagram-shell:fullscreen .fullscreen-button{pointer-events:auto;background:var(--app-soft);box-shadow:0 2px 8px color-mix(in srgb,var(--foreground) 14%,transparent)}.diagram-shell:fullscreen iframe{width:100%;height:calc(100vh - 64px);min-height:0}@media(max-width:680px){.diagram-toolbar{margin-top:0}}</style>
+<style>
+.release-control-panel .release-field::after {
+  content: "";
+  right: 17px;
+  bottom: 17px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--app-muted);
+  border-bottom: 2px solid var(--app-muted);
+  font-size: 0;
+  transform: rotate(45deg);
+  transform-origin: center;
+}
+</style>
+<style>
+.release-dashboard{padding-top:.25rem}.dashboard-empty{min-height:360px;display:grid;place-content:center;text-align:center;color:var(--app-muted)}.dashboard-empty h2{margin:0 0 8px;color:inherit;font-size:1.35rem}.dashboard-empty p{margin:0}.dashboard-content[hidden]{display:none}.dashboard-heading{display:flex;justify-content:space-between;align-items:end;margin:4px 0 16px}.dashboard-heading h1{margin:0;font-size:1.45rem}.dashboard-heading p{margin:4px 0 0;color:var(--app-muted);font-size:.88rem}.dashboard-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:12px}.dashboard-kpi{padding:15px 16px;border:1px solid var(--app-border);border-radius:12px;background:light-dark(#fff,#1b201d)}.dashboard-kpi strong{display:block;font-size:1.6rem;line-height:1.1;color:var(--app-green)}.dashboard-kpi span{display:block;margin-top:5px;color:var(--app-muted);font-size:.78rem}.dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding-bottom:24px}.dashboard-card{min-width:0;padding:16px;border:1px solid var(--app-border);border-radius:12px;background:light-dark(#fff,#1b201d)}.dashboard-wide{grid-column:1/-1}.dashboard-card-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:16px}.dashboard-card h2{margin:0;font-size:1rem}.dashboard-card-head p{margin:4px 0 0;color:var(--app-muted);font-size:.75rem}.status-chart{display:flex;align-items:end;gap:14px;height:250px;padding:18px 10px 0;border-bottom:1px solid var(--app-border);overflow-x:auto}.status-column{display:flex;flex:1 0 66px;min-width:58px;height:100%;flex-direction:column;justify-content:end;align-items:center}.status-total{margin-bottom:5px;font-size:.72rem;font-weight:700}.status-stack{display:flex;width:min(52px,80%);flex-direction:column-reverse;border-radius:6px 6px 0 0;overflow:hidden}.status-segment{min-height:2px}.status-label{width:100%;height:54px;padding-top:8px;color:var(--app-muted);font-size:.67rem;text-align:center;line-height:1.15;overflow-wrap:anywhere}.chart-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;color:var(--app-muted);font-size:.72rem}.legend-item{display:inline-flex;align-items:center;gap:6px}.legend-swatch{width:9px;height:9px;border-radius:3px}.donut-layout{display:grid;grid-template-columns:minmax(130px,42%) 1fr;align-items:center;gap:20px;min-height:230px}.donut-chart{position:relative;width:min(190px,100%);aspect-ratio:1;margin:auto;border-radius:50%}.donut-chart::after{content:"";position:absolute;inset:24%;border-radius:50%;background:light-dark(#fff,#1b201d)}.donut-chart span{position:absolute;inset:0;z-index:1;display:grid;place-content:center;text-align:center;font-weight:750}.donut-chart span small{display:block;color:var(--app-muted);font-size:.65rem;font-weight:500}.donut-legend{display:grid;gap:8px;max-height:230px;overflow:auto}.donut-row{display:grid;grid-template-columns:10px minmax(0,1fr) auto;align-items:center;gap:8px;font-size:.75rem}.donut-row i{width:9px;height:9px;border-radius:50%}.donut-row span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.donut-row b{font-size:.75rem}.rank-list{display:grid;gap:10px}.rank-row{display:grid;grid-template-columns:minmax(100px,42%) 1fr 34px;gap:10px;align-items:center;font-size:.75rem}.rank-row-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rank-track{height:8px;border-radius:5px;background:var(--app-soft);overflow:hidden}.rank-fill{height:100%;border-radius:5px;background:var(--app-green)}.rank-row b{text-align:right}.project-list{display:grid;gap:8px}.project-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:14px;padding:12px 14px;border:1px solid var(--app-border);border-radius:10px;background:var(--app-soft)}.project-copy{min-width:0}.project-key{display:block;margin-bottom:3px;color:var(--app-green);font-size:.69rem;font-weight:750;letter-spacing:.02em}.project-name{display:block;font-size:.78rem;line-height:1.35;overflow-wrap:anywhere}.project-count{min-width:76px;color:var(--app-muted);font-size:.7rem;text-align:right}.project-count b{display:block;color:inherit;font-size:1rem}.project-jira-link{display:inline-flex;align-items:center;gap:5px;padding:7px 9px;border:1px solid color-mix(in srgb,var(--app-green) 35%,var(--app-border));border-radius:8px;color:var(--app-green);font-size:.7rem;font-weight:700;text-decoration:none;white-space:nowrap;background:light-dark(#fff,#1b201d)}.project-jira-link:hover{border-color:var(--app-green);background:color-mix(in srgb,var(--app-green) 8%,transparent)}.dashboard-card,.dashboard-kpi{box-shadow:0 1px 2px color-mix(in srgb,var(--app-muted) 8%,transparent)}@media(max-width:900px){.dashboard-kpis{grid-template-columns:repeat(2,1fr)}.dashboard-grid{grid-template-columns:1fr}.dashboard-wide{grid-column:auto}}@media(max-width:560px){.dashboard-kpis{grid-template-columns:1fr 1fr}.donut-layout{grid-template-columns:1fr}.donut-chart{width:150px}.status-chart{height:230px}.rank-row{grid-template-columns:minmax(90px,42%) 1fr 28px}.project-row{grid-template-columns:minmax(0,1fr) auto}.project-jira-link{grid-column:1/-1;justify-content:center}}
+</style>
+<style>
+#release-dashboard-view,
+#release-map-view {
+  padding-top: 1.15rem;
+}
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: light-dark(#fff, #181818);
+}
+.release-controls-shell {
+  position: sticky;
+  top: var(--app-header-height, 0px);
+  z-index: 25;
+  padding-bottom: 1px;
+  background: light-dark(#fff, #181818);
+  box-shadow: 0 8px 12px -14px color-mix(in srgb, #000 45%, transparent);
+}
+.dashboard-heading {
+  margin-top: 0;
+}
+.diagram-shell:not(:fullscreen) {
+  position: relative;
+}
+.diagram-shell:not(:fullscreen) .diagram-toolbar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 4;
+  margin: 0;
+}
+.dashboard-heading h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+.dashboard-heading p {
+  margin: 0 0 10px;
+  color: var(--app-muted);
+  font-size: .75rem;
+}
+.dashboard-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.dashboard-donut-card .donut-layout {
+  grid-template-columns: 1fr;
+  align-content: start;
+  gap: 14px;
+}
+.dashboard-donut-card .donut-legend {
+  width: 100%;
+}
+.dashboard-projects {
+  grid-column: 1 / -1;
+}
+.dashboard-projects .project-list {
+  grid-template-columns: repeat(5, minmax(220px, 1fr));
+  gap: 10px;
+  padding-bottom: 4px;
+  overflow-x: auto;
+}
+.dashboard-projects .project-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(78px, 1fr) auto;
+  align-items: end;
+  min-height: 156px;
+  background: light-dark(#f8faf9, #202622);
+}
+.dashboard-projects .project-copy {
+  grid-column: 1 / -1;
+  align-self: start;
+}
+.dashboard-projects .project-count {
+  min-width: 0;
+  text-align: left;
+}
+.dashboard-projects .project-jira-link {
+  grid-column: 2;
+  justify-self: end;
+}
+@media (max-width: 1100px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .dashboard-wide,
+  .dashboard-projects {
+    grid-column: auto;
+  }
+}
+.dashboard-content:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  padding: 24px;
+  overflow: auto;
+  background: light-dark(#fff, #151916);
+}
+.dashboard-content:fullscreen .dashboard-heading {
+  margin-top: 0;
+}
+.status-segment,
+.donut-chart[data-interactive="true"],
+.donut-row[href] {
+  cursor: pointer;
+}
+.status-segment {
+  position: relative;
+  z-index: 1;
+  transition: transform .16s ease, filter .16s ease, box-shadow .16s ease;
+}
+.status-segment:hover {
+  z-index: 3;
+  transform: scaleX(1.12);
+  filter: brightness(1.04) saturate(1.14);
+  box-shadow: 0 0 0 2px light-dark(#fff, #181818), 0 5px 12px color-mix(in srgb, #000 24%, transparent);
+}
+.donut-chart[data-interactive="true"] {
+  transition: transform .18s ease, filter .18s ease;
+}
+.donut-chart[data-interactive="true"]:hover {
+  transform: scale(1.025);
+  filter: saturate(1.06);
+}
+.donut-chart[data-interactive="true"]::before {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  z-index: 0;
+  border-radius: 50%;
+  background: var(--hover-gradient, transparent);
+  opacity: var(--hover-opacity, 0);
+  filter: drop-shadow(0 6px 7px color-mix(in srgb, #000 22%, transparent));
+  transition: opacity .12s ease;
+  pointer-events: none;
+}
+.donut-chart::after {
+  z-index: 1;
+}
+.donut-chart span {
+  z-index: 2;
+}
+.donut-row[href] {
+  padding: 5px 7px;
+  border-radius: 7px;
+  color: inherit;
+  text-decoration: none;
+  transition: color .16s ease, background-color .16s ease, transform .16s ease, box-shadow .16s ease;
+}
+.donut-row[href]:hover {
+  transform: translateX(4px);
+  background: color-mix(in srgb, var(--app-green) 9%, var(--app-soft));
+  color: var(--app-green);
+  box-shadow: inset 3px 0 var(--app-green);
+}
+.donut-row[href]:hover i {
+  transform: scale(1.3);
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 10%, transparent);
+}
+.donut-row i {
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+.chart-tooltip {
+  position: fixed;
+  z-index: 1000;
+  min-width: 170px;
+  max-width: 280px;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--app-green) 28%, var(--app-border));
+  border-radius: 10px;
+  background: light-dark(rgba(255,255,255,.97), rgba(25,30,27,.97));
+  box-shadow: 0 10px 28px color-mix(in srgb, #000 20%, transparent);
+  opacity: 0;
+  transform: translateY(5px) scale(.98);
+  transition: opacity .12s ease, transform .12s ease;
+  pointer-events: none;
+}
+.chart-tooltip.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.chart-tooltip-label {
+  display: block;
+  margin-bottom: 3px;
+  font-size: .76rem;
+  font-weight: 750;
+}
+.chart-tooltip-value {
+  color: var(--app-muted);
+  font-size: .7rem;
+}
+.chart-tooltip-action {
+  display: block;
+  margin-top: 7px;
+  color: var(--app-green);
+  font-size: .68rem;
+  font-weight: 700;
+}
+</style>
 </head>
 <body>
 <header class="app-header">
   <div class="app-brand">
-    <span class="app-brand-mark" aria-hidden="true">E</span>
+    <img class="app-brand-logo" src="ekoniva-logo.png" alt="EKONIVA">
     <span class="app-brand-copy">
       <span class="app-brand-title">EkoCrop · Центр аналитики</span>
       <span class="app-brand-subtitle">Релизы, связи и продуктовые показатели</span>
     </span>
   </div>
   <nav class="section-tabs" role="tablist" aria-label="Разделы аналитики">
-    <button class="section-tab" type="button" role="tab" aria-selected="true" aria-controls="release-map-view" data-section-tab="release-map">Карта релиза</button>
-    <button class="section-tab" type="button" role="tab" aria-selected="false" aria-controls="release-analytics-view" data-section-tab="release-analytics">Аналитика релиза <span class="section-tab-count">скоро</span></button>
+    <button class="section-tab" type="button" role="tab" aria-selected="true" aria-controls="release-dashboard-view" data-section-tab="release-dashboard">Дашборд релиза</button>
+    <button class="section-tab" type="button" role="tab" aria-selected="false" aria-controls="release-map-view" data-section-tab="release-map">Дерево релиза</button>
     <button class="section-tab" type="button" role="tab" aria-selected="false" aria-controls="dependencies-view" data-section-tab="dependencies">Зависимости <span class="section-tab-count">скоро</span></button>
   </nav>
 </header>
 <main>
-<section class="app-view" id="release-map-view" role="tabpanel" data-section-view="release-map">
+<div class="app-view release-controls-shell"><div class="release-control-panel">
 <form class="release-toolbar" data-release-form>
   <div class="release-field">
     <label for="release-select">Релиз</label>
     <select id="release-select" data-release-select>
+      <option value="" selected>Выберите релиз</option>
       <option value="6.0">6.0</option>
       <option value="7.0">7.0</option>
       <option value="8.0">8.0</option>
       <option value="9.0">9.0</option>
-      <option value="10.0" selected>10.0</option>
+      <option value="10.0">10.0</option>
       <option value="11.0">11.0</option>
       <option value="12.0">12.0</option>
       <option value="13.0">13.0</option>
       <option value="14.0">14.0</option>
     </select>
   </div>
-  <button type="submit" data-release-submit>Построить диаграмму</button>
-  <span class="release-status" data-release-status role="status" aria-live="polite">Выберите релиз</span>
-</form>
-<div class="import-panel">
   <div class="import-field">
-    <span class="import-label">Или загрузите экспорт Jira</span>
+    <span class="import-label">Экспорт Jira</span>
     <label class="import-file-button" for="jira-csv-file">Импортировать CSV
       <input id="jira-csv-file" type="file" accept=".csv,text/csv" data-csv-file>
     </label>
   </div>
-  <span class="import-hint" data-import-hint>Файл обрабатывается только в вашем браузере и никуда не отправляется</span>
+  <button type="submit" data-release-submit disabled>Построить диаграмму</button>
+</form>
+<span class="release-status" data-release-status role="status" aria-live="polite">Выберите релиз или импортируйте CSV</span>
+</div></div>
+<section class="app-view release-dashboard" id="release-dashboard-view" role="tabpanel" data-section-view="release-dashboard">
+  <div class="dashboard-content" data-dashboard-content hidden>
+    <div class="dashboard-heading">
+      <div><h1 data-dashboard-title>Дашборд релиза</h1><p data-dashboard-subtitle></p></div>
+      <button type="button" class="fullscreen-button" data-dashboard-fullscreen-button aria-label="Открыть дашборд на весь экран">⛶ <span data-dashboard-fullscreen-label>На весь экран</span></button>
+    </div>
+    <div class="dashboard-kpis" data-dashboard-kpis></div>
+    <div class="dashboard-grid">
+      <article class="dashboard-card dashboard-wide"><div class="dashboard-card-head"><div><h2>Задачи по статусам и приоритетам</h2><p>Высота столбца — количество задач, цвет — приоритет</p></div></div><div class="status-chart" data-status-chart></div><div class="chart-legend" data-priority-legend></div></article>
+      <article class="dashboard-card dashboard-donut-card"><div class="dashboard-card-head"><div><h2>Приоритеты задач</h2><p>Распределение пула релиза</p></div></div><div class="donut-layout"><div class="donut-chart" data-priority-donut><span data-priority-total></span></div><div class="donut-legend" data-priority-list></div></div></article>
+      <article class="dashboard-card dashboard-donut-card"><div class="dashboard-card-head"><div><h2>Компоненты arch-tier</h2><p>Распределение задач по техническим слоям</p></div></div><div class="donut-layout"><div class="donut-chart" data-component-donut><span data-component-total></span></div><div class="donut-legend" data-component-list></div></div></article>
+      <article class="dashboard-card dashboard-donut-card"><div class="dashboard-card-head"><div><h2>Типы задач</h2><p>Из чего состоит релиз</p></div></div><div class="donut-layout"><div class="donut-chart" data-type-donut><span data-type-total></span></div><div class="donut-legend" data-type-list></div></div></article>
+      <article class="dashboard-card dashboard-projects"><div class="dashboard-card-head"><div><h2>Самые крупные проекты</h2><p>Полные названия, количество задач и быстрый переход в Jira</p></div></div><div class="project-list" data-project-list></div></article>
+    </div>
+  </div>
+</section>
+<section class="app-view" id="release-map-view" role="tabpanel" data-section-view="release-map" hidden>
+<div class="diagram-shell" data-diagram-shell hidden>
+<div class="diagram-toolbar">
+  <button type="button" class="fullscreen-button" data-fullscreen-button aria-label="Открыть диаграмму на весь экран">⛶ <span data-fullscreen-label>На весь экран</span></button>
 </div>
 <iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" title="Карта релиза EkoCrop" srcdoc="&lt;!doctype html&gt;
 &lt;html lang=&quot;en&quot;&gt;
@@ -1002,6 +1239,16 @@ html&gt;body{padding:0}&lt;/style&gt;
       stroke-linecap: butt;
       vector-effect: non-scaling-stroke;
     }
+    #jira-release-10-hierarchy .jrh-link-label {
+      fill: var(--muted-foreground);
+      stroke: var(--background);
+      stroke-width: 5px;
+      paint-order: stroke;
+      font-size: 11px;
+      text-anchor: middle;
+      dominant-baseline: auto;
+      pointer-events: none;
+    }
     #jira-release-10-hierarchy .jrh-fo-wrap {
       position: relative;
       width: 100%;
@@ -1609,6 +1856,19 @@ html&gt;body{padding:0}&lt;/style&gt;
         return line;
       }
 
+      function addLineLabel(svg, x1, x2, y, label) {
+        if (!label) return null;
+        const text = svgElement(&quot;text&quot;, {
+          x: (x1 + x2) / 2,
+          y: y - 5,
+          class: &quot;jrh-link-label&quot;,
+          &quot;aria-hidden&quot;: &quot;true&quot;,
+        });
+        text.textContent = label;
+        svg.appendChild(text);
+        return text;
+      }
+
       function wrappedLineCount(text, maxCharacters) {
         if (!text) return 0;
         let lines = 1;
@@ -1726,7 +1986,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         const projectX = compact ? 26 : trunkX + 20;
         const projectWidth = compact ? width - projectX - 8 : 220;
         const subtrunkX = compact ? projectX + 14 : projectX + projectWidth + 18;
-        const taskX = compact ? projectX + 32 : subtrunkX + 18;
+        const taskX = compact ? projectX + 128 : subtrunkX + 128;
         const taskWidth = compact ? width - taskX - 8 : Math.max(82, width - taskX - 8);
 
         let cursor = compact ? 112 : 20;
@@ -1857,11 +2117,20 @@ html&gt;body{padding:0}&lt;/style&gt;
           )));
         }
 
+        const visibleGroupYs = [];
+        const visibleTop = Math.max(0, -canvasRect.top);
+        const visibleBottom = Math.min(frame.height, window.innerHeight - canvasRect.top);
         groups.forEach(entry =&gt; {
           const {groupLayout, node, inbound, outbound} = entry;
           let groupY = groupLayout.centerY;
           if (groupLayout.visibleTasks.length) {
             groupY = clamp(viewportCenterY, groupLayout.firstTaskY, groupLayout.lastTaskY);
+          }
+          if (
+            groupY + groupLayout.groupHeight / 2 &gt;= visibleTop
+            &amp;&amp; groupY - groupLayout.groupHeight / 2 &lt;= visibleBottom
+          ) {
+            visibleGroupYs.push(groupY);
           }
           setNodeCenter(node, groupY);
           setHorizontalLineY(inbound, groupY);
@@ -1875,6 +2144,11 @@ html&gt;body{padding:0}&lt;/style&gt;
             setHorizontalLineY(outbound, groupY);
           }
         });
+        if (!frame.compact &amp;&amp; rootLines.trunk) {
+          const connectedYs = visibleGroupYs.length ? visibleGroupYs : [releaseY];
+          rootLines.trunk.setAttribute(&quot;y1&quot;, String(Math.min(releaseY, ...connectedYs)));
+          rootLines.trunk.setAttribute(&quot;y2&quot;, String(Math.max(releaseY, ...connectedYs)));
+        }
       }
 
       function scheduleMotionSync() {
@@ -2009,6 +2283,7 @@ html&gt;body{padding:0}&lt;/style&gt;
             const taskY = groupLayout.taskYs[index];
             const taskPriority = effectivePriority(task);
             addLine(svg, frame.subtrunkX, taskY, frame.taskX, taskY, 2, relationType);
+            addLineLabel(svg, frame.subtrunkX, frame.taskX, taskY, task.relationLabel);
             addNode(svg, task, {
               x: frame.taskX,
               y: taskY,
@@ -2312,9 +2587,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 "></iframe>
-</section>
-<section class="app-view future-view" id="release-analytics-view" role="tabpanel" data-section-view="release-analytics" hidden>
-  <div class="future-view-inner"><h2>Аналитика релиза</h2><p>Здесь появятся графики по статусам, приоритетам и динамике выполнения задач.</p></div>
+</div>
 </section>
 <section class="app-view future-view" id="dependencies-view" role="tabpanel" data-section-view="dependencies" hidden>
   <div class="future-view-inner"><h2>Зависимости</h2><p>Здесь появится отдельное представление связей и блокирующих зависимостей между задачами.</p></div>
@@ -2324,13 +2597,370 @@ html&gt;body{padding:0}&lt;/style&gt;
 (() => {
   const tabs = [...document.querySelectorAll("[data-section-tab]")];
   const views = [...document.querySelectorAll("[data-section-view]")];
+  const appHeader = document.querySelector(".app-header");
   const form = document.querySelector("[data-release-form]");
   const select = document.querySelector("[data-release-select]");
   const submit = document.querySelector("[data-release-submit]");
   const status = document.querySelector("[data-release-status]");
   const csvFile = document.querySelector("[data-csv-file]");
-  const importHint = document.querySelector("[data-import-hint]");
+  const diagramShell = document.querySelector("[data-diagram-shell]");
+  const fullscreenButton = document.querySelector("[data-fullscreen-button]");
+  const fullscreenLabel = document.querySelector("[data-fullscreen-label]");
   const diagram = document.querySelector("iframe");
+  const dashboardContent = document.querySelector("[data-dashboard-content]");
+  const dashboardFullscreenButton = document.querySelector("[data-dashboard-fullscreen-button]");
+  const dashboardFullscreenLabel = document.querySelector("[data-dashboard-fullscreen-label]");
+  let preparedCsvResult = null;
+  let preparedCsvRelease = "";
+
+  function syncStickyOffsets() {
+    document.documentElement.style.setProperty("--app-header-height", `${appHeader.offsetHeight}px`);
+  }
+  syncStickyOffsets();
+  window.addEventListener("resize", syncStickyOffsets);
+  if ("ResizeObserver" in window) new ResizeObserver(syncStickyOffsets).observe(appHeader);
+
+  const dashboardColors = ["#ff5b66", "#ff963f", "#ffca2b", "#25d482", "#2ec4b6", "#4d7df3", "#8b5cf6", "#9aa3ad"];
+
+  function dashboardCount(items, accessor) {
+    const counts = new Map();
+    for (const item of items) {
+      const key = String(accessor(item) || "Не заполнено").trim() || "Не заполнено";
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  }
+
+  function jiraQuote(value) {
+    return `"${String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+  }
+
+  function jiraIssuesUrl(release, clauses = []) {
+    const base = `(project = DEVELOPMENT and fixVersion = ${jiraQuote(`EkoCrop ${release}`)})`;
+    const jql = [base, ...clauses.filter(Boolean).map(clause => `(${clause})`)].join(" AND ");
+    return `https://dev.ekoniva-apk.com/issues/?jql=${encodeURIComponent(jql)}`;
+  }
+
+  function jiraFieldClause(field, value) {
+    return ["Не указано", "Не указан", "Не заполнено"].includes(String(value))
+      ? `${field} is EMPTY`
+      : `${field} = ${jiraQuote(value)}`;
+  }
+
+  function openJiraIssues(url) {
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  const chartTooltip = document.createElement("div");
+  chartTooltip.className = "chart-tooltip";
+  chartTooltip.setAttribute("role", "tooltip");
+  document.body.append(chartTooltip);
+
+  function showChartTooltip(event, label, value) {
+    chartTooltip.replaceChildren();
+    const title = document.createElement("span");
+    title.className = "chart-tooltip-label";
+    title.textContent = label;
+    const detail = document.createElement("span");
+    detail.className = "chart-tooltip-value";
+    detail.textContent = value;
+    const action = document.createElement("span");
+    action.className = "chart-tooltip-action";
+    action.textContent = "Нажмите, чтобы открыть в Jira ↗";
+    chartTooltip.append(title, detail, action);
+    chartTooltip.classList.add("is-visible");
+    const gap = 14;
+    const bounds = chartTooltip.getBoundingClientRect();
+    chartTooltip.style.left = `${Math.min(event.clientX + gap, window.innerWidth - bounds.width - gap)}px`;
+    chartTooltip.style.top = `${Math.min(event.clientY + gap, window.innerHeight - bounds.height - gap)}px`;
+  }
+
+  function hideChartTooltip() {
+    chartTooltip.classList.remove("is-visible");
+  }
+
+  function renderDonut(element, list, total, linkForLabel) {
+    if (!total) { element.style.background = "var(--app-soft)"; return; }
+    let cursor = 0;
+    const sectors = list.map(([label, count], index) => {
+      const start = cursor;
+      cursor += count / total * 100;
+      return {label, count, start, end: cursor, color: dashboardColors[index % dashboardColors.length]};
+    });
+    element.style.background = `conic-gradient(${sectors.map(sector => `${sector.color} ${sector.start}% ${sector.end}%`).join(",")})`;
+    element.dataset.interactive = String(Boolean(linkForLabel));
+    element.onmousemove = linkForLabel ? event => {
+      const rect = element.getBoundingClientRect();
+      const offsetX = event.clientX - rect.left - rect.width / 2;
+      const offsetY = event.clientY - rect.top - rect.height / 2;
+      if (Math.hypot(offsetX, offsetY) < Math.min(rect.width, rect.height) * .24) {
+        element.style.setProperty("--hover-opacity", "0");
+        hideChartTooltip();
+        return;
+      }
+      const angle = (Math.atan2(offsetY, offsetX) + Math.PI / 2 + Math.PI * 2) % (Math.PI * 2);
+      const sector = sectors.find(item => angle / (Math.PI * 2) * 100 >= item.start && angle / (Math.PI * 2) * 100 < item.end);
+      if (sector) {
+        element.style.setProperty("--hover-gradient", `conic-gradient(transparent 0 ${sector.start}%, color-mix(in srgb, ${sector.color} 78%, white) ${sector.start}% ${sector.end}%, transparent ${sector.end}% 100%)`);
+        element.style.setProperty("--hover-opacity", ".92");
+        showChartTooltip(event, sector.label, `${sector.count} задач`);
+      }
+    } : null;
+    element.onmouseleave = linkForLabel ? () => {
+      element.style.setProperty("--hover-opacity", "0");
+      hideChartTooltip();
+    } : null;
+    element.onclick = linkForLabel ? event => {
+      const rect = element.getBoundingClientRect();
+      const offsetX = event.clientX - rect.left - rect.width / 2;
+      const offsetY = event.clientY - rect.top - rect.height / 2;
+      if (Math.hypot(offsetX, offsetY) < Math.min(rect.width, rect.height) * .24) return;
+      const angle = (Math.atan2(offsetY, offsetX) + Math.PI / 2 + Math.PI * 2) % (Math.PI * 2);
+      const position = angle / (Math.PI * 2) * 100;
+      const sector = sectors.find(item => position >= item.start && position < item.end);
+      if (sector) openJiraIssues(linkForLabel(sector.label));
+    } : null;
+  }
+
+  function renderDonutList(element, list, linkForLabel) {
+    element.replaceChildren(...list.map(([label, count], index) => {
+      const row = document.createElement(linkForLabel ? "a" : "div");
+      row.className = "donut-row";
+      if (linkForLabel) {
+        row.href = linkForLabel(label);
+        row.target = "_blank";
+        row.rel = "noopener noreferrer";
+        row.addEventListener("mousemove", event => showChartTooltip(event, label, `${count} задач`));
+        row.addEventListener("mouseleave", hideChartTooltip);
+      }
+      const dot = document.createElement("i");
+      dot.style.background = dashboardColors[index % dashboardColors.length];
+      const name = document.createElement("span");
+      name.textContent = label;
+      name.title = label;
+      const value = document.createElement("b");
+      value.textContent = count;
+      row.append(dot, name, value);
+      return row;
+    }));
+  }
+
+  function renderRankList(element, list) {
+    const maximum = Math.max(1, ...list.map(([, count]) => count));
+    element.replaceChildren(...list.map(([label, count]) => {
+      const row = document.createElement("div");
+      row.className = "rank-row";
+      const name = document.createElement("span");
+      name.className = "rank-row-label";
+      name.textContent = label;
+      name.title = label;
+      const track = document.createElement("span");
+      track.className = "rank-track";
+      const fill = document.createElement("span");
+      fill.className = "rank-fill";
+      fill.style.width = `${count / maximum * 100}%`;
+      track.append(fill);
+      const value = document.createElement("b");
+      value.textContent = count;
+      row.append(name, track, value);
+      return row;
+    }));
+  }
+
+  function renderProjectList(element, list) {
+    element.replaceChildren(...list.map(project => {
+      const row = document.createElement("div");
+      row.className = "project-row";
+
+      const copy = document.createElement("div");
+      copy.className = "project-copy";
+      const key = document.createElement("span");
+      key.className = "project-key";
+      key.textContent = project.id;
+      const name = document.createElement("span");
+      name.className = "project-name";
+      name.textContent = project.name;
+      copy.append(key, name);
+
+      const count = document.createElement("span");
+      count.className = "project-count";
+      const number = document.createElement("b");
+      number.textContent = project.count;
+      count.append(number, document.createTextNode("задач"));
+
+      const link = document.createElement("a");
+      link.className = "project-jira-link";
+      link.href = project.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.setAttribute("aria-label", `Открыть ${project.id} в Jira`);
+      link.textContent = "↗ Jira";
+
+      row.append(copy, count, link);
+      return row;
+    }));
+  }
+
+  function renderDashboard(result) {
+    const release = result.data.release.summary.replace(/^Релиз EkoCrop\s+/, "");
+    const groups = result.data.groups || [];
+    const tasks = groups.flatMap(group => group.tasks || []);
+    const chartTasks = tasks.filter(task => /^DEVELOP-/i.test(String(task.id || "").trim()));
+    const statusOrder = [
+      "Черновик",
+      "Backlog",
+      "Открытый",
+      "Сделать",
+      "В работе",
+      "Можно тестировать",
+      "Тестирование",
+      "Протестировано",
+      "In Review",
+      "Закрыт",
+      "Ожидает обратной связи",
+      "Не доделано",
+    ];
+    const statusRank = value => {
+      const index = statusOrder.findIndex(status => status.toLowerCase() === String(value).toLowerCase());
+      return index < 0 ? statusOrder.length : index;
+    };
+    const statuses = dashboardCount(chartTasks, task => task.status)
+      .sort((a, b) => statusRank(a[0]) - statusRank(b[0]) || a[0].localeCompare(b[0], "ru"));
+    const priorities = dashboardCount(chartTasks, task => task.priority);
+    const types = dashboardCount(chartTasks, task => task.taskType).slice(0, 8);
+    const projects = groups.filter(group => !group.synthetic)
+      .map(group => ({
+        id: group.group.id,
+        name: group.group.summary || group.group.id,
+        count: group.tasks.length,
+        url: group.group.url || `https://dev.ekoniva-apk.com/browse/${encodeURIComponent(group.group.id)}`,
+      }))
+      .sort((a, b) => b.count - a.count).slice(0, 5);
+    const componentValues = chartTasks.flatMap(task => (result.componentsByIssue?.[task.id] || []))
+      .filter(value => /^arch-tier\s*:/i.test(value));
+    const components = dashboardCount(componentValues, value => value).slice(0, 8);
+
+    const releaseSummary = result.data.summary || {};
+    document.querySelector("[data-dashboard-title]").textContent = `Релиз EkoCrop ${release}`;
+    document.querySelector("[data-dashboard-subtitle]").textContent = `${releaseSummary.releaseIssues ?? tasks.length} задачи релиза · ${releaseSummary.projectGroups ?? groups.filter(group => !group.synthetic).length} проектов · ${releaseSummary.serviceGroups ?? groups.filter(group => group.synthetic).length} служебные группы`;
+    const kpis = [
+      [tasks.length, "Задач в пуле"],
+      [groups.filter(group => !group.synthetic).length, "Проектов"],
+      [tasks.filter(task => ["Блокер", "Blocker", "Highest"].includes(task.priority)).length, "Критичных задач"],
+      [statuses.length, "Статусов"],
+    ];
+    document.querySelector("[data-dashboard-kpis]").replaceChildren(...kpis.map(([value, label]) => {
+      const card = document.createElement("div");
+      card.className = "dashboard-kpi";
+      const number = document.createElement("strong"); number.textContent = value;
+      const text = document.createElement("span"); text.textContent = label;
+      card.append(number, text); return card;
+    }));
+
+    const priorityOrder = ["Блокер", "Blocker", "Highest", "High", "Medium", "Low", "Lowest", "Не указан", "Не заполнено"];
+    const priorityIndex = value => { const index = priorityOrder.indexOf(value); return index < 0 ? priorityOrder.length : index; };
+    priorities.sort((a, b) => priorityIndex(a[0]) - priorityIndex(b[0]));
+    const priorityColor = new Map(priorities.map((item, index) => [item[0], dashboardColors[index % dashboardColors.length]]));
+    const chartPriorities = dashboardCount(chartTasks, task => task.priority)
+      .sort((a, b) => priorityIndex(a[0]) - priorityIndex(b[0]));
+    const stackPriorityOrder = ["Не заполнено", "Не указан", "Lowest", "Low", "Medium", "High", "Highest", "Blocker", "Блокер"];
+    const stackPriorityIndex = value => { const index = stackPriorityOrder.indexOf(value); return index < 0 ? stackPriorityOrder.length : index; };
+    const byStatusPriority = new Map(statuses.map(([status]) => [status,
+      dashboardCount(chartTasks.filter(task => (task.status || "Не заполнено") === status), task => task.priority)
+        .sort((a, b) => stackPriorityIndex(a[0]) - stackPriorityIndex(b[0]))
+    ]));
+    const maximumStatus = Math.max(1, ...statuses.map(([, count]) => count));
+    const statusChart = document.querySelector("[data-status-chart]");
+    statusChart.replaceChildren(...statuses.map(([status, total]) => {
+      const column = document.createElement("div"); column.className = "status-column";
+      const number = document.createElement("span"); number.className = "status-total"; number.textContent = total;
+      const stack = document.createElement("span"); stack.className = "status-stack"; stack.style.height = `${Math.max(4, total / maximumStatus * 170)}px`;
+      for (const [priority, count] of byStatusPriority.get(status)) {
+        const segment = document.createElement("span"); segment.className = "status-segment";
+        segment.style.height = `${count / total * 100}%`; segment.style.background = priorityColor.get(priority) || dashboardColors.at(-1);
+        const segmentUrl = jiraIssuesUrl(release, [jiraFieldClause("status", status), jiraFieldClause("priority", priority)]);
+        segment.title = `${status} · ${priority}: ${count} · открыть задачи в Jira`;
+        segment.tabIndex = 0;
+        segment.setAttribute("role", "link");
+        segment.setAttribute("aria-label", `${status}, ${priority}, ${count} задач — открыть в Jira`);
+        segment.addEventListener("mousemove", event => showChartTooltip(event, status, `${priority} · ${count} задач`));
+        segment.addEventListener("mouseleave", hideChartTooltip);
+        segment.addEventListener("click", () => openJiraIssues(segmentUrl));
+        segment.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openJiraIssues(segmentUrl); }
+        });
+        stack.append(segment);
+      }
+      const label = document.createElement("span"); label.className = "status-label"; label.textContent = status;
+      column.append(number, stack, label); return column;
+    }));
+    document.querySelector("[data-priority-legend]").replaceChildren(...chartPriorities.map(([label]) => {
+      const item = document.createElement("span"); item.className = "legend-item";
+      const swatch = document.createElement("i"); swatch.className = "legend-swatch"; swatch.style.background = priorityColor.get(label);
+      item.append(swatch, document.createTextNode(label)); return item;
+    }));
+
+    const priorityUrl = label => jiraIssuesUrl(release, [jiraFieldClause("priority", label)]);
+    const componentUrl = label => jiraIssuesUrl(release, [jiraFieldClause("component", label)]);
+    const typeUrl = label => jiraIssuesUrl(release, [jiraFieldClause("issuetype", label)]);
+    renderDonut(document.querySelector("[data-priority-donut]"), priorities, chartTasks.length, priorityUrl);
+    document.querySelector("[data-priority-total]").innerHTML = `${chartTasks.length}<small>задач</small>`;
+    renderDonutList(document.querySelector("[data-priority-list]"), priorities, priorityUrl);
+    renderDonut(document.querySelector("[data-component-donut]"), components, componentValues.length, componentUrl);
+    document.querySelector("[data-component-total]").innerHTML = `${componentValues.length}<small>компонентов</small>`;
+    renderDonutList(document.querySelector("[data-component-list]"), components.length ? components : [["Нет данных arch-tier", 0]], components.length ? componentUrl : null);
+    renderDonut(document.querySelector("[data-type-donut]"), types, chartTasks.length, typeUrl);
+    document.querySelector("[data-type-total]").innerHTML = `${chartTasks.length}<small>задач</small>`;
+    renderDonutList(document.querySelector("[data-type-list]"), types, typeUrl);
+    renderProjectList(document.querySelector("[data-project-list]"), projects);
+    dashboardContent.hidden = false;
+  }
+
+  function syncFullscreenState() {
+    const diagramActive = document.fullscreenElement === diagramShell;
+    const dashboardActive = document.fullscreenElement === dashboardContent;
+    fullscreenLabel.textContent = diagramActive ? "Скрыть" : "На весь экран";
+    fullscreenButton.setAttribute("aria-label", diagramActive
+      ? "Выйти из полноэкранного режима"
+      : "Открыть диаграмму на весь экран");
+    dashboardFullscreenLabel.textContent = dashboardActive ? "Скрыть" : "На весь экран";
+    dashboardFullscreenButton.setAttribute("aria-label", dashboardActive
+      ? "Выйти из полноэкранного режима"
+      : "Открыть дашборд на весь экран");
+  }
+
+  fullscreenButton.addEventListener("click", async () => {
+    try {
+      if (document.fullscreenElement === diagramShell) await document.exitFullscreen();
+      else await diagramShell.requestFullscreen();
+    } catch {
+      setStatus("Браузер не разрешил открыть полноэкранный режим");
+    }
+  });
+  dashboardFullscreenButton.addEventListener("click", async () => {
+    try {
+      if (document.fullscreenElement === dashboardContent) await document.exitFullscreen();
+      else await dashboardContent.requestFullscreen();
+    } catch {
+      setStatus("Браузер не разрешил открыть полноэкранный режим");
+    }
+  });
+  document.addEventListener("fullscreenchange", syncFullscreenState);
+
+  function syncSubmitState() {
+    submit.disabled = select.disabled || !select.value;
+  }
+
+  select.addEventListener("change", () => {
+    if (preparedCsvResult && select.value !== preparedCsvRelease) {
+      preparedCsvResult = null;
+      preparedCsvRelease = "";
+    }
+    syncSubmitState();
+    setStatus(select.value
+      ? `Выбран релиз ${select.value} — можно построить диаграмму`
+      : "Выберите релиз или импортируйте CSV");
+  });
 
   for (const tab of tabs) {
     tab.addEventListener("click", () => {
@@ -2359,6 +2989,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     try {
       const payload = await json(await fetch("/api/releases", {headers: {Accept: "application/json"}}));
       select.replaceChildren();
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "Выберите релиз";
+      select.appendChild(placeholder);
       for (const release of payload.releases || []) {
         const option = document.createElement("option");
         option.value = release.name;
@@ -2371,9 +3005,9 @@ html&gt;body{padding:0}&lt;/style&gt;
         option.textContent = "10.0";
         select.prepend(option);
       }
-      select.value = "10.0";
+      select.value = "";
       select.disabled = false;
-      submit.disabled = false;
+      syncSubmitState();
       setStatus(payload.mode === "rest"
         ? "Выберите релиз — задачи будут загружены напрямую из Jira"
         : payload.mode === "automation"
@@ -2381,7 +3015,7 @@ html&gt;body{padding:0}&lt;/style&gt;
           : "Подключение к Jira ещё не настроено администратором");
     } catch (error) {
       select.disabled = false;
-      submit.disabled = false;
+      syncSubmitState();
       setStatus("Выберите релиз или импортируйте CSV-файл из Jira");
     }
   }
@@ -2414,6 +3048,15 @@ html&gt;body{padding:0}&lt;/style&gt;
     return [...new Set(values.flat().map(value => String(value || "").trim()).filter(Boolean))];
   }
 
+  function displayRelationName(value) {
+    const name = String(value || "").trim();
+    const normalized = name.toLowerCase();
+    if (normalized === "subtasks-custom-link") return "subtask";
+    if (normalized === "relates") return "relates";
+    if (normalized === "ссылка на эпик" || normalized === "epics-custom-link") return "epic";
+    return name;
+  }
+
   function diagramFromCsv(csvText) {
     const rows = parseCsv(csvText);
     if (rows.length < 2) throw new Error("CSV-файл не содержит задач");
@@ -2444,12 +3087,22 @@ html&gt;body{padding:0}&lt;/style&gt;
     const priorityIndex = first("Приоритет");
     const assigneeIndex = first("Исполнитель");
     const componentIndices = all(name => name === "Компоненты");
-    const relationIndices = all(name => /связ|ссылка на эпик|родительская ссылка/i.test(name));
+    const relationColumns = all(name => /связ|ссылка на эпик|родительская ссылка/i.test(name)).map(index => ({
+      index,
+      label: displayRelationName(headers[index].match(/\(([^()]*)\)\s*$/)?.[1]),
+    }));
+    const relationIndices = relationColumns.map(column => column.index);
     const parentIndices = all(name => /ссылка на эпик|родительская ссылка/i.test(name));
     const value = (rowValue, index) => index >= 0 ? String(rowValue[index] || "").trim() : "";
     const issues = rows.slice(1).map(rowValue => {
       const id = value(rowValue, keyIndex);
       if (!id) return null;
+      const relationTypes = {};
+      for (const column of relationColumns) {
+        const linkedKey = value(rowValue, column.index);
+        if (!linkedKey || !column.label) continue;
+        relationTypes[linkedKey] = unique([relationTypes[linkedKey], column.label]);
+      }
       return {
         id,
         summary: value(rowValue, summaryIndex) || id,
@@ -2460,6 +3113,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         url: `https://dev.ekoniva-apk.com/browse/${encodeURIComponent(id)}`,
         components: unique(componentIndices.map(index => rowValue[index])),
         links: unique(relationIndices.map(index => rowValue[index])),
+        relationTypes,
         parentKey: parentIndices.map(index => value(rowValue, index)).find(Boolean) || "",
         external: false,
         synthetic: false,
@@ -2470,6 +3124,9 @@ html&gt;body{padding:0}&lt;/style&gt;
       for (const linkedKey of issue.links) {
         const linked = issuesByKey.get(linkedKey);
         if (linked && !linked.links.includes(issue.id)) linked.links.push(issue.id);
+        if (linked && issue.relationTypes[linkedKey]?.length) {
+          linked.relationTypes[issue.id] = unique([linked.relationTypes[issue.id], issue.relationTypes[linkedKey]]);
+        }
       }
     }
     const projectCandidate = issue => issue.id.startsWith("PROJECTS-") || ["Проект", "Project", "Epic"].includes(issue.taskType);
@@ -2499,7 +3156,20 @@ html&gt;body{padding:0}&lt;/style&gt;
     for (const issue of issues) {
       if (buckets.has(issue.id)) continue;
       const project = chooseProject(issue);
-      if (project && buckets.has(project.id)) buckets.get(project.id).push(issue); else unassigned.push(issue);
+      if (project && buckets.has(project.id)) {
+        const relationLabels = issue.links.flatMap(linkedKey => {
+          let candidate = candidates.get(linkedKey);
+          const seen = new Set();
+          while (candidate && parentByProject.has(candidate.id) && !seen.has(candidate.id)) {
+            seen.add(candidate.id);
+            candidate = candidates.get(parentByProject.get(candidate.id)) || candidate;
+          }
+          if (candidate?.id !== project.id) return [];
+          return issue.relationTypes[linkedKey] || candidates.get(linkedKey)?.relationTypes?.[issue.id] || [];
+        });
+        issue.relationLabel = unique(relationLabels).join(", ");
+        buckets.get(project.id).push(issue);
+      } else unassigned.push(issue);
     }
     const groups = topProjects.map(project => ({group: project, tasks: buckets.get(project.id), synthetic: false}));
     const bugs = unassigned.filter(issue => ["Ошибка", "Bug"].includes(issue.taskType));
@@ -2526,7 +3196,6 @@ html&gt;body{padding:0}&lt;/style&gt;
     select.disabled = true;
     submit.disabled = true;
     csvFile.disabled = true;
-    importHint.textContent = file.name;
     setStatus(`Импортируем ${file.name}…`);
     try {
       const result = diagramFromCsv(await file.text());
@@ -2538,15 +3207,16 @@ html&gt;body{padding:0}&lt;/style&gt;
         select.appendChild(option);
       }
       select.value = release;
-      diagram.contentWindow.postMessage({type: "jira-diagram-data", payload: result}, "*");
+      preparedCsvResult = result;
+      preparedCsvRelease = release;
+      syncSubmitState();
       const count = result.data?.summary?.releaseIssues ?? 0;
-      setStatus(`Импортировано ${count} задач · релиз определён из файла: ${release}`);
-      document.title = `EkoCrop ${release} — карта задач`;
+      setStatus(`Подготовлено ${count} задач · релиз ${release}. Нажмите «Построить диаграмму»`);
     } catch (error) {
       setStatus(`Ошибка импорта: ${error.message}`);
     } finally {
       select.disabled = false;
-      submit.disabled = false;
+      syncSubmitState();
       csvFile.disabled = false;
       csvFile.value = "";
     }
@@ -2571,6 +3241,18 @@ html&gt;body{padding:0}&lt;/style&gt;
     if (!release) return;
     select.disabled = true;
     submit.disabled = true;
+    if (preparedCsvResult && preparedCsvRelease === release) {
+      const result = preparedCsvResult;
+      renderDashboard(result);
+      diagramShell.hidden = false;
+      diagram.contentWindow.postMessage({type: "jira-diagram-data", payload: result}, "*");
+      const count = result.data?.summary?.releaseIssues ?? 0;
+      setStatus(`Релиз ${release}: построена диаграмма по ${count} задачам из CSV`);
+      document.title = `EkoCrop ${release} — карта задач`;
+      select.disabled = false;
+      syncSubmitState();
+      return;
+    }
     setStatus(`Отправляем запрос для релиза ${release}…`);
     try {
       const job = await json(await fetch("/api/diagram-jobs", {
@@ -2579,6 +3261,8 @@ html&gt;body{padding:0}&lt;/style&gt;
         body: JSON.stringify({release}),
       }));
       const result = await waitForJob(job.id);
+      renderDashboard(result);
+      diagramShell.hidden = false;
       diagram.contentWindow.postMessage({type: "jira-diagram-data", payload: result}, "*");
       const count = result.data?.summary?.releaseIssues ?? 0;
       setStatus(`Релиз ${release}: загружено ${count} задач`);
@@ -2587,11 +3271,12 @@ html&gt;body{padding:0}&lt;/style&gt;
       setStatus(`Ошибка: ${error.message}`);
     } finally {
       select.disabled = false;
-      submit.disabled = false;
+      syncSubmitState();
     }
   });
 
   loadReleases();
+  syncSubmitState();
 })();
 </script>
 </body>
