@@ -260,8 +260,9 @@ function sendJson(response, status, value) {
 
 function publicBaseUrl(request) {
   if (process.env.APP_BASE_URL) return process.env.APP_BASE_URL.replace(/\/$/, "");
-  const protocol = request.headers["x-forwarded-proto"] || "http";
-  const host = request.headers["x-forwarded-host"] || request.headers.host;
+  if (process.env.RENDER_EXTERNAL_URL) return process.env.RENDER_EXTERNAL_URL.replace(/\/$/, "");
+  const protocol = String(request.headers["x-forwarded-proto"] || "http").split(",")[0].trim();
+  const host = String(request.headers["x-forwarded-host"] || request.headers.host).split(",")[0].trim();
   return `${protocol}://${host}`;
 }
 
@@ -375,6 +376,13 @@ export function createAppServer() {
         const releases = await jiraReleases();
         return sendJson(response, 200, {releases, mode: integrationMode()});
       }
+      if (request.method === "GET" && url.pathname === "/api/health") {
+        return sendJson(response, 200, {
+          ok: true,
+          integration: integrationMode(),
+          uptimeSeconds: Math.round(process.uptime()),
+        });
+      }
       if (request.method === "POST" && url.pathname === "/api/diagram-jobs") {
         return await startJob(request, response);
       }
@@ -405,7 +413,8 @@ const executedDirectly = process.argv[1]
   && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (executedDirectly) {
   const port = Number(process.env.PORT || 8787);
-  createAppServer().listen(port, () => {
-    console.log(`Jira release map: http://localhost:${port}`);
+  const host = process.env.HOST || "0.0.0.0";
+  createAppServer().listen(port, host, () => {
+    console.log(`Jira release map listens on ${host}:${port}`);
   });
 }

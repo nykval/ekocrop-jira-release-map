@@ -1,6 +1,7 @@
 {
   "name": "ekocrop-jira-release-map",
   "private": true,
+  "description": "Веб-карта релизов EkoCrop с загрузкой задач через Jira Automation",
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
