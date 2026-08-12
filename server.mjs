@@ -3,6 +3,7 @@ import {randomBytes, randomUUID} from "node:crypto";
 import {readFile} from "node:fs/promises";
 import {fileURLToPath, pathToFileURL} from "node:url";
 import {dirname, extname, join, normalize} from "node:path";
+import {jiraCsvRelease, jiraCsvToIssues} from "./src/worker.mjs";
 
 const moduleDirectory = dirname(fileURLToPath(import.meta.url));
 const publicDirectory = join(moduleDirectory, "public");
@@ -274,6 +275,17 @@ async function readJson(request, limit = 5 * 1024 * 1024) {
   return JSON.parse(Buffer.concat(chunks).toString("utf8"));
 }
 
+async function readText(request, limit = 5 * 1024 * 1024) {
+  const chunks = [];
+  let size = 0;
+  for await (const chunk of request) {
+    size += chunk.length;
+    if (size > limit) throw new Error("CSV-файл больше 5 МБ");
+    chunks.push(chunk);
+  }
+  return Buffer.concat(chunks).toString("utf8");
+}
+
 function sendJson(response, status, value) {
   const body = JSON.stringify(value);
   response.writeHead(status, {
@@ -436,6 +448,16 @@ export function createAppServer() {
       }
       if (request.method === "POST" && url.pathname === "/api/diagram-jobs") {
         return await startJob(request, response);
+      }
+      if (request.method === "POST" && url.pathname === "/api/import-csv") {
+        const csvText = await readText(request);
+        const release = jiraCsvRelease(csvText);
+        const issues = jiraCsvToIssues(csvText);
+        return sendJson(response, 200, buildDiagramData(
+          release,
+          issues,
+          process.env.JIRA_BASE_URL || "https://dev.ekoniva-apk.com",
+        ));
       }
       const jobMatch = url.pathname.match(/^\/api\/diagram-jobs\/([0-9a-f-]+)$/i);
       if (request.method === "GET" && jobMatch) return jobStatus(response, jobMatch[1]);

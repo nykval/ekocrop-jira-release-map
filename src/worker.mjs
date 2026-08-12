@@ -3,6 +3,105 @@ const JOB_TTL_SECONDS = 30 * 60;
 
 const issueTypeRanks = {Epic: 5, Проект: 4, Project: 4, История: 3, Story: 3};
 
+function parseCsv(textValue) {
+  const rows = [];
+  let row = [];
+  let cell = "";
+  let quoted = false;
+  const source = String(textValue || "").replace(/^\uFEFF/, "");
+  for (let index = 0; index < source.length; index += 1) {
+    const character = source[index];
+    if (quoted) {
+      if (character === '"' && source[index + 1] === '"') {
+        cell += '"';
+        index += 1;
+      } else if (character === '"') quoted = false;
+      else cell += character;
+    } else if (character === '"') quoted = true;
+    else if (character === ",") {
+      row.push(cell);
+      cell = "";
+    } else if (character === "\n" || character === "\r") {
+      if (character === "\r" && source[index + 1] === "\n") index += 1;
+      row.push(cell);
+      if (row.some(value => value !== "")) rows.push(row);
+      row = [];
+      cell = "";
+    } else cell += character;
+  }
+  row.push(cell);
+  if (row.some(value => value !== "")) rows.push(row);
+  return rows;
+}
+
+export function jiraCsvToIssues(csvText) {
+  const rows = parseCsv(csvText);
+  if (rows.length < 2) throw new Error("CSV-файл не содержит задач");
+  const headers = rows[0].map(value => value.trim());
+  const first = name => headers.indexOf(name);
+  const all = predicate => headers.map((name, index) => predicate(name) ? index : -1).filter(index => index >= 0);
+  const keyIndex = first("Ключ проблемы");
+  const summaryIndex = first("Тема");
+  if (keyIndex < 0 || summaryIndex < 0) throw new Error("Это не экспорт Jira: не найдены колонки «Ключ проблемы» и «Тема»");
+  const typeIndex = first("Тип задачи");
+  const statusIndex = first("Статус");
+  const priorityIndex = first("Приоритет");
+  const assigneeIndex = first("Исполнитель");
+  const componentIndices = all(name => name === "Компоненты");
+  const relationIndices = all(name => /связ|ссылка на эпик|родительская ссылка/i.test(name));
+  const parentIndices = all(name => /ссылка на эпик|родительская ссылка/i.test(name));
+  const value = (rowValue, index) => index >= 0 ? text(rowValue[index]) : "";
+  const issues = rows.slice(1).map(rowValue => {
+    const key = value(rowValue, keyIndex);
+    if (!key) return null;
+    return {
+      key,
+      summary: value(rowValue, summaryIndex),
+      issueType: value(rowValue, typeIndex),
+      status: value(rowValue, statusIndex),
+      priority: value(rowValue, priorityIndex),
+      assignee: value(rowValue, assigneeIndex),
+      components: uniqueStrings(componentIndices.map(index => rowValue[index])),
+      linkedKeys: uniqueStrings(relationIndices.map(index => rowValue[index])),
+      parentKey: parentIndices.map(index => value(rowValue, index)).find(Boolean) || "",
+    };
+  }).filter(Boolean);
+  const issuesByKey = new Map(issues.map(issue => [issue.key, issue]));
+  for (const issue of issues) {
+    for (const linkedKey of issue.linkedKeys) {
+      const linked = issuesByKey.get(linkedKey);
+      if (linked && !linked.linkedKeys.includes(issue.key)) linked.linkedKeys.push(issue.key);
+    }
+  }
+  return issues;
+}
+
+export function jiraCsvRelease(csvText) {
+  const rows = parseCsv(csvText);
+  if (rows.length < 2) throw new Error("CSV-файл не содержит задач");
+  const headers = rows[0].map(value => value.trim());
+  const versionIndices = headers
+    .map((name, index) => name === "Исправить в версиях" ? index : -1)
+    .filter(index => index >= 0);
+  if (!versionIndices.length) {
+    throw new Error("В CSV нет колонки «Исправить в версиях»");
+  }
+  const counts = new Map();
+  for (const row of rows.slice(1)) {
+    const rowReleases = new Set(versionIndices.flatMap(index => {
+      const match = text(row[index]).match(/(?:EkoCrop\s*)?(\d+(?:[.,]\d+)?)/i);
+      return match ? [match[1].replace(",", ".")] : [];
+    }));
+    for (const release of rowReleases) counts.set(release, (counts.get(release) || 0) + 1);
+  }
+  const ranked = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  if (!ranked.length) throw new Error("В колонке «Исправить в версиях» не указан релиз EkoCrop");
+  if (ranked[1]?.[1] === ranked[0][1]) {
+    throw new Error(`В CSV неоднозначно указаны релизы: ${ranked.filter(item => item[1] === ranked[0][1]).map(item => item[0]).join(", ")}`);
+  }
+  return ranked[0][0];
+}
+
 function text(value, fallback = "") {
   if (value === null || value === undefined) return fallback;
   if (typeof value === "string") return value.trim() || fallback;
@@ -90,6 +189,25 @@ export function buildDiagramData(release, rawIssues, jiraBaseUrl = "https://dev.
   const issues = rawIssues.map(issue => normalizeIssue(issue, jiraBaseUrl));
   const issuesByKey = new Map(issues.map(issue => [issue.id, issue]));
   const candidates = new Map(issues.filter(projectCandidate).map(issue => [issue.id, issue]));
+  for (const linkedKey of uniqueStrings(issues.flatMap(issue => issue.links))) {
+    if (!linkedKey.startsWith("PROJECTS-") || issuesByKey.has(linkedKey)) continue;
+    const externalProject = {
+      id: linkedKey,
+      summary: linkedKey,
+      taskType: "Проект",
+      status: "Вне выбранного релиза",
+      priority: "Не указан",
+      assignee: "Не назначен",
+      url: `${jiraBaseUrl.replace(/\/$/, "")}/browse/${encodeURIComponent(linkedKey)}`,
+      components: [],
+      links: [],
+      parentKey: "",
+      external: true,
+      synthetic: false,
+    };
+    issuesByKey.set(linkedKey, externalProject);
+    candidates.set(linkedKey, externalProject);
+  }
   const parentByProject = new Map();
 
   for (const issue of candidates.values()) {
@@ -238,6 +356,15 @@ async function jobStatus(id, env) {
   return json({id: job.id, release: job.release, status: job.status, error: job.error, result: job.status === "ready" ? job.result : undefined});
 }
 
+async function importCsv(request, env) {
+  const length = Number(request.headers.get("content-length") || 0);
+  if (length > 5 * 1024 * 1024) return json({error: "CSV-файл больше 5 МБ"}, 413);
+  const csvText = await request.text();
+  const release = jiraCsvRelease(csvText);
+  const issues = jiraCsvToIssues(csvText);
+  return json(buildDiagramData(release, issues, env.JIRA_BASE_URL || "https://dev.ekoniva-apk.com"));
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -249,6 +376,7 @@ export default {
         return json({ok: true, platform: "cloudflare-workers", integration: env.JIRA_AUTOMATION_WEBHOOK_URL ? "automation" : "not-configured", storage: env.JOBS ? "ready" : "not-configured"});
       }
       if (request.method === "POST" && url.pathname === "/api/diagram-jobs") return startJob(request, env);
+      if (request.method === "POST" && url.pathname === "/api/import-csv") return importCsv(request, env);
       const jobMatch = url.pathname.match(/^\/api\/diagram-jobs\/([0-9a-f-]+)$/i);
       if (request.method === "GET" && jobMatch) return jobStatus(jobMatch[1], env);
       if (request.method === "POST" && url.pathname === "/api/jira-callback") return acceptCallback(request, env);

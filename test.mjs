@@ -146,3 +146,27 @@ test("главная страница сразу отдаёт приложени
     await close(app);
   }
 });
+
+test("локальный сервер импортирует CSV-экспорт Jira", async () => {
+  const app = createAppServer();
+  const appPort = await listen(app);
+  const csv = [
+    "Тема,Ключ проблемы,Тип задачи,Статус,Приоритет,Исправить в версиях,Входящая связь задачи (subtasks-custom-link)",
+    '"[EkoCrop] Проект",PROJECTS-1,Проект,Новый,High,EkoCrop 9.0,DEVELOP-1',
+    '"Задача, с запятой",DEVELOP-1,Задача,Сделать,Medium,EkoCrop 9.0,PROJECTS-1',
+  ].join("\n");
+  try {
+    const response = await fetch(`http://127.0.0.1:${appPort}/api/import-csv?release=10.0`, {
+      method: "POST",
+      headers: {"Content-Type": "text/csv;charset=utf-8"},
+      body: csv,
+    });
+    assert.equal(response.status, 200);
+    const result = await response.json();
+    assert.equal(result.data.release.summary, "Релиз EkoCrop 9.0");
+    assert.equal(result.data.summary.releaseIssues, 2);
+    assert.equal(result.data.groups[0].tasks[0].id, "DEVELOP-1");
+  } finally {
+    await close(app);
+  }
+});
