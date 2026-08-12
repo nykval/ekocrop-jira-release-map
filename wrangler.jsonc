@@ -12,5 +12,11 @@
   },
   "vars": {
     "JIRA_BASE_URL": "https://dev.ekoniva-apk.com"
-  }
+  },
+  "kv_namespaces": [
+    {
+      "binding": "JOBS",
+      "id": "5b25250eb01e4d4384f8e7b090aa8c63"
+    }
+  ]
 }
