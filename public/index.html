@@ -6,9 +6,25 @@
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src 'self' blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Карта релиза EkoCrop</title>
-<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255),rgb(24 24 24));font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:light-dark(rgb(26 28 31),rgb(255 255 255))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}.release-toolbar{display:flex;align-items:end;gap:.75rem;flex-wrap:wrap;margin:0 0 .75rem}.release-field{display:grid;gap:.3rem;min-width:220px}.release-field label{font-size:.85rem;color:light-dark(rgb(80 84 90),rgb(190 194 200))}.release-field select,.release-toolbar button{box-sizing:border-box;min-height:40px;border:1px solid light-dark(rgb(205 208 214),rgb(80 84 90));border-radius:8px;padding:.55rem .75rem;font:inherit}.release-field select{background:light-dark(rgb(255 255 255),rgb(38 38 38));color:inherit}.release-toolbar button{border-color:light-dark(rgb(0 126 58),rgb(64 201 119));background:light-dark(rgb(0 126 58),rgb(64 201 119));color:light-dark(rgb(255 255 255),rgb(13 13 13));cursor:pointer}.release-toolbar button:disabled{opacity:.55;cursor:wait}.release-status{min-height:40px;display:flex;align-items:center;color:light-dark(rgb(80 84 90),rgb(190 194 200))}iframe{display:block;width:100%;height:calc(100vh - 7rem);min-height:420px;margin:0 auto;border:0}@media(max-width:520px){.release-field{flex:1 1 100%}.release-toolbar button{flex:1}.release-status{flex-basis:100%;height:auto;min-height:0}}</style>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255),rgb(24 24 24));font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:light-dark(rgb(26 28 31),rgb(255 255 255));--app-green:light-dark(rgb(0 126 58),rgb(64 201 119));--app-border:light-dark(rgb(226 229 233),rgb(63 67 72));--app-muted:light-dark(rgb(91 96 104),rgb(180 185 192));--app-soft:light-dark(rgb(246 249 247),rgb(31 38 34))}*{box-sizing:border-box}html,body{margin:0}body{background:inherit}.app-header{padding:1.25rem 2rem 0;border-top:3px solid var(--app-green);border-bottom:1px solid var(--app-border);background:inherit}.app-brand{display:flex;align-items:center;gap:.7rem;margin-bottom:1rem}.app-brand-mark{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--app-green);color:light-dark(white,rgb(13 13 13));font-weight:700}.app-brand-copy{display:grid;gap:.1rem}.app-brand-title{font-size:1.05rem;font-weight:650}.app-brand-subtitle{font-size:.78rem;color:var(--app-muted)}.section-tabs{display:flex;gap:.35rem;overflow-x:auto;scrollbar-width:none}.section-tabs::-webkit-scrollbar{display:none}.section-tab{position:relative;display:inline-flex;align-items:center;gap:.5rem;min-height:44px;padding:.65rem .9rem;border:0;background:transparent;color:var(--app-muted);font:inherit;font-weight:550;white-space:nowrap;cursor:pointer}.section-tab:hover{color:inherit;background:var(--app-soft);border-radius:8px 8px 0 0}.section-tab[aria-selected="true"]{color:var(--app-green)}.section-tab[aria-selected="true"]::after{content:"";position:absolute;left:.8rem;right:.8rem;bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:var(--app-green)}.section-tab-count{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 .35rem;border-radius:10px;background:var(--app-soft);color:var(--app-muted);font-size:.7rem}.app-view{padding:1.15rem 2rem 0}.app-view[hidden]{display:none}.release-toolbar{display:flex;align-items:end;gap:.75rem;flex-wrap:wrap;margin:0 0 .75rem}.release-field{display:grid;gap:.3rem;min-width:220px}.release-field label{font-size:.85rem;color:var(--app-muted)}.release-field select,.release-toolbar button{box-sizing:border-box;min-height:44px;border:1px solid var(--app-border);border-radius:10px;padding:.6rem .8rem;font:inherit}.release-field select{background:light-dark(rgb(255 255 255),rgb(38 38 38));color:inherit}.release-toolbar button{border-color:var(--app-green);background:var(--app-green);color:light-dark(rgb(255 255 255),rgb(13 13 13));font-weight:600;cursor:pointer}.release-toolbar button:disabled{opacity:.55;cursor:wait}.release-status{min-height:44px;display:flex;align-items:center;color:var(--app-muted)}.future-view{min-height:320px;display:grid;place-items:center;text-align:center}.future-view-inner{max-width:440px}.future-view h2{margin:0 0 .5rem;font-size:1.25rem}.future-view p{margin:0;color:var(--app-muted);line-height:1.55}iframe{display:block;width:100%;height:calc(100vh - 11rem);min-height:420px;margin:0 auto;border:0}@media(max-width:680px){.app-header{padding:1rem 1rem 0}.app-view{padding:1rem 1rem 0}.app-brand-subtitle{display:none}.section-tab{padding:.6rem .7rem}.release-field{flex:1 1 100%}.release-toolbar button{flex:1}.release-status{flex-basis:100%;height:auto;min-height:0}iframe{height:calc(100vh - 14rem)}}</style>
 </head>
 <body>
+<header class="app-header">
+  <div class="app-brand">
+    <span class="app-brand-mark" aria-hidden="true">E</span>
+    <span class="app-brand-copy">
+      <span class="app-brand-title">EkoCrop · Центр аналитики</span>
+      <span class="app-brand-subtitle">Релизы, связи и продуктовые показатели</span>
+    </span>
+  </div>
+  <nav class="section-tabs" role="tablist" aria-label="Разделы аналитики">
+    <button class="section-tab" type="button" role="tab" aria-selected="true" aria-controls="release-map-view" data-section-tab="release-map">Карта релиза</button>
+    <button class="section-tab" type="button" role="tab" aria-selected="false" aria-controls="release-analytics-view" data-section-tab="release-analytics">Аналитика релиза <span class="section-tab-count">скоро</span></button>
+    <button class="section-tab" type="button" role="tab" aria-selected="false" aria-controls="dependencies-view" data-section-tab="dependencies">Зависимости <span class="section-tab-count">скоро</span></button>
+  </nav>
+</header>
+<main>
+<section class="app-view" id="release-map-view" role="tabpanel" data-section-view="release-map">
 <form class="release-toolbar" data-release-form>
   <div class="release-field">
     <label for="release-select">Релиз</label>
@@ -966,8 +982,8 @@ html&gt;body{padding:0}&lt;/style&gt;
       will-change: transform;
     }
     #jira-release-10-hierarchy .jrh-grid-dot {
-      fill: var(--border);
-      opacity: .24;
+      fill: var(--muted-foreground);
+      opacity: .28;
     }
     #jira-release-10-hierarchy .jrh-link {
       fill: none;
@@ -1880,14 +1896,14 @@ html&gt;body{padding:0}&lt;/style&gt;
         const defs = svgElement(&quot;defs&quot;);
         const pattern = svgElement(&quot;pattern&quot;, {
           id: &quot;jrh-grid-pattern&quot;,
-          width: 30,
-          height: 30,
+          width: 24,
+          height: 24,
           patternUnits: &quot;userSpaceOnUse&quot;,
         });
         pattern.appendChild(svgElement(&quot;circle&quot;, {
           cx: 1,
           cy: 1,
-          r: .8,
+          r: 1,
           class: &quot;jrh-grid-dot&quot;,
         }));
         defs.appendChild(pattern);
@@ -2287,13 +2303,31 @@ html&gt;body{padding:0}&lt;/style&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 "></iframe>
+</section>
+<section class="app-view future-view" id="release-analytics-view" role="tabpanel" data-section-view="release-analytics" hidden>
+  <div class="future-view-inner"><h2>Аналитика релиза</h2><p>Здесь появятся графики по статусам, приоритетам и динамике выполнения задач.</p></div>
+</section>
+<section class="app-view future-view" id="dependencies-view" role="tabpanel" data-section-view="dependencies" hidden>
+  <div class="future-view-inner"><h2>Зависимости</h2><p>Здесь появится отдельное представление связей и блокирующих зависимостей между задачами.</p></div>
+</section>
+</main>
 <script>
 (() => {
+  const tabs = [...document.querySelectorAll("[data-section-tab]")];
+  const views = [...document.querySelectorAll("[data-section-view]")];
   const form = document.querySelector("[data-release-form]");
   const select = document.querySelector("[data-release-select]");
   const submit = document.querySelector("[data-release-submit]");
   const status = document.querySelector("[data-release-status]");
   const diagram = document.querySelector("iframe");
+
+  for (const tab of tabs) {
+    tab.addEventListener("click", () => {
+      const section = tab.dataset.sectionTab;
+      for (const item of tabs) item.setAttribute("aria-selected", String(item === tab));
+      for (const view of views) view.hidden = view.dataset.sectionView !== section;
+    });
+  }
 
   function setStatus(message) {
     status.textContent = message;
