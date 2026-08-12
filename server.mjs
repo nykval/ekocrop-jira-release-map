@@ -327,7 +327,7 @@ async function startJob(request, response) {
 
   const id = randomUUID();
   const callbackToken = randomBytes(24).toString("hex");
-  const callbackUrl = `${publicBaseUrl(request)}/api/jira-callback/${id}?token=${callbackToken}`;
+  const callbackUrl = `${publicBaseUrl(request)}/api/jira-callback`;
   const job = {id, release, callbackToken, status: "pending", createdAt: Date.now()};
   jobs.set(id, job);
 
@@ -342,8 +342,9 @@ async function startJob(request, response) {
       body: JSON.stringify({
         requestId: id,
         release,
+        callbackToken,
         callbackUrl,
-        data: {releaseVersion: release, requestId: id, callbackUrl},
+        data: {releaseVersion: release, requestId: id, callbackToken, callbackUrl},
       }),
     });
     if (!jiraResponse.ok) throw new Error(`Jira Automation: HTTP ${jiraResponse.status}`);
@@ -355,17 +356,16 @@ async function startJob(request, response) {
   }
 }
 
-async function acceptCallback(request, response, id, url) {
+async function acceptCallback(request, response, id, token, payload) {
   const job = jobs.get(id);
   if (!job) return sendJson(response, 404, {error: "Запрос не найден или устарел"});
-  if (url.searchParams.get("token") !== job.callbackToken) {
+  if (token !== job.callbackToken) {
     return sendJson(response, 403, {error: "Неверный callback token"});
   }
   if (job.status === "ready") {
     return sendJson(response, 409, {error: "Результат для этого запроса уже получен"});
   }
   try {
-    const payload = await readJson(request);
     const issues = Array.isArray(payload) ? payload : payload.issues;
     job.result = buildDiagramData(
       job.release,
@@ -441,7 +441,18 @@ export function createAppServer() {
       if (request.method === "GET" && jobMatch) return jobStatus(response, jobMatch[1]);
       const callbackMatch = url.pathname.match(/^\/api\/jira-callback\/([0-9a-f-]+)$/i);
       if (request.method === "POST" && callbackMatch) {
-        return await acceptCallback(request, response, callbackMatch[1], url);
+        const payload = await readJson(request);
+        return await acceptCallback(request, response, callbackMatch[1], url.searchParams.get("token"), payload);
+      }
+      if (request.method === "POST" && url.pathname === "/api/jira-callback") {
+        const payload = await readJson(request);
+        return await acceptCallback(
+          request,
+          response,
+          text(payload.requestId),
+          text(payload.callbackToken),
+          payload,
+        );
       }
       if (request.method === "GET" || request.method === "HEAD") {
         return await serveStatic(response, url.pathname);

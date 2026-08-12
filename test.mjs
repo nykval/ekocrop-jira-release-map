@@ -87,12 +87,17 @@ test("веб-хук, callback и опрос задания работают вм
     const body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
     assert.equal(body.data.releaseVersion, "11.0");
     assert.equal(body.data.callbackUrl, body.callbackUrl);
+    assert.ok(body.data.callbackToken);
     response.writeHead(200, {"Content-Type": "application/json"});
     response.end("{}");
     callbackPromise = fetch(body.callbackUrl, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({issues: sampleIssues}),
+      body: JSON.stringify({
+        requestId: body.data.requestId,
+        callbackToken: body.data.callbackToken,
+        issues: sampleIssues,
+      }),
     });
   });
   const jiraPort = await listen(jiraMock);

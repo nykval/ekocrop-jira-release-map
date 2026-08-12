@@ -5,7 +5,12 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test test.mjs"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test test.mjs worker.test.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.30.0"
   },
   "engines": {
     "node": ">=20"
