@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {createServer} from "node:http";
-import {buildDiagramData, createAppServer} from "./server.mjs";
+import {buildDiagramData, createAppServer, searchJiraIssues} from "./server.mjs";
 
 const sampleIssues = [
   {
@@ -44,12 +44,49 @@ test("buildDiagramData создаёт проекты и три служебны�
   assert.deepEqual(result.componentsByIssue["DEVELOP-1"], ["arch-tier: backend-srv"]);
 });
 
+test("Jira REST поиск формирует JQL релиза и получает все страницы", async () => {
+  const previousBaseUrl = process.env.JIRA_BASE_URL;
+  const previousAuth = process.env.JIRA_AUTH_HEADER;
+  process.env.JIRA_BASE_URL = "https://jira.example.test";
+  process.env.JIRA_AUTH_HEADER = "Bearer secret-test-token";
+  const requests = [];
+  const mockFetch = async (url, options) => {
+    const body = JSON.parse(options.body);
+    requests.push({url, options, body});
+    const issues = body.startAt === 0 ? sampleIssues.slice(0, 2) : sampleIssues.slice(2);
+    return new Response(JSON.stringify({issues, total: sampleIssues.length}), {
+      status: 200,
+      headers: {"Content-Type": "application/json"},
+    });
+  };
+  try {
+    const issues = await searchJiraIssues("10.0", mockFetch);
+    assert.equal(issues.length, sampleIssues.length);
+    assert.equal(requests.length, 2);
+    assert.equal(requests[0].url, "https://jira.example.test/rest/api/2/search");
+    assert.equal(requests[0].body.jql, 'fixVersion = "10.0" ORDER BY priority ASC, key ASC');
+    assert.equal(requests[0].options.headers.Authorization, "Bearer secret-test-token");
+    assert.equal(requests[1].body.startAt, 2);
+  } finally {
+    if (previousBaseUrl === undefined) delete process.env.JIRA_BASE_URL;
+    else process.env.JIRA_BASE_URL = previousBaseUrl;
+    if (previousAuth === undefined) delete process.env.JIRA_AUTH_HEADER;
+    else process.env.JIRA_AUTH_HEADER = previousAuth;
+  }
+});
+
 test("веб-хук, callback и опрос задания работают вместе", async () => {
   let callbackPromise;
+  const previousBaseUrl = process.env.JIRA_BASE_URL;
+  const previousAuth = process.env.JIRA_AUTH_HEADER;
+  delete process.env.JIRA_BASE_URL;
+  delete process.env.JIRA_AUTH_HEADER;
   const jiraMock = createServer(async (request, response) => {
     const chunks = [];
     for await (const chunk of request) chunks.push(chunk);
     const body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+    assert.equal(body.data.releaseVersion, "11.0");
+    assert.equal(body.data.callbackUrl, body.callbackUrl);
     response.writeHead(200, {"Content-Type": "application/json"});
     response.end("{}");
     callbackPromise = fetch(body.callbackUrl, {
@@ -83,6 +120,8 @@ test("веб-хук, callback и опрос задания работают вм
   } finally {
     delete process.env.JIRA_AUTOMATION_WEBHOOK_URL;
     delete process.env.APP_BASE_URL;
+    if (previousBaseUrl !== undefined) process.env.JIRA_BASE_URL = previousBaseUrl;
+    if (previousAuth !== undefined) process.env.JIRA_AUTH_HEADER = previousAuth;
     await close(app);
     await close(jiraMock);
   }

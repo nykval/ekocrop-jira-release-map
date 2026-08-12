@@ -12,7 +12,7 @@ services:
       - key: NODE_VERSION
         value: 20.19.5
       - key: RELEASES
-        value: 10.0,10.1
+        value: 6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0
       - key: JIRA_BASE_URL
         value: https://dev.ekoniva-apk.com
       - key: JIRA_PROJECT_KEYS
@@ -20,6 +20,4 @@ services:
       - key: JIRA_AUTOMATION_WEBHOOK_URL
         sync: false
       - key: JIRA_AUTOMATION_WEBHOOK_TOKEN
-        sync: false
-      - key: JIRA_AUTH_HEADER
         sync: false

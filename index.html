@@ -12,12 +12,20 @@
 <form class="release-toolbar" data-release-form>
   <div class="release-field">
     <label for="release-select">Релиз</label>
-    <select id="release-select" data-release-select disabled>
-      <option value="10.0">10.0</option>
+    <select id="release-select" data-release-select>
+      <option value="6.0">6.0</option>
+      <option value="7.0">7.0</option>
+      <option value="8.0">8.0</option>
+      <option value="9.0">9.0</option>
+      <option value="10.0" selected>10.0</option>
+      <option value="11.0">11.0</option>
+      <option value="12.0">12.0</option>
+      <option value="13.0">13.0</option>
+      <option value="14.0">14.0</option>
     </select>
   </div>
-  <button type="submit" data-release-submit disabled>Построить диаграмму</button>
-  <span class="release-status" data-release-status role="status" aria-live="polite">Загрузка списка релизов…</span>
+  <button type="submit" data-release-submit>Построить диаграмму</button>
+  <span class="release-status" data-release-status role="status" aria-live="polite">Выберите релиз</span>
 </form>
 <iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" title="Карта релиза EkoCrop" srcdoc="&lt;!doctype html&gt;
 &lt;html lang=&quot;en&quot;&gt;
@@ -2316,13 +2324,15 @@ html&gt;body{padding:0}&lt;/style&gt;
       select.value = "10.0";
       select.disabled = false;
       submit.disabled = false;
-      setStatus(payload.mode === "automation"
-        ? "Выберите релиз и постройте диаграмму"
-        : "Список готов; для загрузки новых данных настройте веб-хук Jira");
+      setStatus(payload.mode === "rest"
+        ? "Выберите релиз — задачи будут загружены напрямую из Jira"
+        : payload.mode === "automation"
+          ? "Выберите релиз и постройте диаграмму"
+          : "Подключение к Jira ещё не настроено администратором");
     } catch (error) {
       select.disabled = false;
       submit.disabled = false;
-      setStatus(`Сервис недоступен: ${error.message}`);
+      setStatus("Выберите релиз. Для загрузки актуальных задач требуется адрес приложения Render");
     }
   }
 

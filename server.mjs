@@ -198,42 +198,68 @@ export function buildDiagramData(release, rawIssues, jiraBaseUrl = "https://dev.
 }
 
 function configuredReleases() {
-  return (process.env.RELEASES || "10.0")
+  return (process.env.RELEASES || Array.from({length: 9}, (_, index) => `${index + 6}.0`).join(","))
     .split(",")
     .map(value => value.trim())
     .filter(Boolean)
     .map(name => ({id: name, name}));
 }
 
-async function jiraReleases() {
-  const baseUrl = process.env.JIRA_BASE_URL;
-  const auth = process.env.JIRA_AUTH_HEADER;
-  const projects = (process.env.JIRA_PROJECT_KEYS || "")
-    .split(",")
-    .map(value => value.trim())
-    .filter(Boolean);
-  if (!baseUrl || !auth || !projects.length) return configuredReleases();
+function jiraConfiguration() {
+  const baseUrl = text(process.env.JIRA_BASE_URL).replace(/\/$/, "");
+  const auth = text(process.env.JIRA_AUTH_HEADER);
+  return {baseUrl, auth, ready: Boolean(baseUrl && auth)};
+}
 
-  const versions = [];
-  for (const project of projects) {
-    const response = await fetch(`${baseUrl.replace(/\/$/, "")}/rest/api/2/project/${encodeURIComponent(project)}/versions`, {
-      headers: {Authorization: auth, Accept: "application/json"},
+function jiraHeaders() {
+  const {auth} = jiraConfiguration();
+  return {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    Authorization: auth,
+  };
+}
+
+function jiraErrorMessage(status, payload) {
+  if (status === 401) return "Jira отклонила авторизацию. Проверьте JIRA_AUTH_HEADER";
+  if (status === 403) return "У технического пользователя нет доступа к задачам Jira";
+  const messages = uniqueStrings([payload?.errorMessages, Object.values(payload?.errors || {})]);
+  return messages.length ? messages.join("; ") : `Jira REST API: HTTP ${status}`;
+}
+
+export async function searchJiraIssues(release, fetchImplementation = fetch) {
+  const {baseUrl, ready} = jiraConfiguration();
+  if (!ready) throw new Error("Прямое подключение к Jira не настроено");
+  const pageSize = Math.min(100, Math.max(1, Number(process.env.JIRA_PAGE_SIZE) || 100));
+  const fields = ["summary", "issuetype", "status", "priority", "assignee", "components", "parent", "issuelinks"];
+  const issues = [];
+  let startAt = 0;
+  let total = Infinity;
+
+  while (startAt < total) {
+    const response = await fetchImplementation(`${baseUrl}/rest/api/2/search`, {
+      method: "POST",
+      headers: jiraHeaders(),
+      body: JSON.stringify({
+        jql: `fixVersion = ${JSON.stringify(release)} ORDER BY priority ASC, key ASC`,
+        startAt,
+        maxResults: pageSize,
+        fields,
+      }),
     });
-    if (!response.ok) throw new Error(`Jira versions: HTTP ${response.status}`);
-    const projectVersions = await response.json();
-    versions.push(...projectVersions);
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(jiraErrorMessage(response.status, payload));
+    const page = Array.isArray(payload.issues) ? payload.issues : [];
+    issues.push(...page);
+    total = Number.isFinite(Number(payload.total)) ? Number(payload.total) : issues.length;
+    if (!page.length) break;
+    startAt += page.length;
   }
-  const unique = new Map();
-  for (const version of versions) {
-    if (!version?.name || version.archived) continue;
-    unique.set(version.name, {
-      id: String(version.id || version.name),
-      name: version.name,
-      released: Boolean(version.released),
-      releaseDate: version.releaseDate || null,
-    });
-  }
-  return [...unique.values()].sort((a, b) => b.name.localeCompare(a.name, "ru", {numeric: true}));
+  return issues;
+}
+
+async function jiraReleases() {
+  return configuredReleases();
 }
 
 async function readJson(request, limit = 5 * 1024 * 1024) {
@@ -267,13 +293,31 @@ function publicBaseUrl(request) {
 }
 
 function integrationMode() {
+  if (jiraConfiguration().ready) return "rest";
   return process.env.JIRA_AUTOMATION_WEBHOOK_URL ? "automation" : "not-configured";
+}
+
+function allowedRelease(release) {
+  return configuredReleases().some(item => item.name === release);
 }
 
 async function startJob(request, response) {
   const payload = await readJson(request, 64 * 1024);
   const release = text(payload.release);
-  if (!release || release.length > 100) return sendJson(response, 400, {error: "Выберите корректный релиз"});
+  if (!release || !allowedRelease(release)) {
+    return sendJson(response, 400, {error: "Выберите релиз от 6.0 до 14.0"});
+  }
+  if (jiraConfiguration().ready) {
+    try {
+      const issues = await searchJiraIssues(release);
+      const id = randomUUID();
+      const result = buildDiagramData(release, issues, jiraConfiguration().baseUrl);
+      jobs.set(id, {id, release, status: "ready", result, createdAt: Date.now(), completedAt: Date.now()});
+      return sendJson(response, 202, {id, release, status: "ready"});
+    } catch (error) {
+      return sendJson(response, 502, {error: error.message || "Не удалось получить задачи из Jira"});
+    }
+  }
   const webhookUrl = process.env.JIRA_AUTOMATION_WEBHOOK_URL;
   if (!webhookUrl) {
     return sendJson(response, 503, {
@@ -295,7 +339,12 @@ async function startJob(request, response) {
     const jiraResponse = await fetch(webhookUrl, {
       method: "POST",
       headers,
-      body: JSON.stringify({requestId: id, release, callbackUrl}),
+      body: JSON.stringify({
+        requestId: id,
+        release,
+        callbackUrl,
+        data: {releaseVersion: release, requestId: id, callbackUrl},
+      }),
     });
     if (!jiraResponse.ok) throw new Error(`Jira Automation: HTTP ${jiraResponse.status}`);
     return sendJson(response, 202, {id, release, status: job.status});
