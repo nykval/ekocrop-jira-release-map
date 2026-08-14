@@ -186,10 +186,20 @@ function candidateScore(issue, issuesByKey) {
 }
 
 function chooseProject(issue, candidates, issuesByKey, parentByProject) {
+  const relationPriority = candidate => {
+    const labels = uniqueStrings([
+      issue.relationTypes?.[candidate.id],
+      candidate.relationTypes?.[issue.id],
+    ]).map(label => label.toLowerCase());
+    if (labels.includes("subtask")) return 3;
+    if (labels.includes("epic")) return 2;
+    if (labels.includes("relates")) return 0;
+    return 1;
+  };
   const linked = issue.links
     .map(key => candidates.get(key))
     .filter(Boolean)
-    .sort((a, b) => candidateScore(b, issuesByKey) - candidateScore(a, issuesByKey));
+    .sort((a, b) => relationPriority(b) - relationPriority(a) || candidateScore(b, issuesByKey) - candidateScore(a, issuesByKey));
   let selected = issue.parentKey ? candidates.get(issue.parentKey) : null;
   if (!selected) selected = linked[0] || null;
   const seen = new Set();
@@ -200,7 +210,7 @@ function chooseProject(issue, candidates, issuesByKey, parentByProject) {
   return selected;
 }
 
-function relationLabelFor(issue, project, candidates, parentByProject) {
+function relationLabelsFor(issue, project, candidates, parentByProject) {
   const belongsToProject = candidate => {
     const seen = new Set();
     let current = candidate;
@@ -213,8 +223,20 @@ function relationLabelFor(issue, project, candidates, parentByProject) {
   return uniqueStrings(issue.links.flatMap(linkedKey => {
     const candidate = candidates.get(linkedKey);
     if (!candidate || !belongsToProject(candidate)) return [];
-    return issue.relationTypes?.[linkedKey] || candidate.relationTypes?.[issue.id] || [];
-  })).join(", ");
+    const labels = issue.relationTypes?.[linkedKey] || candidate.relationTypes?.[issue.id] || [];
+    return uniqueStrings(labels).length || linkedKey !== issue.parentKey ? labels : ["subtask"];
+  }));
+}
+
+function relationLabelFor(issue, project, candidates, parentByProject) {
+  return relationLabelsFor(issue, project, candidates, parentByProject).join(", ");
+}
+
+function hasStructuralProjectRelation(issue, project, candidates, parentByProject) {
+  return relationLabelsFor(issue, project, candidates, parentByProject).some(label => {
+    const normalized = label.toLowerCase();
+    return ["subtask", "subtasks-custom-link", "epic", "ссылка на эпик", "epics-custom-link"].includes(normalized);
+  });
 }
 
 function syntheticGroup(id, summary, taskType, tasks) {
@@ -275,7 +297,18 @@ export function buildDiagramData(release, rawIssues, jiraBaseUrl = "https://dev.
     else unassigned.push(issue);
   }
 
-  const groups = topLevelProjects.map(project => ({group: project, tasks: taskBuckets.get(project.id) || [], synthetic: false}));
+  const visibleTopLevelProjects = topLevelProjects.filter(project => {
+    if (!project.external) return true;
+    return (taskBuckets.get(project.id) || []).some(issue => (
+      hasStructuralProjectRelation(issue, project, candidates, parentByProject)
+    ));
+  });
+  const visibleProjectIds = new Set(visibleTopLevelProjects.map(project => project.id));
+  for (const project of topLevelProjects) {
+    if (!visibleProjectIds.has(project.id)) unassigned.push(...(taskBuckets.get(project.id) || []));
+  }
+
+  const groups = visibleTopLevelProjects.map(project => ({group: project, tasks: taskBuckets.get(project.id) || [], synthetic: false}));
   const bugs = unassigned.filter(issue => ["Ошибка", "Bug"].includes(issue.taskType));
   const refactoring = unassigned.filter(issue => ["Рефакторинг", "Refactoring"].includes(issue.taskType));
   const other = unassigned.filter(issue => !bugs.includes(issue) && !refactoring.includes(issue));

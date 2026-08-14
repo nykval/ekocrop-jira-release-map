@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
 <title>Карта релиза EkoCrop</title>
 <style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255),rgb(24 24 24));font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:light-dark(rgb(26 28 31),rgb(255 255 255));--app-green:light-dark(rgb(0 126 58),rgb(64 201 119));--app-border:light-dark(rgb(226 229 233),rgb(63 67 72));--app-muted:light-dark(rgb(91 96 104),rgb(180 185 192));--app-soft:light-dark(rgb(246 249 247),rgb(31 38 34))}*{box-sizing:border-box}html,body{margin:0}body{background:inherit}.app-header{padding:1.25rem 2rem 0;border-top:3px solid var(--app-green);border-bottom:1px solid var(--app-border);background:inherit}.app-brand{display:flex;align-items:center;gap:.7rem;margin-bottom:1rem}.app-brand-mark{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--app-green);color:light-dark(white,rgb(13 13 13));font-weight:700}.app-brand-copy{display:grid;gap:.1rem}.app-brand-title{font-size:1.05rem;font-weight:650}.app-brand-subtitle{font-size:.78rem;color:var(--app-muted)}.section-tabs{display:flex;gap:.35rem;overflow-x:auto;scrollbar-width:none}.section-tabs::-webkit-scrollbar{display:none}.section-tab{position:relative;display:inline-flex;align-items:center;gap:.5rem;min-height:44px;padding:.65rem .9rem;border:0;background:transparent;color:var(--app-muted);font:inherit;font-weight:550;white-space:nowrap;cursor:pointer}.section-tab:hover{color:inherit;background:var(--app-soft);border-radius:8px 8px 0 0}.section-tab[aria-selected="true"]{color:var(--app-green)}.section-tab[aria-selected="true"]::after{content:"";position:absolute;left:.8rem;right:.8rem;bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:var(--app-green)}.section-tab-count{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 .35rem;border-radius:10px;background:var(--app-soft);color:var(--app-muted);font-size:.7rem}.app-view{padding:1.15rem 2rem 0}.app-view[hidden]{display:none}.release-toolbar{display:flex;align-items:end;gap:.75rem;flex-wrap:wrap;margin:0 0 .75rem}.release-field{display:grid;gap:.3rem;min-width:220px}.release-field label,.import-label{font-size:.85rem;color:var(--app-muted)}.release-field select,.release-toolbar button,.import-file-button{box-sizing:border-box;min-height:44px;border:1px solid var(--app-border);border-radius:10px;padding:.6rem .8rem;font:inherit}.release-field select{background:light-dark(rgb(255 255 255),rgb(38 38 38));color:inherit}.release-toolbar button{border-color:var(--app-green);background:var(--app-green);color:light-dark(rgb(255 255 255),rgb(13 13 13));font-weight:600;cursor:pointer}.release-toolbar button:disabled{opacity:.55;cursor:wait}.release-status{min-height:44px;display:flex;align-items:center;color:var(--app-muted)}.import-panel{display:flex;align-items:end;gap:.75rem;flex-wrap:wrap;margin:-.15rem 0 .8rem}.import-field{display:grid;gap:.3rem}.import-file-button{display:inline-flex;align-items:center;gap:.55rem;background:var(--app-soft);cursor:pointer;font-weight:550}.import-file-button:hover{border-color:var(--app-green)}.import-file-button input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.import-hint{min-height:44px;display:flex;align-items:center;color:var(--app-muted);font-size:.86rem}.future-view{min-height:320px;display:grid;place-items:center;text-align:center}.future-view-inner{max-width:440px}.future-view h2{margin:0 0 .5rem;font-size:1.25rem}.future-view p{margin:0;color:var(--app-muted);line-height:1.55}iframe{display:block;width:100%;height:calc(100vh - 14rem);min-height:420px;margin:0 auto;border:0}@media(max-width:680px){.app-header{padding:1rem 1rem 0}.app-view{padding:1rem 1rem 0}.app-brand-subtitle{display:none}.section-tab{padding:.6rem .7rem}.release-field{flex:1 1 100%}.release-toolbar button{flex:1}.release-status{flex-basis:100%;height:auto;min-height:0}.import-field{width:100%}.import-file-button{width:100%;justify-content:center}.import-hint{min-height:0}iframe{height:calc(100vh - 18rem)}}.app-brand-logo{display:block;width:116px;height:36px;object-fit:contain;object-position:left center}
-.release-control-panel{display:flex;align-items:end;gap:14px;width:100%;margin:0 0 16px;padding:14px 16px;border:1px solid var(--app-border);border-left:4px solid var(--app-green);border-radius:12px;background:var(--app-soft)}.release-control-panel .release-toolbar,.release-control-panel .import-panel{display:flex;align-items:end;gap:12px;flex:0 0 auto;margin:0}.release-control-panel .release-field{position:relative;min-width:210px}.release-control-panel .release-field::after{content:"⌄";position:absolute;right:14px;bottom:10px;color:var(--app-muted);font-size:1.2rem;line-height:1;pointer-events:none}.release-control-panel .release-field select{width:100%;min-height:46px;padding:.65rem 2.65rem .65rem .9rem;appearance:none;border:1.5px solid var(--app-border);border-radius:11px;background:light-dark(rgb(255 255 255),rgb(38 38 38));box-shadow:0 1px 2px color-mix(in srgb,var(--app-muted) 10%,transparent);font-size:1rem;font-weight:600;line-height:1.2;cursor:pointer;transition:border-color .16s ease,box-shadow .16s ease,background-color .16s ease}.release-control-panel .release-field select:hover{border-color:color-mix(in srgb,var(--app-green) 60%,var(--app-border))}.release-control-panel .release-field select:focus-visible{outline:0;border-color:var(--app-green);box-shadow:0 0 0 3px color-mix(in srgb,var(--app-green) 18%,transparent)}.release-control-panel .import-file-button,.release-control-panel .release-toolbar button{min-height:46px;font-size:1rem;line-height:1.2}.release-control-panel .import-hint{max-width:340px;line-height:1.25}.release-control-panel .release-status{min-width:210px;min-height:46px;display:flex;align-items:center;flex:1 1 240px;align-self:flex-end;line-height:1.3}.release-control-panel button:disabled{border-color:var(--app-border);background:var(--app-border);color:var(--app-muted);opacity:1;cursor:not-allowed}@media(max-width:1050px){.release-control-panel{flex-wrap:wrap}.release-control-panel .release-status{flex-basis:100%;min-height:0}.release-control-panel .import-hint{max-width:none}}@media(max-width:680px){.release-control-panel,.release-control-panel .release-toolbar,.release-control-panel .import-panel{align-items:stretch;flex-direction:column;width:100%}.release-control-panel .release-field{min-width:0}.release-control-panel .release-status{min-width:0;min-height:46px;flex-basis:auto;align-self:stretch}}.diagram-toolbar{display:flex;justify-content:flex-end;margin:-8px 0 4px}.fullscreen-button{min-height:36px;padding:6px 10px;border:1px solid var(--app-border);border-radius:8px;background:var(--app-soft);color:inherit;font:inherit;font-size:.85rem;cursor:pointer}.fullscreen-button:hover{border-color:var(--app-green);color:var(--app-green)}.diagram-shell{width:100%;background:inherit}.diagram-shell:fullscreen{position:relative;width:100vw;height:100vh;padding:12px;background:var(--background,Canvas);overflow:auto}.diagram-shell:fullscreen .diagram-toolbar{position:sticky;top:0;z-index:10;margin:0 0 4px;pointer-events:none}.diagram-shell:fullscreen .fullscreen-button{pointer-events:auto;background:var(--app-soft);box-shadow:0 2px 8px color-mix(in srgb,var(--foreground) 14%,transparent)}.diagram-shell:fullscreen iframe{width:100%;height:calc(100vh - 64px);min-height:0}@media(max-width:680px){.diagram-toolbar{margin-top:0}}</style>
+.release-control-panel{display:flex;align-items:end;gap:14px;width:100%;margin:0 0 16px;padding:14px 16px;border:1px solid var(--app-border);border-left:4px solid var(--app-green);border-radius:12px;background:var(--app-soft)}.release-control-panel .release-toolbar,.release-control-panel .import-panel{display:flex;align-items:end;gap:12px;flex:0 0 auto;margin:0}.release-control-panel .release-field{position:relative;min-width:210px}.release-control-panel .release-field::after{content:"⌄";position:absolute;right:14px;bottom:10px;color:var(--app-muted);font-size:1.2rem;line-height:1;pointer-events:none}.release-control-panel .release-field select{width:100%;min-height:46px;padding:.65rem 2.65rem .65rem .9rem;appearance:none;border:1.5px solid var(--app-border);border-radius:11px;background:light-dark(rgb(255 255 255),rgb(38 38 38));box-shadow:0 1px 2px color-mix(in srgb,var(--app-muted) 10%,transparent);font-size:1rem;font-weight:600;line-height:1.2;cursor:pointer;transition:border-color .16s ease,box-shadow .16s ease,background-color .16s ease}.release-control-panel .release-field select:hover{border-color:color-mix(in srgb,var(--app-green) 60%,var(--app-border))}.release-control-panel .release-field select:focus-visible{outline:0;border-color:var(--app-green);box-shadow:0 0 0 3px color-mix(in srgb,var(--app-green) 18%,transparent)}.release-control-panel .import-file-button,.release-control-panel .release-toolbar button{min-height:46px;font-size:1rem;line-height:1.2}.release-control-panel .import-hint{max-width:340px;line-height:1.25}.release-control-panel .release-status{min-width:210px;min-height:46px;display:flex;align-items:center;flex:1 1 240px;align-self:flex-end;line-height:1.3}.release-control-panel button:disabled{border-color:var(--app-border);background:var(--app-border);color:var(--app-muted);opacity:1;cursor:not-allowed}@media(max-width:1050px){.release-control-panel{flex-wrap:wrap}.release-control-panel .release-status{flex-basis:100%;min-height:0}.release-control-panel .import-hint{max-width:none}}@media(max-width:680px){.release-control-panel,.release-control-panel .release-toolbar,.release-control-panel .import-panel{align-items:stretch;flex-direction:column;width:100%}.release-control-panel .release-field{min-width:0}.release-control-panel .release-status{min-width:0;min-height:46px;flex-basis:auto;align-self:stretch}}.diagram-toolbar{display:flex;justify-content:flex-end;gap:8px;margin:-8px 0 4px}.fullscreen-button{min-height:36px;padding:6px 10px;border:1px solid var(--app-border);border-radius:8px;background:var(--app-soft);color:inherit;font:inherit;font-size:.85rem;cursor:pointer}.fullscreen-button:hover{border-color:var(--app-green);color:var(--app-green)}.visualization-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}.diagram-shell{width:100%;background:inherit}.diagram-shell:fullscreen{position:relative;width:100vw;height:100vh;padding:12px;background:var(--background,Canvas);overflow:auto}.diagram-shell:fullscreen .diagram-toolbar{position:sticky;top:0;z-index:10;margin:0 0 4px;pointer-events:none}.diagram-shell:fullscreen .fullscreen-button{pointer-events:auto;background:var(--app-soft);box-shadow:0 2px 8px color-mix(in srgb,var(--foreground) 14%,transparent)}.diagram-shell:fullscreen iframe{width:100%;height:calc(100vh - 64px);min-height:0}@media(max-width:680px){.diagram-toolbar{margin-top:0}.visualization-actions{justify-content:flex-start}}</style>
 <style>
 .release-control-panel .release-field::after {
   content: "";
@@ -299,7 +299,9 @@
   <div class="dashboard-content" data-dashboard-content hidden>
     <div class="dashboard-heading">
       <div><h1 data-dashboard-title>Дашборд релиза</h1></div>
-      <button type="button" class="fullscreen-button" data-dashboard-fullscreen-button aria-label="Открыть дашборд на весь экран">⛶ <span data-dashboard-fullscreen-label>На весь экран</span></button>
+      <div class="visualization-actions">
+        <button type="button" class="fullscreen-button" data-dashboard-fullscreen-button aria-label="Открыть дашборд на весь экран">⛶ <span data-dashboard-fullscreen-label>На весь экран</span></button>
+      </div>
     </div>
     <div class="dashboard-kpis" data-dashboard-kpis></div>
     <div class="dashboard-grid">
@@ -1338,6 +1340,32 @@ html&gt;body{padding:0}&lt;/style&gt;
     #jira-release-10-hierarchy .jrh-node-short {
       color: var(--muted-foreground);
     }
+    #jira-release-10-hierarchy .jrh-status-badge {
+      flex: 0 1 auto;
+      max-width: 34%;
+      margin-left: auto;
+      padding: 4px 7px;
+      border: 1px solid color-mix(in srgb, currentColor 26%, transparent);
+      border-radius: 6px;
+      background: color-mix(in srgb, currentColor 10%, var(--background));
+      color: var(--muted-foreground);
+      font-size: 9px;
+      font-weight: 750;
+      line-height: 1.15;
+      letter-spacing: .025em;
+      text-align: center;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #jira-release-10-hierarchy .jrh-status-active { color: var(--orange); }
+    #jira-release-10-hierarchy .jrh-status-review { color: var(--blue); }
+    #jira-release-10-hierarchy .jrh-status-done { color: var(--green); }
+    #jira-release-10-hierarchy .jrh-status-blocked { color: var(--red); }
+    @media (max-width: 620px) {
+      #jira-release-10-hierarchy .jrh-status-badge { max-width: 30%; padding-inline: 5px; font-size: 8px; }
+    }
     #jira-release-10-hierarchy .jrh-info-button {
       position: absolute;
       top: 50%;
@@ -1564,6 +1592,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       const expanded = new Set();
       let selectedId = data.release.id;
       let lastWidth = 0;
+      let lastViewportHeight = 0;
       let motionContext = null;
       let motionFrameRequest = 0;
 
@@ -1966,6 +1995,21 @@ html&gt;body{padding:0}&lt;/style&gt;
         }
         button.appendChild(copy);
 
+        if (kind === &quot;task&quot; &amp;&amp; String(item.status || &quot;&quot;).trim()) {
+          const status = String(item.status).trim();
+          const normalized = status.toLowerCase();
+          let statusClass = &quot;&quot;;
+          if (/закрыт|решен|протестирован/.test(normalized)) statusClass = &quot;jrh-status-done&quot;;
+          else if (/review|тестирован|можно тестировать|обратной связи/.test(normalized)) statusClass = &quot;jrh-status-review&quot;;
+          else if (/не доделано|блок/.test(normalized)) statusClass = &quot;jrh-status-blocked&quot;;
+          else if (/работе|сделать/.test(normalized)) statusClass = &quot;jrh-status-active&quot;;
+          const badge = document.createElementNS(xhtmlNamespace, &quot;span&quot;);
+          badge.setAttribute(&quot;class&quot;, `jrh-status-badge ${statusClass}`.trim());
+          badge.setAttribute(&quot;title&quot;, status);
+          badge.textContent = status;
+          button.appendChild(badge);
+        }
+
         wrapper.appendChild(button);
         let infoButton = null;
         if (onInfo) {
@@ -2086,10 +2130,21 @@ html&gt;body{padding:0}&lt;/style&gt;
             taskYs, taskHeights, taskLabelParts, groupHeight, groupPriority, groupLabelParts,
           };
         });
-        const height = Math.max(520, cursor + 12);
+        const naturalHeight = cursor + 12;
+        const availableHeight = Math.max(0, Math.floor(window.innerHeight - canvas.getBoundingClientRect().top));
+        const height = Math.max(520, naturalHeight, availableHeight);
+        const verticalOffset = Math.max(0, (height - naturalHeight) / 2);
+        if (verticalOffset) {
+          groups.forEach(group =&gt; {
+            group.centerY += verticalOffset;
+            group.firstTaskY += verticalOffset;
+            group.lastTaskY += verticalOffset;
+            group.taskYs = group.taskYs.map(taskY =&gt; taskY + verticalOffset);
+          });
+        }
         const firstGroupY = groups[0]?.centerY || height / 2;
         const lastGroupY = groups[groups.length - 1]?.centerY || height / 2;
-        const rootY = compact ? 48 : (firstGroupY + lastGroupY) / 2;
+        const rootY = compact ? 48 + verticalOffset : (firstGroupY + lastGroupY) / 2;
 
         return {
           width, height, compact, groups, rootY, rootNodeHeight,
@@ -2186,6 +2241,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       function render() {
         const width = Math.max(320, Math.floor(canvas.clientWidth));
         lastWidth = width;
+        lastViewportHeight = window.innerHeight;
         const frame = layout(width);
         canvas.replaceChildren();
         const groupMotion = [];
@@ -2341,7 +2397,10 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (event.target === dialog) dialog.close();
       });
       window.addEventListener(&quot;scroll&quot;, scheduleMotionSync, {passive: true});
-      window.addEventListener(&quot;resize&quot;, scheduleMotionSync, {passive: true});
+      window.addEventListener(&quot;resize&quot;, () =&gt; {
+        scheduleMotionSync();
+        if (Math.abs(window.innerHeight - lastViewportHeight) &gt; 1) render();
+      }, {passive: true});
       window.addEventListener(&quot;message&quot;, event =&gt; {
         if (event.data?.type !== &quot;jira-diagram-data&quot;) return;
         const payload = event.data.payload;
@@ -2636,6 +2695,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   const dashboardFullscreenLabel = document.querySelector("[data-dashboard-fullscreen-label]");
   let preparedCsvResult = null;
   let preparedCsvRelease = "";
+  let currentVisualizationResult = null;
 
   function syncStickyOffsets() {
     document.documentElement.style.setProperty("--app-header-height", `${appHeader.offsetHeight}px`);
@@ -2826,6 +2886,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   function renderDashboard(result) {
+    currentVisualizationResult = result;
     const release = result.data.release.summary.replace(/^Релиз EkoCrop\s+/, "");
     const groups = result.data.groups || [];
     const tasks = groups.flatMap(group => group.tasks || []);
@@ -2919,6 +2980,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         segment.tabIndex = 0;
         segment.setAttribute("role", "link");
         segment.setAttribute("aria-label", `${status}, ${priority}, ${count} задач — открыть в Jira`);
+        segment.dataset.jiraUrl = segmentUrl;
         segment.addEventListener("mousemove", event => showChartTooltip(event, status, `${priority} · ${count} задач`));
         segment.addEventListener("mouseleave", hideChartTooltip);
         segment.addEventListener("click", () => openJiraIssues(segmentUrl));
@@ -3181,7 +3243,19 @@ html&gt;body{padding:0}&lt;/style&gt;
       if (parent) parentByProject.set(issue.id, parent.id);
     }
     const chooseProject = issue => {
-      let selected = (issue.parentKey && candidates.get(issue.parentKey)) || issue.links.map(key => candidates.get(key)).filter(Boolean).sort((a, b) => score(b) - score(a))[0];
+      const relationPriority = candidate => {
+        const labels = unique([
+          issue.relationTypes[candidate.id],
+          candidate.relationTypes?.[issue.id],
+        ]).map(label => label.toLowerCase());
+        if (labels.includes("subtask")) return 3;
+        if (labels.includes("epic")) return 2;
+        if (labels.includes("relates")) return 0;
+        return 1;
+      };
+      let selected = (issue.parentKey && candidates.get(issue.parentKey)) || issue.links
+        .map(key => candidates.get(key)).filter(Boolean)
+        .sort((a, b) => relationPriority(b) - relationPriority(a) || score(b) - score(a))[0];
       const seen = new Set();
       while (selected && parentByProject.has(selected.id) && !seen.has(selected.id)) { seen.add(selected.id); selected = candidates.get(parentByProject.get(selected.id)) || selected; }
       return selected;
@@ -3189,25 +3263,37 @@ html&gt;body{padding:0}&lt;/style&gt;
     const topProjects = [...candidates.values()].filter(issue => !parentByProject.has(issue.id));
     const buckets = new Map(topProjects.map(project => [project.id, []]));
     const unassigned = [];
+    const relationLabelsFor = (issue, project) => unique(issue.links.flatMap(linkedKey => {
+      let candidate = candidates.get(linkedKey);
+      const linkedCandidate = candidate;
+      const seen = new Set();
+      while (candidate && parentByProject.has(candidate.id) && !seen.has(candidate.id)) {
+        seen.add(candidate.id);
+        candidate = candidates.get(parentByProject.get(candidate.id)) || candidate;
+      }
+      if (candidate?.id !== project.id) return [];
+      const labels = issue.relationTypes[linkedKey] || linkedCandidate?.relationTypes?.[issue.id] || [];
+      return unique(labels).length || linkedKey !== issue.parentKey ? labels : ["subtask"];
+    }));
+    const hasStructuralRelation = (issue, project) => relationLabelsFor(issue, project).some(label => (
+      ["subtask", "subtasks-custom-link", "epic", "ссылка на эпик", "epics-custom-link"].includes(label.toLowerCase())
+    ));
     for (const issue of issues) {
       if (buckets.has(issue.id)) continue;
       const project = chooseProject(issue);
       if (project && buckets.has(project.id)) {
-        const relationLabels = issue.links.flatMap(linkedKey => {
-          let candidate = candidates.get(linkedKey);
-          const seen = new Set();
-          while (candidate && parentByProject.has(candidate.id) && !seen.has(candidate.id)) {
-            seen.add(candidate.id);
-            candidate = candidates.get(parentByProject.get(candidate.id)) || candidate;
-          }
-          if (candidate?.id !== project.id) return [];
-          return issue.relationTypes[linkedKey] || candidates.get(linkedKey)?.relationTypes?.[issue.id] || [];
-        });
-        issue.relationLabel = unique(relationLabels).join(", ");
+        issue.relationLabel = relationLabelsFor(issue, project).join(", ");
         buckets.get(project.id).push(issue);
       } else unassigned.push(issue);
     }
-    const groups = topProjects.map(project => ({group: project, tasks: buckets.get(project.id), synthetic: false}));
+    const visibleTopProjects = topProjects.filter(project => (
+      !project.external || (buckets.get(project.id) || []).some(issue => hasStructuralRelation(issue, project))
+    ));
+    const visibleProjectIds = new Set(visibleTopProjects.map(project => project.id));
+    for (const project of topProjects) {
+      if (!visibleProjectIds.has(project.id)) unassigned.push(...(buckets.get(project.id) || []));
+    }
+    const groups = visibleTopProjects.map(project => ({group: project, tasks: buckets.get(project.id), synthetic: false}));
     const bugs = unassigned.filter(issue => ["Ошибка", "Bug"].includes(issue.taskType));
     const refactoring = unassigned.filter(issue => ["Рефакторинг", "Refactoring"].includes(issue.taskType));
     const other = unassigned.filter(issue => !bugs.includes(issue) && !refactoring.includes(issue));

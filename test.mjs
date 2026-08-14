@@ -143,6 +143,7 @@ test("главная страница сразу отдаёт приложени
     assert.match(html, /data-fullscreen-button/);
     assert.match(html, /requestFullscreen/);
     assert.match(html, /let preparedCsvResult = null/);
+    assert.match(html, /const verticalOffset = Math\.max\(0, \(height - naturalHeight\) \/ 2\)/);
     assert.match(html, /Подготовлено.*Нажмите «Построить диаграмму»/);
     assert.match(html, /Карта релиза EkoCrop/);
     assert.doesNotMatch(html, /<h1[^>]*>\s*Карта релизов EkoCrop/);
@@ -174,4 +175,28 @@ test("локальный сервер импортирует CSV-экспорт 
   } finally {
     await close(app);
   }
+});
+
+test("subtask-связь определяет проект раньше обычной relates-связи", () => {
+  const result = buildDiagramData("8.2", [
+    {key: "PROJECTS-394", summary: "Основной проект", issueType: "История", linkedKeys: ["DEVELOP-5832", "DEVELOP-5833"], relationTypes: {"DEVELOP-5832": ["subtask"], "DEVELOP-5833": ["subtask"]}},
+    {key: "PROJECTS-410", summary: "Связанный проект", issueType: "История", linkedKeys: ["DEVELOP-5832"], relationTypes: {"DEVELOP-5832": ["relates"]}},
+    {key: "DEVELOP-5832", summary: "Backend", issueType: "Задача", linkedKeys: ["PROJECTS-410", "PROJECTS-394"], relationTypes: {"PROJECTS-410": ["relates"], "PROJECTS-394": ["subtask"]}},
+    {key: "DEVELOP-5833", summary: "Web", issueType: "Задача", linkedKeys: ["PROJECTS-394"], relationTypes: {"PROJECTS-394": ["subtask"]}},
+  ]);
+  const project394 = result.data.groups.find(group => group.group.id === "PROJECTS-394");
+  assert.deepEqual(project394.tasks.map(task => task.id).sort(), ["DEVELOP-5832", "DEVELOP-5833"]);
+});
+
+test("внешний проект показывается только при наличии subtask или epic задачи релиза", () => {
+  const result = buildDiagramData("9.0", [
+    {key: "PROJECTS-IN", summary: "Проект самого релиза", issueType: "Проект"},
+    {key: "DEVELOP-SUB", summary: "Структурная подзадача", issueType: "Задача", linkedKeys: ["PROJECTS-STRUCT"], relationTypes: {"PROJECTS-STRUCT": ["subtask"]}},
+    {key: "DEVELOP-REL", summary: "Только связанная задача", issueType: "Задача", linkedKeys: ["PROJECTS-RELATES"], relationTypes: {"PROJECTS-RELATES": ["relates"]}},
+  ]);
+  const projectIds = result.data.groups.filter(group => !group.synthetic).map(group => group.group.id);
+  assert.ok(projectIds.includes("PROJECTS-IN"));
+  assert.ok(projectIds.includes("PROJECTS-STRUCT"));
+  assert.ok(!projectIds.includes("PROJECTS-RELATES"));
+  assert.ok(result.data.groups.find(group => group.group.id === "group-other").tasks.some(task => task.id === "DEVELOP-REL"));
 });
