@@ -66,6 +66,22 @@ test("Cloudflare Worker отдаёт релизы 6.0–14.0", async () => {
   const response = await worker.fetch(new Request("https://map.example/api/releases"), {});
   const payload = await response.json();
   assert.deepEqual(payload.releases.map(item => item.name), ["6.0", "7.0", "8.0", "9.0", "10.0", "11.0", "12.0", "13.0", "14.0"]);
+  assert.equal(response.headers.get("Access-Control-Allow-Origin"), "https://nykval.github.io");
+});
+
+test("Cloudflare Worker разрешает браузерные запросы с GitHub Pages", async () => {
+  const response = await worker.fetch(new Request("https://map.example/api/diagram-jobs", {
+    method: "OPTIONS",
+    headers: {
+      Origin: "https://nykval.github.io",
+      "Access-Control-Request-Method": "POST",
+      "Access-Control-Request-Headers": "content-type",
+    },
+  }), {});
+  assert.equal(response.status, 204);
+  assert.equal(response.headers.get("Access-Control-Allow-Origin"), "https://nykval.github.io");
+  assert.match(response.headers.get("Access-Control-Allow-Methods"), /POST/);
+  assert.match(response.headers.get("Access-Control-Allow-Headers"), /Content-Type/i);
 });
 
 test("Cloudflare Worker импортирует CSV-экспорт Jira", async () => {

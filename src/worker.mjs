@@ -342,8 +342,18 @@ export function buildDiagramData(release, rawIssues, jiraBaseUrl = "https://dev.
   };
 }
 
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "https://nykval.github.io",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Accept",
+  Vary: "Origin",
+};
+
 function json(value, status = 200) {
-  return Response.json(value, {status, headers: {"Cache-Control": "no-store"}});
+  return Response.json(value, {
+    status,
+    headers: {"Cache-Control": "no-store", ...CORS_HEADERS},
+  });
 }
 
 function randomToken() {
@@ -446,6 +456,9 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     try {
+      if (request.method === "OPTIONS" && url.pathname.startsWith("/api/")) {
+        return new Response(null, {status: 204, headers: CORS_HEADERS});
+      }
       if (request.method === "GET" && url.pathname === "/api/releases") {
         return json({releases: RELEASES.map(name => ({id: name, name})), mode: env.JIRA_AUTOMATION_WEBHOOK_URL ? "automation" : "not-configured"});
       }

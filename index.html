@@ -2678,6 +2678,9 @@ html&gt;body{padding:0}&lt;/style&gt;
 </main>
 <script>
 (() => {
+  const WORKER_API_ORIGIN = "https://ekocrop-jira-release-map.skorokirzhaboy.workers.dev";
+  const sameOriginApiHosts = new Set(["localhost", "127.0.0.1", "::1", "ekocrop-jira-release-map.skorokirzhaboy.workers.dev"]);
+  const apiUrl = path => `${sameOriginApiHosts.has(location.hostname) ? "" : WORKER_API_ORIGIN}${path}`;
   const tabs = [...document.querySelectorAll("[data-section-tab]")];
   const views = [...document.querySelectorAll("[data-section-view]")];
   const appHeader = document.querySelector(".app-header");
@@ -3085,7 +3088,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   async function loadReleases() {
     try {
-      const payload = await json(await fetch("/api/releases", {headers: {Accept: "application/json"}}));
+      const payload = await json(await fetch(apiUrl("/api/releases"), {headers: {Accept: "application/json"}}));
       select.replaceChildren();
       const placeholder = document.createElement("option");
       placeholder.value = "";
@@ -3347,7 +3350,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   async function waitForJob(id) {
     for (let attempt = 0; attempt < 120; attempt += 1) {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      const job = await json(await fetch(`/api/diagram-jobs/${encodeURIComponent(id)}`, {
+      const job = await json(await fetch(apiUrl(`/api/diagram-jobs/${encodeURIComponent(id)}`), {
         headers: {Accept: "application/json"},
       }));
       if (job.status === "ready") return job.result;
@@ -3377,7 +3380,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     }
     setStatus(`Отправляем запрос для релиза ${release}…`);
     try {
-      const job = await json(await fetch("/api/diagram-jobs", {
+      const job = await json(await fetch(apiUrl("/api/diagram-jobs"), {
         method: "POST",
         headers: {"Content-Type": "application/json", Accept: "application/json"},
         body: JSON.stringify({release}),

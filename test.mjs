@@ -143,6 +143,9 @@ test("главная страница сразу отдаёт приложени
     assert.match(html, /data-fullscreen-button/);
     assert.match(html, /requestFullscreen/);
     assert.match(html, /let preparedCsvResult = null/);
+    assert.match(html, /WORKER_API_ORIGIN = "https:\/\/ekocrop-jira-release-map\.skorokirzhaboy\.workers\.dev"/);
+    assert.match(html, /fetch\(apiUrl\("\/api\/releases"\)/);
+    assert.match(html, /fetch\(apiUrl\("\/api\/diagram-jobs"\)/);
     assert.match(html, /const verticalOffset = Math\.max\(0, \(height - naturalHeight\) \/ 2\)/);
     assert.match(html, /Подготовлено.*Нажмите «Построить диаграмму»/);
     assert.match(html, /Карта релиза EkoCrop/);
