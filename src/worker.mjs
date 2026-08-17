@@ -184,7 +184,18 @@ function normalizeIssue(raw, jiraBaseUrl) {
 
 function issueReleaseVersions(raw) {
   const fields = raw?.fields || raw || {};
-  const source = [raw?.fixVersions, raw?.versions, fields.fixVersions];
+  const source = [
+    raw?.fixVersions,
+    raw?.fixVersion,
+    raw?.versions,
+    raw?.version,
+    raw?.releaseVersions,
+    fields.fixVersions,
+    fields.fixVersion,
+    fields.versions,
+    fields.version,
+    fields.releaseVersions,
+  ];
   return uniqueStrings(source).flatMap(value => {
     const matches = [...String(value).matchAll(/EkoCrop\s+(\d+(?:[.,]\d+)*)/gi)];
     return matches.map(match => match[1].replace(",", "."));
@@ -465,11 +476,29 @@ async function saveSnapshot(payload, env) {
   const issues = Array.isArray(payload) ? payload : payload.issues;
   if (!Array.isArray(issues)) return json({error: "Jira должна передать массив issues"}, 400);
 
+  if (!issues.length) {
+    return json({
+      error: "Jira передала пустой массив issues. Проверьте JQL и цикл {{#issues}} в теле веб-запроса.",
+      receivedIssues: 0,
+    }, 422);
+  }
+
+  const releases = [...new Set(issues.flatMap(issueReleaseVersions))].sort(compareReleases);
+  if (!releases.length) {
+    return json({
+      error: "В переданных задачах не найдено ни одной версии EkoCrop. Проверьте, что тело веб-запроса передает поле fixVersions.",
+      receivedIssues: issues.length,
+      sampleKeys: issues
+        .slice(0, 5)
+        .map(issue => text(issue?.key ?? issue?.fields?.key))
+        .filter(Boolean),
+    }, 422);
+  }
+
   const jiraBaseUrl = env.JIRA_BASE_URL || "https://dev.ekoniva-apk.com";
   const syncedAt = new Date().toISOString();
   const previousMetaRaw = await env.JOBS.get("snapshot:meta");
   const previousMeta = previousMetaRaw ? JSON.parse(previousMetaRaw) : null;
-  const releases = [...new Set(issues.flatMap(issueReleaseVersions))].sort(compareReleases);
   const saved = [];
   for (const release of releases) {
     const releaseIssues = issuesForRelease(issues, release, jiraBaseUrl);
