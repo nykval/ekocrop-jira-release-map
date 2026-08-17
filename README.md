@@ -1,6 +1,6 @@
 # Карта релизов EkoCrop — Cloudflare Workers
 
-Полноценное веб-приложение: пользователь открывает публичный адрес, выбирает релиз от 6.0 до 14.0, Jira Automation находит задачи по JQL и возвращает их приложению для построения интерактивной диаграммы.
+Полноценное веб-приложение: Jira Automation по расписанию отправляет полный снимок задач в Cloudflare Workers KV. Пользователь открывает публичный адрес, выбирает любой найденный релиз EkoCrop и сразу строит интерактивную диаграмму из сохранённых данных.
 
 Главная страница репозитория содержит `index.html`, поэтому при публикации сайта открывается непосредственно диаграмма. Этот README отображается только при просмотре исходного кода на GitHub.
 
@@ -13,9 +13,7 @@ GitHub хранит исходный код, а Cloudflare Worker одновре
 1. В Cloudflare откройте **Workers & Pages → Create → Import a repository** и выберите этот репозиторий.
 2. Build command: `npm run deploy`. Для первого подключения можно использовать стандартные настройки Cloudflare Workers.
 3. Создайте Workers KV namespace, например `ekocrop-jira-jobs`, и добавьте к Worker binding с именем `JOBS`.
-4. В **Settings → Variables and Secrets** добавьте Secret `JIRA_AUTOMATION_WEBHOOK_URL`.
-5. Если у входящего веб-хука Jira настроен секретный ключ, добавьте Secret `JIRA_AUTOMATION_WEBHOOK_TOKEN`.
-6. Нажмите Deploy. Пользовательский адрес будет иметь вид `https://ekocrop-jira-release-map.<поддомен>.workers.dev`.
+4. Нажмите Deploy. Пользовательский адрес будет иметь вид `https://ekocrop-jira-release-map.<поддомен>.workers.dev`.
 
 В `wrangler.jsonc` уже настроены Worker, статические файлы и API. После подключения GitHub обновления ветки `main` публикуются автоматически.
 
@@ -23,11 +21,11 @@ GitHub хранит исходный код, а Cloudflare Worker одновре
 
 | Переменная | Назначение |
 |---|---|
-| `JIRA_AUTOMATION_WEBHOOK_URL` | URL триггера «Входящий веб-хук» |
-| `RELEASES` | Доступные релизы: от `6.0` до `14.0` |
 | `JIRA_BASE_URL` | Адрес Jira для ссылок и REST API |
 
-KV хранит каждое задание 30 минут, после чего Cloudflare удаляет его автоматически.
+Список релизов формируется динамически из значений `fixVersion` формата `EkoCrop …`.
+
+KV постоянно хранит последний успешно принятый снимок каждого релиза. Временное задание страницы хранится 30 минут.
 
 ## Локальная проверка для разработчика
 
@@ -37,33 +35,35 @@ KV хранит каждое задание 30 минут, после чего C
 2. Выполните `npm install`, затем `npm run dev`.
 3. Откройте адрес, который покажет Wrangler.
 
-## Основная интеграция через Jira Automation
+## Периодическая синхронизация через Jira Automation
 
-### 1. Триггер «Входящий веб-хук»
+Используется одно правило. Оно запускается по расписанию, находит задачи всех поддерживаемых релизов и отправляет один полный снимок в Cloudflare.
 
-- Выберите «Задачи, указанные с помощью следующего поискового запроса JQL».
-- JQL:
+### 1. Триггер «Запланированные»
+
+1. Выберите удобную периодичность, для первого теста — один раз в день.
+2. Выберите **«запустить поиск JQL и передать результаты последующим условиям и действиям»**.
+3. Обязательно снимите флажок **«Учитывать только задачи, которые изменились с момента последнего выполнения правила»**. Иначе полный снимок будет неполным.
+4. JQL:
 
 ```text
-fixVersion = "{{webhookData.releaseVersion}}"
+(project = DEVELOPMENT AND fixVersion is not EMPTY) OR project = PROJECTS
 ```
 
-- В дополнительных параметрах включите массовую обработку всех найденных задач. Это делает список `{{issues}}` доступным одному запуску правила.
-- Скопируйте URL веб-хука в `JIRA_AUTOMATION_WEBHOOK_URL`.
-- Если для триггера задан секрет, сохраните его в `JIRA_AUTOMATION_WEBHOOK_TOKEN`.
+В дополнительных параметрах включите массовую обработку всех найденных задач, если Jira показывает этот переключатель.
+
+Worker сам оставляет только версии, названия которых начинаются с `EkoCrop`, поэтому новые версии (например, `EkoCrop 8.1`, `EkoCrop 8.2` или `EkoCrop 14.1`) появятся на странице автоматически после очередной синхронизации.
 
 ### 2. Действие «Отправить веб-запрос»
 
-- URL: постоянный публичный адрес Worker с путём `/api/jira-callback`, например `https://ekocrop-jira-release-map.<поддомен>.workers.dev/api/jira-callback`.
+- URL: `https://ekocrop-jira-release-map.skorokirzhaboy.workers.dev/api/jira-callback`
 - Метод: `POST`
-- Заголовок: `Content-Type: application/json`
-- «Дождитесь отклика»: выключено.
-- Тело веб-хука: «Пользовательские данные» со следующим JSON:
+- Заголовок `Content-Type`: `application/json`
+- «Дождитесь отклика»: для первого теста включено, затем можно выключить.
+- Тело веб-хука: **«Пользовательские данные»**:
 
   ```json
   {
-    "requestId": {{webhookData.requestId.asJsonString}},
-    "callbackToken": {{webhookData.callbackToken.asJsonString}},
     "issues": [
       {{#issues}}
       {
@@ -74,10 +74,14 @@ fixVersion = "{{webhookData.releaseVersion}}"
         "priority": {{priority.name.asJsonString}},
         "assignee": {{assignee.displayName.asJsonString}},
         "components": {{components.name.asJsonStringArray}},
+        "fixVersions": {{fixVersions.name.asJsonStringArray}},
         "parentKey": {{parent.key.asJsonString}},
-        "linkedKeys": [
+        "issueLinks": [
           {{#issuelinks}}
-          {{#inwardIssue}}{{key.asJsonString}}{{/}}{{#outwardIssue}}{{key.asJsonString}}{{/}}{{^last}},{{/}}
+          {
+            "key": {{#inwardIssue}}{{key.asJsonString}}{{/}}{{#outwardIssue}}{{key.asJsonString}}{{/}},
+            "type": {{type.name.asJsonString}}
+          }{{^last}},{{/}}
           {{/}}
         ]
       }{{^last}},{{/}}
@@ -86,18 +90,20 @@ fixVersion = "{{webhookData.releaseVersion}}"
   }
   ```
 
-После сохранения включите правило и проверьте его журнал. Веб-хук отвечает сразу, а результат приходит в сервис отдельным callback-запросом.
+После сохранения вручную запустите правило один раз и откройте его журнал. Успешный ответ Worker содержит `"ok": true`, количество принятых задач и список сохранённых релизов.
 
 ## API
 
 - `GET /api/health` — состояние опубликованного сервиса.
 - `GET /api/releases` — список доступных релизов.
-- `POST /api/diagram-jobs` с `{"release":"10.0"}` — запуск построения.
+- `POST /api/jira-callback` — согласованный публичный адрес: принимает полный периодический снимок Jira без дополнительного токена; также совместим со старым callback разовых запросов с `requestId` и `callbackToken`.
+- `POST /api/jira-snapshot` — дополнительный совместимый адрес для приёма полного снимка (в Jira использовать его не требуется).
+- `POST /api/diagram-jobs` с `{"release":"10.0"}` — построение из последнего сохранённого снимка.
+- `POST /api/jira-poll` — защищённая выдача ближайшего ожидающего запроса правилу-диспетчеру Jira.
 - `GET /api/diagram-jobs/{id}` — состояние и готовая диаграмма.
-- `POST /api/jira-callback` — callback Jira Automation; идентификатор и одноразовый токен передаются в JSON.
 - `POST /api/jira-callback/{id}?token=...` — прежний совместимый формат callback.
 
-URL Jira и токены хранятся только на сервере и не попадают в браузер.
+Служебные URL Jira хранятся только на сервере и не попадают в браузер.
 
 ## GitHub Pages и Render
 

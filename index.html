@@ -3097,7 +3097,10 @@ html&gt;body{padding:0}&lt;/style&gt;
       for (const release of payload.releases || []) {
         const option = document.createElement("option");
         option.value = release.name;
-        option.textContent = release.released ? `${release.name} · выпущен` : release.name;
+        option.textContent = release.available
+          ? `${release.name} · ${release.issueCount ?? 0} задач`
+          : `${release.name} · нет синхронизированных данных`;
+        if (payload.mode === "jira-snapshot" && !release.available) option.disabled = true;
         select.appendChild(option);
       }
       if (![...select.options].some(option => option.value === "10.0")) {
@@ -3109,9 +3112,11 @@ html&gt;body{padding:0}&lt;/style&gt;
       select.value = "";
       select.disabled = false;
       syncSubmitState();
-      setStatus(payload.mode === "rest"
+      setStatus(payload.mode === "jira-snapshot"
+        ? "Выберите релиз с синхронизированными данными Jira"
+        : payload.mode === "rest"
         ? "Выберите релиз — задачи будут загружены напрямую из Jira"
-        : payload.mode === "automation"
+        : payload.mode === "automation" || payload.mode === "jira-polling"
           ? "Выберите релиз и постройте диаграмму"
           : "Подключение к Jira ещё не настроено администратором");
     } catch (error) {
@@ -3348,16 +3353,18 @@ html&gt;body{padding:0}&lt;/style&gt;
   });
 
   async function waitForJob(id) {
-    for (let attempt = 0; attempt < 120; attempt += 1) {
+    for (let attempt = 0; attempt < 600; attempt += 1) {
       await new Promise(resolve => setTimeout(resolve, 1000));
       const job = await json(await fetch(apiUrl(`/api/diagram-jobs/${encodeURIComponent(id)}`), {
         headers: {Accept: "application/json"},
       }));
       if (job.status === "ready") return job.result;
       if (job.status === "error") throw new Error(job.error || "Jira не смогла сформировать список задач");
-      setStatus(`Jira формирует список задач для релиза ${job.release}…`);
+      setStatus(job.status === "processing"
+        ? `Jira обрабатывает релиз ${job.release}…`
+        : `Запрос релиза ${job.release} ожидает ближайшего запуска Jira…`);
     }
-    throw new Error("Jira не ответила за две минуты");
+    throw new Error("Jira не забрала запрос за десять минут. Проверьте журнал правила-диспетчера");
   }
 
   form.addEventListener("submit", async event => {

@@ -1,5 +1,7 @@
-const RELEASES = Array.from({length: 9}, (_, index) => `${index + 6}.0`);
+const DEFAULT_RELEASES = Array.from({length: 9}, (_, index) => `${index + 6}.0`);
 const JOB_TTL_SECONDS = 30 * 60;
+const CLAIM_RETRY_MS = 3 * 60 * 1000;
+const SNAPSHOT_PREFIX = "snapshot:release:";
 
 const issueTypeRanks = {Epic: 5, Проект: 4, Project: 4, История: 3, Story: 3};
 
@@ -142,10 +144,11 @@ function uniqueStrings(values) {
 
 function linkedKeys(fields, raw) {
   const direct = uniqueStrings([raw.links, raw.linkedKeys, raw.parentKey, raw.parent]);
+  const compactLinks = Array.isArray(raw.issueLinks) ? raw.issueLinks.map(link => link?.key) : [];
   const jiraLinks = Array.isArray(fields.issuelinks)
     ? fields.issuelinks.flatMap(link => [link.inwardIssue?.key, link.outwardIssue?.key])
     : [];
-  return uniqueStrings([...direct, ...jiraLinks]);
+  return uniqueStrings([...direct, ...compactLinks, ...jiraLinks]);
 }
 
 function normalizeIssue(raw, jiraBaseUrl) {
@@ -156,6 +159,12 @@ function normalizeIssue(raw, jiraBaseUrl) {
   const parentKey = text(raw.parentKey ?? fields.parent?.key ?? raw.parent?.key);
   const links = linkedKeys(fields, raw).filter(link => link !== key);
   if (parentKey && !links.includes(parentKey)) links.unshift(parentKey);
+  const relationTypes = {...(raw.relationTypes || {})};
+  for (const link of Array.isArray(raw.issueLinks) ? raw.issueLinks : []) {
+    const linkedKey = text(link?.key);
+    const label = displayRelationName(link?.type);
+    if (linkedKey && label) relationTypes[linkedKey] = uniqueStrings([relationTypes[linkedKey], label]);
+  }
   return {
     id: key,
     summary: text(raw.summary ?? fields.summary, key),
@@ -166,11 +175,63 @@ function normalizeIssue(raw, jiraBaseUrl) {
     url: text(raw.url, `${jiraBaseUrl.replace(/\/$/, "")}/browse/${encodeURIComponent(key)}`),
     components,
     links,
-    relationTypes: raw.relationTypes || {},
+    relationTypes,
     parentKey,
     external: false,
     synthetic: false,
   };
+}
+
+function issueReleaseVersions(raw) {
+  const fields = raw?.fields || raw || {};
+  const source = [raw?.fixVersions, raw?.versions, fields.fixVersions];
+  return uniqueStrings(source).flatMap(value => {
+    const matches = [...String(value).matchAll(/EkoCrop\s+(\d+(?:[.,]\d+)*)/gi)];
+    return matches.map(match => match[1].replace(",", "."));
+  });
+}
+
+function validRelease(value) {
+  return /^\d+(?:\.\d+)*$/.test(text(value));
+}
+
+function compareReleases(left, right) {
+  const leftParts = left.split(".").map(Number);
+  const rightParts = right.split(".").map(Number);
+  const length = Math.max(leftParts.length, rightParts.length);
+  for (let index = 0; index < length; index += 1) {
+    const difference = (leftParts[index] || 0) - (rightParts[index] || 0);
+    if (difference) return difference;
+  }
+  return left.localeCompare(right, "ru");
+}
+
+function issuesForRelease(rawIssues, release, jiraBaseUrl) {
+  const normalized = rawIssues.map(raw => ({raw, issue: normalizeIssue(raw, jiraBaseUrl)}));
+  const byKey = new Map(normalized.map(item => [item.issue.id, item]));
+  const selected = new Map();
+  for (const item of normalized) {
+    if (issueReleaseVersions(item.raw).includes(release)) selected.set(item.issue.id, item.raw);
+  }
+
+  // Проекты могут не иметь версии сами, но должны попасть в релиз,
+  // если с ними структурно связана хотя бы одна задача этого релиза.
+  const queue = [...selected.keys()];
+  const visited = new Set(queue);
+  while (queue.length) {
+    const key = queue.shift();
+    const item = byKey.get(key);
+    if (!item) continue;
+    for (const linkedKey of uniqueStrings([item.issue.parentKey, item.issue.links])) {
+      if (visited.has(linkedKey)) continue;
+      const linked = byKey.get(linkedKey);
+      if (!linked || !projectCandidate(linked.issue)) continue;
+      visited.add(linkedKey);
+      selected.set(linkedKey, linked.raw);
+      queue.push(linkedKey);
+    }
+  }
+  return [...selected.values()];
 }
 
 function projectCandidate(issue) {
@@ -364,7 +425,7 @@ function randomToken() {
 
 async function readPayload(request) {
   const length = Number(request.headers.get("content-length") || 0);
-  if (length > 10 * 1024 * 1024) throw new Error("Тело запроса слишком большое");
+  if (length > 50 * 1024 * 1024) throw new Error("Тело запроса больше 50 МБ");
   return request.json();
 }
 
@@ -376,43 +437,117 @@ async function startJob(request, env) {
   requireBindings(env);
   const payload = await readPayload(request);
   const release = text(payload.release);
-  if (!RELEASES.includes(release)) return json({error: "Выберите релиз от 6.0 до 14.0"}, 400);
-  if (!env.JIRA_AUTOMATION_WEBHOOK_URL) return json({error: "Секрет JIRA_AUTOMATION_WEBHOOK_URL не настроен"}, 503);
+  if (!validRelease(release)) return json({error: "Выберите синхронизированный релиз EkoCrop"}, 400);
+
+  const snapshot = await env.JOBS.get(`${SNAPSHOT_PREFIX}${release}`);
+  if (snapshot) {
+    const stored = JSON.parse(snapshot);
+    const id = crypto.randomUUID();
+    const job = {id, release, status: "ready", createdAt: Date.now(), completedAt: stored.syncedAt, result: stored.result};
+    await env.JOBS.put(`job:${id}`, JSON.stringify(job), {expirationTtl: JOB_TTL_SECONDS});
+    return json({id, release, status: "ready", syncedAt: stored.syncedAt}, 201);
+  }
+
+  if (!env.JIRA_POLL_TOKEN) {
+    return json({error: `Для релиза ${release} ещё нет данных. Дождитесь периодической синхронизации Jira`}, 404);
+  }
 
   const id = crypto.randomUUID();
   const callbackToken = randomToken();
   const callbackUrl = `${new URL(request.url).origin}/api/jira-callback`;
-  const job = {id, release, callbackToken, status: "pending", createdAt: Date.now()};
+  const job = {id, release, callbackToken, callbackUrl, status: "queued", createdAt: Date.now(), attempts: 0};
   await env.JOBS.put(`job:${id}`, JSON.stringify(job), {expirationTtl: JOB_TTL_SECONDS});
+  return json({id, release, status: "queued"}, 202);
+}
 
-  const headers = {"Content-Type": "application/json", Accept: "application/json"};
-  if (env.JIRA_AUTOMATION_WEBHOOK_TOKEN) headers["X-Automation-Webhook-Token"] = env.JIRA_AUTOMATION_WEBHOOK_TOKEN;
-  try {
-    const jiraResponse = await fetch(env.JIRA_AUTOMATION_WEBHOOK_URL, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        requestId: id,
-        release,
-        callbackToken,
-        callbackUrl,
-        data: {releaseVersion: release, requestId: id, callbackToken, callbackUrl},
-      }),
-    });
-    if (!jiraResponse.ok) throw new Error(`Jira Automation: HTTP ${jiraResponse.status}`);
-    return json({id, release, status: "pending"}, 202);
-  } catch (error) {
-    job.status = "error";
-    job.error = error.message;
-    await env.JOBS.put(`job:${id}`, JSON.stringify(job), {expirationTtl: JOB_TTL_SECONDS});
-    return json({error: job.error, id}, 502);
+async function saveSnapshot(payload, env) {
+  requireBindings(env);
+  const issues = Array.isArray(payload) ? payload : payload.issues;
+  if (!Array.isArray(issues)) return json({error: "Jira должна передать массив issues"}, 400);
+
+  const jiraBaseUrl = env.JIRA_BASE_URL || "https://dev.ekoniva-apk.com";
+  const syncedAt = new Date().toISOString();
+  const previousMetaRaw = await env.JOBS.get("snapshot:meta");
+  const previousMeta = previousMetaRaw ? JSON.parse(previousMetaRaw) : null;
+  const releases = [...new Set(issues.flatMap(issueReleaseVersions))].sort(compareReleases);
+  const saved = [];
+  for (const release of releases) {
+    const releaseIssues = issuesForRelease(issues, release, jiraBaseUrl);
+    if (!releaseIssues.length) {
+      await env.JOBS.delete?.(`${SNAPSHOT_PREFIX}${release}`);
+      continue;
+    }
+    const result = buildDiagramData(release, releaseIssues, jiraBaseUrl);
+    await env.JOBS.put(`${SNAPSHOT_PREFIX}${release}`, JSON.stringify({release, syncedAt, result}));
+    saved.push({release, issues: result.data.summary.releaseIssues});
   }
+  const currentReleases = new Set(releases);
+  for (const item of previousMeta?.releases || []) {
+    if (!currentReleases.has(item.release)) await env.JOBS.delete?.(`${SNAPSHOT_PREFIX}${item.release}`);
+  }
+  await env.JOBS.put("snapshot:meta", JSON.stringify({syncedAt, receivedIssues: issues.length, releases: saved}));
+  return json({ok: true, syncedAt, receivedIssues: issues.length, releases: saved});
+}
+
+async function acceptSnapshot(request, env) {
+  return saveSnapshot(await readPayload(request), env);
+}
+
+async function availableReleases(env) {
+  if (!env.JOBS) return DEFAULT_RELEASES.map(name => ({id: name, name, available: false}));
+  const metaRaw = await env.JOBS.get("snapshot:meta");
+  const meta = metaRaw ? JSON.parse(metaRaw) : null;
+  if (!meta) return DEFAULT_RELEASES.map(name => ({id: name, name, available: false}));
+  return (meta.releases || [])
+    .map(item => ({id: item.release, name: item.release, available: true, issueCount: item.issues}))
+    .sort((left, right) => compareReleases(left.name, right.name));
+}
+
+function pollAuthorized(request, env) {
+  const expected = text(env.JIRA_POLL_TOKEN);
+  const received = text(request.headers.get("X-Jira-Poll-Token"));
+  return Boolean(expected && received && received === expected);
+}
+
+async function claimJob(request, env) {
+  requireBindings(env);
+  if (!env.JIRA_POLL_TOKEN) return json({error: "Секрет JIRA_POLL_TOKEN не настроен"}, 503);
+  if (!pollAuthorized(request, env)) return json({error: "Неверный токен Jira dispatcher"}, 401);
+
+  const now = Date.now();
+  const listed = await env.JOBS.list({prefix: "job:", limit: 1000});
+  const candidates = [];
+  for (const key of listed.keys || []) {
+    const stored = await env.JOBS.get(key.name);
+    if (!stored) continue;
+    const job = JSON.parse(stored);
+    const retryable = job.status === "processing" && now - Number(job.claimedAt || 0) >= CLAIM_RETRY_MS;
+    if (job.status === "queued" || retryable) candidates.push(job);
+  }
+  candidates.sort((left, right) => Number(left.createdAt || 0) - Number(right.createdAt || 0));
+  const job = candidates[0];
+  if (!job) return json({pending: false});
+
+  job.status = "processing";
+  job.claimedAt = now;
+  job.attempts = Number(job.attempts || 0) + 1;
+  await env.JOBS.put(`job:${job.id}`, JSON.stringify(job), {expirationTtl: JOB_TTL_SECONDS});
+  return json({
+    pending: true,
+    requestId: job.id,
+    releaseVersion: job.release,
+    callbackToken: job.callbackToken,
+    callbackUrl: job.callbackUrl,
+    attempt: job.attempts,
+  });
 }
 
 async function acceptCallback(request, env) {
   requireBindings(env);
   const payload = await readPayload(request);
   const id = text(payload.requestId);
+  const issues = Array.isArray(payload) ? payload : payload.issues;
+  if (!id && Array.isArray(issues)) return saveSnapshot(payload, env);
   const token = text(payload.callbackToken);
   const stored = id && await env.JOBS.get(`job:${id}`);
   if (!stored) return json({error: "Запрос не найден или устарел"}, 404);
@@ -420,7 +555,6 @@ async function acceptCallback(request, env) {
   if (token !== job.callbackToken) return json({error: "Неверный callback token"}, 403);
   if (job.status === "ready") return json({error: "Результат для этого запроса уже получен"}, 409);
   try {
-    const issues = Array.isArray(payload) ? payload : payload.issues;
     job.result = buildDiagramData(job.release, issues, env.JIRA_BASE_URL || "https://dev.ekoniva-apk.com");
     job.status = "ready";
     job.completedAt = Date.now();
@@ -460,12 +594,14 @@ export default {
         return new Response(null, {status: 204, headers: CORS_HEADERS});
       }
       if (request.method === "GET" && url.pathname === "/api/releases") {
-        return json({releases: RELEASES.map(name => ({id: name, name})), mode: env.JIRA_AUTOMATION_WEBHOOK_URL ? "automation" : "not-configured"});
+        return json({releases: await availableReleases(env), mode: env.JOBS ? "jira-snapshot" : env.JIRA_POLL_TOKEN ? "jira-polling" : "not-configured"});
       }
       if (request.method === "GET" && url.pathname === "/api/health") {
-        return json({ok: true, platform: "cloudflare-workers", integration: env.JIRA_AUTOMATION_WEBHOOK_URL ? "automation" : "not-configured", storage: env.JOBS ? "ready" : "not-configured"});
+        return json({ok: true, platform: "cloudflare-workers", integration: env.JOBS ? "jira-snapshot" : env.JIRA_POLL_TOKEN ? "jira-polling" : "not-configured", storage: env.JOBS ? "ready" : "not-configured"});
       }
       if (request.method === "POST" && url.pathname === "/api/diagram-jobs") return startJob(request, env);
+      if (request.method === "POST" && url.pathname === "/api/jira-snapshot") return acceptSnapshot(request, env);
+      if (request.method === "POST" && url.pathname === "/api/jira-poll") return claimJob(request, env);
       if (request.method === "POST" && url.pathname === "/api/import-csv") return importCsv(request, env);
       const jobMatch = url.pathname.match(/^\/api\/diagram-jobs\/([0-9a-f-]+)$/i);
       if (request.method === "GET" && jobMatch) return jobStatus(jobMatch[1], env);

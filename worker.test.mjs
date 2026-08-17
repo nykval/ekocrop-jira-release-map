@@ -12,7 +12,53 @@ class MemoryKV {
   constructor() { this.values = new Map(); }
   async put(key, value) { this.values.set(key, value); }
   async get(key) { return this.values.get(key) ?? null; }
+  async delete(key) { this.values.delete(key); }
+  async list({prefix = "", limit = 1000} = {}) {
+    return {keys: [...this.values.keys()].filter(key => key.startsWith(prefix)).slice(0, limit).map(name => ({name}))};
+  }
 }
+
+test("Jira сохраняет периодический снимок через согласованный callback, а страница читает его из KV", async () => {
+  const JOBS = new MemoryKV();
+  const env = {
+    JOBS,
+    JIRA_BASE_URL: "https://jira.example.test",
+    ASSETS: {fetch: () => new Response("asset")},
+  };
+  const snapshotIssues = [
+    {...sampleIssues[0], fixVersions: []},
+    {...sampleIssues[1], fixVersions: ["EkoCrop 8.2", "EkoCrop 10.0"]},
+    {...sampleIssues[2], fixVersions: ["EkoCrop 9.0", "EkoCrop 10.0"]},
+  ];
+  const savedResponse = await worker.fetch(new Request("https://map.example/api/jira-callback", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({issues: snapshotIssues}),
+  }), env);
+  assert.equal(savedResponse.status, 200);
+  const saved = await savedResponse.json();
+  assert.equal(saved.receivedIssues, 3);
+  assert.deepEqual(saved.releases.map(item => item.release), ["8.2", "9.0", "10.0"]);
+
+  const releasesResponse = await worker.fetch(new Request("https://map.example/api/releases"), env);
+  const releases = await releasesResponse.json();
+  assert.equal(releases.mode, "jira-snapshot");
+  assert.equal(releases.releases.find(item => item.name === "8.2").available, true);
+  assert.equal(releases.releases.find(item => item.name === "10.0").available, true);
+
+  const createdResponse = await worker.fetch(new Request("https://map.example/api/diagram-jobs", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({release: "10.0"}),
+  }), env);
+  assert.equal(createdResponse.status, 201);
+  const created = await createdResponse.json();
+  assert.equal(created.status, "ready");
+  const statusResponse = await worker.fetch(new Request(`https://map.example/api/diagram-jobs/${created.id}`), env);
+  const status = await statusResponse.json();
+  assert.equal(status.result.data.summary.projectGroups, 1);
+  assert.equal(status.result.data.summary.releaseIssues, 3);
+});
 
 test("Cloudflare-версия строит те же группы диаграммы", () => {
   const result = buildDiagramData("10.0", sampleIssues);
@@ -21,45 +67,52 @@ test("Cloudflare-версия строит те же группы диаграм
   assert.equal(result.data.groups.find(group => group.group.id === "PROJECTS-1").tasks.length, 1);
 });
 
-test("Cloudflare Worker связывает запуск, Jira callback и опрос через KV", async () => {
+test("Cloudflare Worker связывает очередь, Jira dispatcher, callback и опрос через KV", async () => {
   const JOBS = new MemoryKV();
-  let webhookPayload;
-  const originalFetch = globalThis.fetch;
-  globalThis.fetch = async (_url, options) => {
-    webhookPayload = JSON.parse(options.body);
-    return new Response("{}", {status: 200});
-  };
   const env = {
     JOBS,
-    JIRA_AUTOMATION_WEBHOOK_URL: "https://jira.example.test/hook",
+    JIRA_POLL_TOKEN: "dispatcher-secret",
     JIRA_BASE_URL: "https://jira.example.test",
     ASSETS: {fetch: () => new Response("asset")},
   };
-  try {
-    const createdResponse = await worker.fetch(new Request("https://map.example/api/diagram-jobs", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({release: "10.0"}),
-    }), env);
-    assert.equal(createdResponse.status, 202);
-    const created = await createdResponse.json();
-    assert.equal(webhookPayload.data.releaseVersion, "10.0");
-    assert.equal(webhookPayload.callbackUrl, "https://map.example/api/jira-callback");
+  const createdResponse = await worker.fetch(new Request("https://map.example/api/diagram-jobs", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({release: "10.0"}),
+  }), env);
+  assert.equal(createdResponse.status, 202);
+  const created = await createdResponse.json();
+  assert.equal(created.status, "queued");
 
-    const callbackResponse = await worker.fetch(new Request(webhookPayload.callbackUrl, {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({requestId: webhookPayload.requestId, callbackToken: webhookPayload.callbackToken, issues: sampleIssues}),
-    }), env);
-    assert.equal(callbackResponse.status, 200);
+  const unauthorized = await worker.fetch(new Request("https://map.example/api/jira-poll", {method: "POST"}), env);
+  assert.equal(unauthorized.status, 401);
+  const pollResponse = await worker.fetch(new Request("https://map.example/api/jira-poll", {
+    method: "POST",
+    headers: {"X-Jira-Poll-Token": "dispatcher-secret"},
+  }), env);
+  assert.equal(pollResponse.status, 200);
+  const dispatch = await pollResponse.json();
+  assert.equal(dispatch.pending, true);
+  assert.equal(dispatch.releaseVersion, "10.0");
+  assert.equal(dispatch.callbackUrl, "https://map.example/api/jira-callback");
 
-    const statusResponse = await worker.fetch(new Request(`https://map.example/api/diagram-jobs/${created.id}`), env);
-    const status = await statusResponse.json();
-    assert.equal(status.status, "ready");
-    assert.equal(status.result.data.summary.releaseIssues, 3);
-  } finally {
-    globalThis.fetch = originalFetch;
-  }
+  const callbackResponse = await worker.fetch(new Request(dispatch.callbackUrl, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({requestId: dispatch.requestId, callbackToken: dispatch.callbackToken, issues: sampleIssues}),
+  }), env);
+  assert.equal(callbackResponse.status, 200);
+
+  const statusResponse = await worker.fetch(new Request(`https://map.example/api/diagram-jobs/${created.id}`), env);
+  const status = await statusResponse.json();
+  assert.equal(status.status, "ready");
+  assert.equal(status.result.data.summary.releaseIssues, 3);
+
+  const emptyPoll = await worker.fetch(new Request("https://map.example/api/jira-poll", {
+    method: "POST",
+    headers: {"X-Jira-Poll-Token": "dispatcher-secret"},
+  }), env);
+  assert.deepEqual(await emptyPoll.json(), {pending: false});
 });
 
 test("Cloudflare Worker отдаёт релизы 6.0–14.0", async () => {
