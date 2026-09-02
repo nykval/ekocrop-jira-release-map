@@ -24,6 +24,7 @@ const sampleIssues = [
   {key: "DEVELOP-2", summary: "Исправить ошибку", issueType: "Ошибка", priority: "Highest"},
   {key: "DEVELOP-3", summary: "Рефакторинг", issueType: "Рефакторинг", priority: "Low"},
   {key: "DEVELOP-4", summary: "Отдельная задача", issueType: "Задача", priority: "Medium"},
+  {key: "DEVELOP-5", summary: "Оптимизация", issueType: "Оптимизация", priority: "Low"},
 ];
 
 function listen(server) {
@@ -34,13 +35,15 @@ function close(server) {
   return new Promise((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
 }
 
-test("buildDiagramData создаёт проекты и три служебные группы", () => {
+test("buildDiagramData создаёт только PROJECTS на первом уровне и служебные группы", () => {
   const result = buildDiagramData("11.0", sampleIssues);
-  assert.equal(result.data.summary.releaseIssues, 5);
+  assert.equal(result.data.summary.releaseIssues, 6);
   assert.equal(result.data.summary.projectGroups, 1);
-  assert.equal(result.data.summary.serviceGroups, 3);
+  assert.equal(result.data.summary.serviceGroups, 4);
   assert.equal(result.data.groups.find(group => group.group.id === "PROJECTS-1").tasks.length, 1);
-  assert.equal(result.data.groups.at(-1).group.id, "group-other");
+  assert.ok(result.data.groups.filter(group => !group.synthetic).every(group => group.group.id.startsWith("PROJECTS-")));
+  assert.equal(result.data.groups.find(group => group.group.id === "group-optimization").tasks.length, 1);
+  assert.equal(result.data.groups.find(group => group.group.id === "group-tasks").tasks.length, 1);
   assert.deepEqual(result.componentsByIssue["DEVELOP-1"], ["arch-tier: backend-srv"]);
 });
 
@@ -121,7 +124,7 @@ test("веб-хук, callback и опрос задания работают вм
     const statusResponse = await fetch(`http://127.0.0.1:${appPort}/api/diagram-jobs/${job.id}`);
     const status = await statusResponse.json();
     assert.equal(status.status, "ready");
-    assert.equal(status.result.data.summary.releaseIssues, 5);
+    assert.equal(status.result.data.summary.releaseIssues, 6);
   } finally {
     delete process.env.JIRA_AUTOMATION_WEBHOOK_URL;
     delete process.env.APP_BASE_URL;
@@ -201,5 +204,5 @@ test("внешний проект показывается только при �
   assert.ok(projectIds.includes("PROJECTS-IN"));
   assert.ok(projectIds.includes("PROJECTS-STRUCT"));
   assert.ok(!projectIds.includes("PROJECTS-RELATES"));
-  assert.ok(result.data.groups.find(group => group.group.id === "group-other").tasks.some(task => task.id === "DEVELOP-REL"));
+  assert.ok(result.data.groups.find(group => group.group.id === "group-tasks").tasks.some(task => task.id === "DEVELOP-REL"));
 });

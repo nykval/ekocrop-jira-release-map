@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src 'self' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src 'self' blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src 'self' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src 'self' blob: data: https://ekocrop-jira-release-map.skorokirzhaboy.workers.dev; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
 <title>Карта релиза EkoCrop</title>
 <style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255),rgb(24 24 24));font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:light-dark(rgb(26 28 31),rgb(255 255 255));--app-green:light-dark(rgb(0 126 58),rgb(64 201 119));--app-border:light-dark(rgb(226 229 233),rgb(63 67 72));--app-muted:light-dark(rgb(91 96 104),rgb(180 185 192));--app-soft:light-dark(rgb(246 249 247),rgb(31 38 34))}*{box-sizing:border-box}html,body{margin:0}body{background:inherit}.app-header{padding:1.25rem 2rem 0;border-top:3px solid var(--app-green);border-bottom:1px solid var(--app-border);background:inherit}.app-brand{display:flex;align-items:center;gap:.7rem;margin-bottom:1rem}.app-brand-mark{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--app-green);color:light-dark(white,rgb(13 13 13));font-weight:700}.app-brand-copy{display:grid;gap:.1rem}.app-brand-title{font-size:1.05rem;font-weight:650}.app-brand-subtitle{font-size:.78rem;color:var(--app-muted)}.section-tabs{display:flex;gap:.35rem;overflow-x:auto;scrollbar-width:none}.section-tabs::-webkit-scrollbar{display:none}.section-tab{position:relative;display:inline-flex;align-items:center;gap:.5rem;min-height:44px;padding:.65rem .9rem;border:0;background:transparent;color:var(--app-muted);font:inherit;font-weight:550;white-space:nowrap;cursor:pointer}.section-tab:hover{color:inherit;background:var(--app-soft);border-radius:8px 8px 0 0}.section-tab[aria-selected="true"]{color:var(--app-green)}.section-tab[aria-selected="true"]::after{content:"";position:absolute;left:.8rem;right:.8rem;bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:var(--app-green)}.section-tab-count{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 .35rem;border-radius:10px;background:var(--app-soft);color:var(--app-muted);font-size:.7rem}.app-view{padding:1.15rem 2rem 0}.app-view[hidden]{display:none}.release-toolbar{display:flex;align-items:end;gap:.75rem;flex-wrap:wrap;margin:0 0 .75rem}.release-field{display:grid;gap:.3rem;min-width:220px}.release-field label,.import-label{font-size:.85rem;color:var(--app-muted)}.release-field select,.release-toolbar button,.import-file-button{box-sizing:border-box;min-height:44px;border:1px solid var(--app-border);border-radius:10px;padding:.6rem .8rem;font:inherit}.release-field select{background:light-dark(rgb(255 255 255),rgb(38 38 38));color:inherit}.release-toolbar button{border-color:var(--app-green);background:var(--app-green);color:light-dark(rgb(255 255 255),rgb(13 13 13));font-weight:600;cursor:pointer}.release-toolbar button:disabled{opacity:.55;cursor:wait}.release-status{min-height:44px;display:flex;align-items:center;color:var(--app-muted)}.import-panel{display:flex;align-items:end;gap:.75rem;flex-wrap:wrap;margin:-.15rem 0 .8rem}.import-field{display:grid;gap:.3rem}.import-file-button{display:inline-flex;align-items:center;gap:.55rem;background:var(--app-soft);cursor:pointer;font-weight:550}.import-file-button:hover{border-color:var(--app-green)}.import-file-button input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.import-hint{min-height:44px;display:flex;align-items:center;color:var(--app-muted);font-size:.86rem}.future-view{min-height:320px;display:grid;place-items:center;text-align:center}.future-view-inner{max-width:440px}.future-view h2{margin:0 0 .5rem;font-size:1.25rem}.future-view p{margin:0;color:var(--app-muted);line-height:1.55}iframe{display:block;width:100%;height:calc(100vh - 14rem);min-height:420px;margin:0 auto;border:0}@media(max-width:680px){.app-header{padding:1rem 1rem 0}.app-view{padding:1rem 1rem 0}.app-brand-subtitle{display:none}.section-tab{padding:.6rem .7rem}.release-field{flex:1 1 100%}.release-toolbar button{flex:1}.release-status{flex-basis:100%;height:auto;min-height:0}.import-field{width:100%}.import-file-button{width:100%;justify-content:center}.import-hint{min-height:0}iframe{height:calc(100vh - 18rem)}}.app-brand-logo{display:block;width:116px;height:36px;object-fit:contain;object-position:left center}
@@ -1517,6 +1517,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     #jira-release-10-hierarchy .jrh-type-purple {
       background: var(--purple);
     }
+    #jira-release-10-hierarchy .jrh-type-yellow {
+      background: var(--yellow);
+      color: light-dark(rgb(41 31 0), rgb(31 24 0));
+    }
     #jira-release-10-hierarchy .jrh-type-muted {
       background: var(--muted-foreground);
     }
@@ -1754,6 +1758,15 @@ html&gt;body{padding:0}&lt;/style&gt;
         } else if (value === &quot;Документы&quot;) {
           color = &quot;purple&quot;;
           kind = &quot;list&quot;;
+        } else if (value === &quot;Оптимизация&quot;) {
+          color = &quot;yellow&quot;;
+          kind = &quot;arrow&quot;;
+        } else if (value === &quot;Рефакторинг&quot;) {
+          color = &quot;purple&quot;;
+          kind = &quot;list&quot;;
+        } else if (value === &quot;Группа&quot;) {
+          color = &quot;muted&quot;;
+          kind = &quot;list&quot;;
         }
 
         const wrapper = document.createElement(&quot;span&quot;);
@@ -1973,6 +1986,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (expandedState !== null) button.setAttribute(&quot;aria-expanded&quot;, String(expandedState));
         button.addEventListener(&quot;click&quot;, onActivate);
 
+        if (kind !== &quot;release&quot;) button.appendChild(createIssueTypeIcon(item.taskType));
         if (priority) button.appendChild(createPriorityIcon(priority));
 
         const copy = document.createElementNS(xhtmlNamespace, &quot;span&quot;);
@@ -2065,7 +2079,9 @@ html&gt;body{padding:0}&lt;/style&gt;
         const serviceGroupOrder = {
           &quot;group-bugs&quot;: 0,
           &quot;group-refactoring&quot;: 1,
-          &quot;group-other&quot;: 2,
+          &quot;group-optimization&quot;: 2,
+          &quot;group-tasks&quot;: 3,
+          &quot;group-other&quot;: 4,
         };
         const serviceGroups = data.groups
           .filter(item =&gt; item.synthetic)
@@ -2698,6 +2714,8 @@ html&gt;body{padding:0}&lt;/style&gt;
   const dashboardFullscreenLabel = document.querySelector("[data-dashboard-fullscreen-label]");
   let preparedCsvResult = null;
   let preparedCsvRelease = "";
+  let baselineCsvText = "";
+  let baselineExportMeta = null;
   let currentVisualizationResult = null;
 
   function syncStickyOffsets() {
@@ -3127,6 +3145,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
 
   function parseCsv(sourceText) {
+    const delimiter = detectCsvDelimiter(sourceText);
     const rows = [];
     let row = [], cell = "", quoted = false;
     const source = String(sourceText || "").replace(/^\uFEFF/, "");
@@ -3137,7 +3156,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         else if (character === '"') quoted = false;
         else cell += character;
       } else if (character === '"') quoted = true;
-      else if (character === ",") { row.push(cell); cell = ""; }
+      else if (character === delimiter) { row.push(cell); cell = ""; }
       else if (character === "\n" || character === "\r") {
         if (character === "\r" && source[index + 1] === "\n") index += 1;
         row.push(cell);
@@ -3148,6 +3167,13 @@ html&gt;body{padding:0}&lt;/style&gt;
     row.push(cell);
     if (row.some(value => value !== "")) rows.push(row);
     return rows;
+  }
+
+  function detectCsvDelimiter(sourceText) {
+    const firstLine = String(sourceText || "").replace(/^\uFEFF/, "").split(/\r?\n/).find(line => line.trim()) || "";
+    const commas = (firstLine.match(/,/g) || []).length;
+    const semicolons = (firstLine.match(/;/g) || []).length;
+    return semicolons > commas ? ";" : ",";
   }
 
   function unique(values) {
@@ -3163,7 +3189,88 @@ html&gt;body{padding:0}&lt;/style&gt;
     return name;
   }
 
-  function diagramFromCsv(csvText) {
+  function csvReleaseCounts(csvText) {
+    const rows = parseCsv(csvText);
+    if (rows.length < 2) throw new Error("CSV-файл не содержит задач");
+    const headers = rows[0].map(value => value.trim());
+    const all = predicate => headers.map((name, index) => predicate(name) ? index : -1).filter(index => index >= 0);
+    const versionIndices = all(name => name === "Исправить в версиях");
+    if (!versionIndices.length) throw new Error("В CSV нет колонки «Исправить в версиях»");
+    const releaseCounts = new Map();
+    for (const rowValue of rows.slice(1)) {
+      const rowReleases = new Set(rowReleaseVersions(rowValue, versionIndices));
+      for (const item of rowReleases) releaseCounts.set(item, (releaseCounts.get(item) || 0) + 1);
+    }
+    return releaseCounts;
+  }
+
+  function rowReleaseVersions(rowValue, versionIndices) {
+    return versionIndices.flatMap(index => {
+      const matches = [...String(rowValue[index] || "").matchAll(/(?:EkoCrop\s*)?(\d+(?:[.,]\d+)?)/gi)];
+      return matches.map(match => match[1].replace(",", "."));
+    });
+  }
+
+  function compareReleaseNames(left, right) {
+    const leftParts = String(left).split(".").map(Number);
+    const rightParts = String(right).split(".").map(Number);
+    const length = Math.max(leftParts.length, rightParts.length);
+    for (let index = 0; index < length; index += 1) {
+      const difference = (leftParts[index] || 0) - (rightParts[index] || 0);
+      if (difference) return difference;
+    }
+    return String(left).localeCompare(String(right), "ru");
+  }
+
+  function setCsvReleaseOptions(releaseCounts, sourceLabel) {
+    select.replaceChildren();
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Выберите релиз";
+    select.appendChild(placeholder);
+    for (const [release, count] of [...releaseCounts.entries()].sort((a, b) => compareReleaseNames(a[0], b[0]))) {
+      const option = document.createElement("option");
+      option.value = release;
+      option.textContent = `${release} · ${count} задач · ${sourceLabel}`;
+      select.appendChild(option);
+    }
+    select.value = "";
+    select.disabled = false;
+    syncSubmitState();
+  }
+
+  async function fetchOptionalJson(path) {
+    try {
+      const response = await fetch(`${path}?v=${Date.now()}`, {cache: "no-store"});
+      if (!response.ok) return null;
+      return await response.json();
+    } catch {
+      return null;
+    }
+  }
+
+  async function loadBaselineCsv() {
+    try {
+      const response = await fetch(`data/jira.csv?v=${Date.now()}`, {cache: "no-store"});
+      if (!response.ok) return false;
+      const csvText = await response.text();
+      const releaseCounts = csvReleaseCounts(csvText);
+      if (!releaseCounts.size) return false;
+      baselineCsvText = csvText;
+      baselineExportMeta = await fetchOptionalJson("data/last-export.json");
+      setCsvReleaseOptions(releaseCounts, "CSV");
+      const exportedAt = baselineExportMeta?.exportedAt
+        ? new Date(baselineExportMeta.exportedAt).toLocaleString("ru-RU")
+        : "";
+      setStatus(`Загружена еженедельная CSV-база${exportedAt ? ` от ${exportedAt}` : ""}. Выберите релиз`);
+      return true;
+    } catch (error) {
+      setStatus(`CSV-база data/jira.csv не загружена: ${error.message}. Можно импортировать CSV вручную`);
+      return false;
+    }
+  }
+
+  function diagramFromCsv(csvText, requestedRelease = "") {
     const rows = parseCsv(csvText);
     if (rows.length < 2) throw new Error("CSV-файл не содержит задач");
     const headers = rows[0].map(value => value.trim());
@@ -3171,20 +3278,14 @@ html&gt;body{padding:0}&lt;/style&gt;
     const all = predicate => headers.map((name, index) => predicate(name) ? index : -1).filter(index => index >= 0);
     const versionIndices = all(name => name === "Исправить в версиях");
     if (!versionIndices.length) throw new Error("В CSV нет колонки «Исправить в версиях»");
-    const releaseCounts = new Map();
-    for (const rowValue of rows.slice(1)) {
-      const rowReleases = new Set(versionIndices.flatMap(index => {
-        const match = String(rowValue[index] || "").trim().match(/(?:EkoCrop\s*)?(\d+(?:[.,]\d+)?)/i);
-        return match ? [match[1].replace(",", ".")] : [];
-      }));
-      for (const item of rowReleases) releaseCounts.set(item, (releaseCounts.get(item) || 0) + 1);
-    }
+    const releaseCounts = csvReleaseCounts(csvText);
     const rankedReleases = [...releaseCounts.entries()].sort((a, b) => b[1] - a[1]);
     if (!rankedReleases.length) throw new Error("В колонке «Исправить в версиях» не указан релиз EkoCrop");
-    if (rankedReleases[1]?.[1] === rankedReleases[0][1]) {
+    if (!requestedRelease && rankedReleases[1]?.[1] === rankedReleases[0][1]) {
       throw new Error(`В CSV неоднозначно указаны релизы: ${rankedReleases.filter(item => item[1] === rankedReleases[0][1]).map(item => item[0]).join(", ")}`);
     }
-    const release = rankedReleases[0][0];
+    const release = requestedRelease || rankedReleases[0][0];
+    if (requestedRelease && !releaseCounts.has(requestedRelease)) throw new Error(`В CSV нет задач релиза ${requestedRelease}`);
     const keyIndex = first("Ключ проблемы");
     const summaryIndex = first("Тема");
     if (keyIndex < 0 || summaryIndex < 0) throw new Error("Это не экспорт Jira: не найдены колонки «Ключ проблемы» и «Тема»");
@@ -3200,7 +3301,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     const relationIndices = relationColumns.map(column => column.index);
     const parentIndices = all(name => /ссылка на эпик|родительская ссылка/i.test(name));
     const value = (rowValue, index) => index >= 0 ? String(rowValue[index] || "").trim() : "";
-    const issues = rows.slice(1).map(rowValue => {
+    let issues = rows.slice(1).map(rowValue => {
       const id = value(rowValue, keyIndex);
       if (!id) return null;
       const relationTypes = {};
@@ -3219,14 +3320,16 @@ html&gt;body{padding:0}&lt;/style&gt;
         url: `https://dev.ekoniva-apk.com/browse/${encodeURIComponent(id)}`,
         components: unique(componentIndices.map(index => rowValue[index])),
         links: unique(relationIndices.map(index => rowValue[index])),
+        releaseVersions: rowReleaseVersions(rowValue, versionIndices),
         relationTypes,
         parentKey: parentIndices.map(index => value(rowValue, index)).find(Boolean) || "",
         external: false,
         synthetic: false,
       };
     }).filter(Boolean);
-    const issuesByKey = new Map(issues.map(issue => [issue.id, issue]));
-    for (const issue of issues) {
+    const allIssues = issues;
+    const issuesByKey = new Map(allIssues.map(issue => [issue.id, issue]));
+    for (const issue of allIssues) {
       for (const linkedKey of issue.links) {
         const linked = issuesByKey.get(linkedKey);
         if (linked && !linked.links.includes(issue.id)) linked.links.push(issue.id);
@@ -3235,8 +3338,22 @@ html&gt;body{padding:0}&lt;/style&gt;
         }
       }
     }
-    const projectCandidate = issue => issue.id.startsWith("PROJECTS-") || ["Проект", "Project", "Epic"].includes(issue.taskType);
-    const candidates = new Map(issues.filter(projectCandidate).map(issue => [issue.id, issue]));
+    const projectCandidate = issue => issue.id.startsWith("PROJECTS-");
+    const selectedIds = new Set(allIssues.filter(issue => issue.releaseVersions.includes(release)).map(issue => issue.id));
+    const queue = [...selectedIds];
+    while (queue.length) {
+      const issue = issuesByKey.get(queue.shift());
+      if (!issue) continue;
+      for (const linkedKey of unique([issue.parentKey, issue.links])) {
+        const linked = issuesByKey.get(linkedKey);
+        if (!linked || selectedIds.has(linkedKey) || !projectCandidate(linked)) continue;
+        selectedIds.add(linkedKey);
+        queue.push(linkedKey);
+      }
+    }
+    issues = allIssues.filter(issue => selectedIds.has(issue.id));
+    const selectedIssueKeys = new Set(issues.map(issue => issue.id));
+    const candidates = new Map(allIssues.filter(issue => selectedIssueKeys.has(issue.id) && projectCandidate(issue)).map(issue => [issue.id, issue]));
     for (const linkedKey of unique(issues.flatMap(issue => issue.links))) {
       if (!linkedKey.startsWith("PROJECTS-") || issuesByKey.has(linkedKey)) continue;
       const project = {id: linkedKey, summary: linkedKey, taskType: "Проект", status: "Вне выбранного релиза", priority: "Не указан", assignee: "Не назначен", url: `https://dev.ekoniva-apk.com/browse/${linkedKey}`, components: [], links: [], parentKey: "", external: true, synthetic: false};
@@ -3304,10 +3421,15 @@ html&gt;body{padding:0}&lt;/style&gt;
     const groups = visibleTopProjects.map(project => ({group: project, tasks: buckets.get(project.id), synthetic: false}));
     const bugs = unassigned.filter(issue => ["Ошибка", "Bug"].includes(issue.taskType));
     const refactoring = unassigned.filter(issue => ["Рефакторинг", "Refactoring"].includes(issue.taskType));
-    const other = unassigned.filter(issue => !bugs.includes(issue) && !refactoring.includes(issue));
+    const optimization = unassigned.filter(issue => ["Оптимизация", "Optimization"].includes(issue.taskType));
+    const standaloneTasks = unassigned.filter(issue => ["Задача", "Task"].includes(issue.taskType));
+    const grouped = new Set([...bugs, ...refactoring, ...optimization, ...standaloneTasks]);
+    const other = unassigned.filter(issue => !grouped.has(issue));
     const service = (id, summary, taskType, tasks) => ({group: {id, summary, taskType, status: "Служебная группа", priority: "—", assignee: "—", url: null, external: false, synthetic: true}, tasks, synthetic: true});
     if (bugs.length) groups.push(service("group-bugs", "Ошибки без проекта", "Ошибка", bugs));
     if (refactoring.length) groups.push(service("group-refactoring", "Рефакторинг без проекта", "Рефакторинг", refactoring));
+    if (optimization.length) groups.push(service("group-optimization", "Оптимизация без проекта", "Оптимизация", optimization));
+    if (standaloneTasks.length) groups.push(service("group-tasks", "Задачи без проекта", "Задача", standaloneTasks));
     if (other.length) groups.push(service("group-other", "Без проекта", "Группа", other));
     const realGroups = groups.filter(group => !group.synthetic);
     const serviceGroups = groups.filter(group => group.synthetic);
@@ -3328,20 +3450,16 @@ html&gt;body{padding:0}&lt;/style&gt;
     csvFile.disabled = true;
     setStatus(`Импортируем ${file.name}…`);
     try {
-      const result = diagramFromCsv(await file.text());
-      const release = result.data.release.summary.replace(/^Релиз EkoCrop\s+/, "");
-      if (![...select.options].some(option => option.value === release)) {
-        const option = document.createElement("option");
-        option.value = release;
-        option.textContent = release;
-        select.appendChild(option);
-      }
-      select.value = release;
-      preparedCsvResult = result;
-      preparedCsvRelease = release;
+      const csvText = await file.text();
+      const releaseCounts = csvReleaseCounts(csvText);
+      baselineCsvText = csvText;
+      baselineExportMeta = null;
+      preparedCsvResult = null;
+      preparedCsvRelease = "";
+      setCsvReleaseOptions(releaseCounts, "импорт");
       syncSubmitState();
-      const count = result.data?.summary?.releaseIssues ?? 0;
-      setStatus(`Подготовлено ${count} задач · релиз ${release}. Нажмите «Построить диаграмму»`);
+      const total = [...releaseCounts.values()].reduce((sum, count) => sum + count, 0);
+      setStatus(`Подготовлено ${total} задач из CSV. Выберите релиз. Нажмите «Построить диаграмму»`);
     } catch (error) {
       setStatus(`Ошибка импорта: ${error.message}`);
     } finally {
@@ -3385,6 +3503,25 @@ html&gt;body{padding:0}&lt;/style&gt;
       syncSubmitState();
       return;
     }
+    if (baselineCsvText) {
+      try {
+        const result = diagramFromCsv(baselineCsvText, release);
+        preparedCsvResult = result;
+        preparedCsvRelease = release;
+        renderDashboard(result);
+        diagramShell.hidden = false;
+        diagram.contentWindow.postMessage({type: "jira-diagram-data", payload: result}, "*");
+        const count = result.data?.summary?.releaseIssues ?? 0;
+        setStatus(`Релиз ${release}: построена диаграмма по ${count} задачам из CSV`);
+        document.title = `EkoCrop ${release} — карта задач`;
+      } catch (error) {
+        setStatus(`Ошибка CSV: ${error.message}`);
+      } finally {
+        select.disabled = false;
+        syncSubmitState();
+      }
+      return;
+    }
     setStatus(`Отправляем запрос для релиза ${release}…`);
     try {
       const job = await json(await fetch(apiUrl("/api/diagram-jobs"), {
@@ -3407,8 +3544,15 @@ html&gt;body{padding:0}&lt;/style&gt;
     }
   });
 
-  loadReleases();
-  syncSubmitState();
+  async function boot() {
+    select.disabled = true;
+    syncSubmitState();
+    const loadedFromCsv = await loadBaselineCsv();
+    if (!loadedFromCsv) await loadReleases();
+    syncSubmitState();
+  }
+
+  boot();
 })();
 </script>
 </body>

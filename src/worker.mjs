@@ -246,7 +246,7 @@ function issuesForRelease(rawIssues, release, jiraBaseUrl) {
 }
 
 function projectCandidate(issue) {
-  return issue.id.startsWith("PROJECTS-") || ["Проект", "Project", "Epic"].includes(issue.taskType);
+  return issue.id.startsWith("PROJECTS-");
 }
 
 function candidateScore(issue, issuesByKey) {
@@ -383,9 +383,14 @@ export function buildDiagramData(release, rawIssues, jiraBaseUrl = "https://dev.
   const groups = visibleTopLevelProjects.map(project => ({group: project, tasks: taskBuckets.get(project.id) || [], synthetic: false}));
   const bugs = unassigned.filter(issue => ["Ошибка", "Bug"].includes(issue.taskType));
   const refactoring = unassigned.filter(issue => ["Рефакторинг", "Refactoring"].includes(issue.taskType));
-  const other = unassigned.filter(issue => !bugs.includes(issue) && !refactoring.includes(issue));
+  const optimization = unassigned.filter(issue => ["Оптимизация", "Optimization"].includes(issue.taskType));
+  const standaloneTasks = unassigned.filter(issue => ["Задача", "Task"].includes(issue.taskType));
+  const grouped = new Set([...bugs, ...refactoring, ...optimization, ...standaloneTasks]);
+  const other = unassigned.filter(issue => !grouped.has(issue));
   if (bugs.length) groups.push(syntheticGroup("group-bugs", "Ошибки без проекта", "Ошибка", bugs));
   if (refactoring.length) groups.push(syntheticGroup("group-refactoring", "Рефакторинг без проекта", "Рефакторинг", refactoring));
+  if (optimization.length) groups.push(syntheticGroup("group-optimization", "Оптимизация без проекта", "Оптимизация", optimization));
+  if (standaloneTasks.length) groups.push(syntheticGroup("group-tasks", "Задачи без проекта", "Задача", standaloneTasks));
   if (other.length) groups.push(syntheticGroup("group-other", "Без проекта", "Группа", other));
 
   const componentsByIssue = Object.fromEntries(issues.filter(issue => issue.components.length).map(issue => [issue.id, issue.components]));
