@@ -292,6 +292,7 @@
     </label>
   </div>
   <button type="submit" data-release-submit disabled>Построить диаграмму</button>
+  <button type="button" data-clear-marks disabled>Сбросить отметки</button>
 </form>
 <span class="release-status" data-release-status role="status" aria-live="polite">Выберите релиз или импортируйте CSV</span>
 </div></div>
@@ -1318,6 +1319,15 @@ html&gt;body{padding:0}&lt;/style&gt;
       border-color: color-mix(in srgb, var(--green) 55%, var(--background));
       box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green) 55%, var(--background));
     }
+    #jira-release-10-hierarchy .jrh-node-main[data-marked=&quot;true&quot;] {
+      background: color-mix(in srgb, var(--green) 12%, var(--background));
+      border-color: color-mix(in srgb, var(--green) 56%, var(--border));
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green) 42%, transparent);
+    }
+    #jira-release-10-hierarchy .jrh-node-main[data-node-kind=&quot;release&quot;][data-marked=&quot;true&quot;] {
+      background: var(--green);
+      border-color: var(--green);
+    }
     #jira-release-10-hierarchy .jrh-node-copy {
       min-width: 0;
       display: block;
@@ -1363,6 +1373,29 @@ html&gt;body{padding:0}&lt;/style&gt;
     #jira-release-10-hierarchy .jrh-status-review { color: var(--blue); }
     #jira-release-10-hierarchy .jrh-status-done { color: var(--green); }
     #jira-release-10-hierarchy .jrh-status-blocked { color: var(--red); }
+    #jira-release-10-hierarchy .jrh-mark-button {
+      flex: 0 0 25px;
+      width: 25px;
+      height: 25px;
+      margin-left: auto;
+      border: 1px solid color-mix(in srgb, var(--green) 38%, var(--border));
+      border-radius: 999px;
+      background: var(--background);
+      color: var(--muted-foreground);
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1;
+      cursor: pointer;
+    }
+    #jira-release-10-hierarchy .jrh-mark-button:hover,
+    #jira-release-10-hierarchy .jrh-mark-button[aria-pressed=&quot;true&quot;] {
+      background: var(--green);
+      color: var(--primary-foreground);
+      border-color: var(--green);
+    }
+    #jira-release-10-hierarchy .jrh-node-main .jrh-mark-button + .jrh-status-badge {
+      margin-left: 0;
+    }
     @media (max-width: 620px) {
       #jira-release-10-hierarchy .jrh-status-badge { max-width: 30%; padding-inline: 5px; font-size: 8px; }
     }
@@ -1594,6 +1627,8 @@ html&gt;body{padding:0}&lt;/style&gt;
       const svgNamespace = &quot;http://www.w3.org/2000/svg&quot;;
       const xhtmlNamespace = &quot;http://www.w3.org/1999/xhtml&quot;;
       const expanded = new Set();
+      const markedStorageKey = &quot;ekocrop-release-map-marked&quot;;
+      const marked = new Set(loadMarked());
       let selectedId = data.release.id;
       let lastWidth = 0;
       let lastViewportHeight = 0;
@@ -1605,6 +1640,48 @@ html&gt;body{padding:0}&lt;/style&gt;
       }
 
       updateReleaseHeader();
+
+      function loadMarked() {
+        try {
+          const value = JSON.parse(localStorage.getItem(markedStorageKey) || &quot;[]&quot;);
+          return Array.isArray(value) ? value.filter(Boolean) : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function saveMarked() {
+        try {
+          localStorage.setItem(markedStorageKey, JSON.stringify([...marked]));
+        } catch {}
+      }
+
+      function updateMarkStates() {
+        for (const button of root.querySelectorAll(&quot;[data-node-id]&quot;)) {
+          button.dataset.marked = String(marked.has(button.dataset.nodeId));
+        }
+        for (const button of root.querySelectorAll(&quot;[data-mark-node-id]&quot;)) {
+          const isMarked = marked.has(button.dataset.markNodeId);
+          button.setAttribute(&quot;aria-pressed&quot;, String(isMarked));
+          button.setAttribute(&quot;aria-label&quot;, isMarked ? &quot;Снять отметку&quot; : &quot;Отметить&quot;);
+          button.textContent = isMarked ? &quot;✓&quot; : &quot;○&quot;;
+        }
+        window.parent?.postMessage({type: &quot;jira-mark-count&quot;, count: marked.size}, &quot;*&quot;);
+      }
+
+      function toggleMarked(id) {
+        if (!id) return;
+        if (marked.has(id)) marked.delete(id);
+        else marked.add(id);
+        saveMarked();
+        updateMarkStates();
+      }
+
+      function clearMarked() {
+        marked.clear();
+        saveMarked();
+        updateMarkStates();
+      }
 
       function svgElement(name, attributes = {}) {
         const element = document.createElementNS(svgNamespace, name);
@@ -1983,6 +2060,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         button.dataset.nodeId = item.id;
         button.dataset.nodeKind = kind;
         button.dataset.hasInfo = onInfo ? &quot;true&quot; : &quot;false&quot;;
+        button.dataset.marked = String(marked.has(item.id));
         if (expandedState !== null) button.setAttribute(&quot;aria-expanded&quot;, String(expandedState));
         button.addEventListener(&quot;click&quot;, onActivate);
 
@@ -2008,6 +2086,26 @@ html&gt;body{padding:0}&lt;/style&gt;
           copy.appendChild(short);
         }
         button.appendChild(copy);
+
+        if (kind !== &quot;release&quot;) {
+          const markButton = document.createElementNS(xhtmlNamespace, &quot;span&quot;);
+          markButton.setAttribute(&quot;role&quot;, &quot;button&quot;);
+          markButton.setAttribute(&quot;tabindex&quot;, &quot;0&quot;);
+          markButton.setAttribute(&quot;class&quot;, &quot;jrh-mark-button&quot;);
+          markButton.dataset.markNodeId = item.id;
+          markButton.addEventListener(&quot;click&quot;, event =&gt; {
+            event.stopPropagation();
+            toggleMarked(item.id);
+          });
+          markButton.addEventListener(&quot;keydown&quot;, event =&gt; {
+            event.stopPropagation();
+            if (event.key === &quot;Enter&quot; || event.key === &quot; &quot;) {
+              event.preventDefault();
+              toggleMarked(item.id);
+            }
+          });
+          button.appendChild(markButton);
+        }
 
         if (kind === &quot;task&quot; &amp;&amp; String(item.status || &quot;&quot;).trim()) {
           const status = String(item.status).trim();
@@ -2400,6 +2498,7 @@ html&gt;body{padding:0}&lt;/style&gt;
           groups: groupMotion,
         };
         updatePressedStates();
+        updateMarkStates();
         scheduleMotionSync();
       }
 
@@ -2418,6 +2517,10 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (Math.abs(window.innerHeight - lastViewportHeight) &gt; 1) render();
       }, {passive: true});
       window.addEventListener(&quot;message&quot;, event =&gt; {
+        if (event.data?.type === &quot;jira-clear-marks&quot;) {
+          clearMarked();
+          return;
+        }
         if (event.data?.type !== &quot;jira-diagram-data&quot;) return;
         const payload = event.data.payload;
         const nextData = payload?.data;
@@ -2703,6 +2806,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   const form = document.querySelector("[data-release-form]");
   const select = document.querySelector("[data-release-select]");
   const submit = document.querySelector("[data-release-submit]");
+  const clearMarks = document.querySelector("[data-clear-marks]");
   const status = document.querySelector("[data-release-status]");
   const csvFile = document.querySelector("[data-csv-file]");
   const diagramShell = document.querySelector("[data-diagram-shell]");
@@ -3069,6 +3173,19 @@ html&gt;body{padding:0}&lt;/style&gt;
   function syncSubmitState() {
     submit.disabled = select.disabled || !select.value;
   }
+
+  clearMarks.addEventListener("click", () => {
+    diagram.contentWindow?.postMessage({type: "jira-clear-marks"}, "*");
+    clearMarks.disabled = true;
+    setStatus("Отметки сброшены");
+  });
+
+  window.addEventListener("message", event => {
+    if (event.data?.type !== "jira-mark-count") return;
+    const count = Number(event.data.count || 0);
+    clearMarks.disabled = count === 0;
+    clearMarks.textContent = count ? `Сбросить отметки (${count})` : "Сбросить отметки";
+  });
 
   select.addEventListener("change", () => {
     if (preparedCsvResult && select.value !== preparedCsvRelease) {
