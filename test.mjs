@@ -47,6 +47,44 @@ test("buildDiagramData создаёт только PROJECTS на первом у
   assert.deepEqual(result.componentsByIssue["DEVELOP-1"], ["arch-tier: backend-srv"]);
 });
 
+test("buildDiagramData оставляет задачи подпроекта под подпроектом", () => {
+  const result = buildDiagramData("10.0", [
+    {
+      key: "PROJECTS-333",
+      summary: "[EkoCrop] Главный проект",
+      issueType: "Проект",
+      status: "В работе",
+      priority: "Highest",
+      linkedKeys: ["PROJECTS-349"],
+    },
+    {
+      key: "PROJECTS-349",
+      summary: "[EkoCrop] Подпроект",
+      issueType: "История",
+      status: "Новый",
+      priority: "Highest",
+      linkedKeys: ["PROJECTS-333", "DEVELOP-5977"],
+      relationTypes: {"PROJECTS-333": ["subtask"], "DEVELOP-5977": ["subtask"]},
+    },
+    {
+      key: "DEVELOP-5977",
+      summary: "Задача подпроекта",
+      issueType: "Новая функциональность",
+      status: "Открытый",
+      priority: "Highest",
+      linkedKeys: ["PROJECTS-349"],
+      relationTypes: {"PROJECTS-349": ["subtask"]},
+    },
+  ]);
+  const main = result.data.groups.find(group => group.group.id === "PROJECTS-333");
+  assert.ok(main);
+  assert.equal(main.tasks.length, 0);
+  assert.equal(main.subgroups.length, 1);
+  assert.equal(main.subgroups[0].group.id, "PROJECTS-349");
+  assert.equal(main.subgroups[0].tasks.length, 1);
+  assert.equal(main.subgroups[0].tasks[0].id, "DEVELOP-5977");
+});
+
 test("Jira REST поиск формирует JQL релиза и получает все страницы", async () => {
   const previousBaseUrl = process.env.JIRA_BASE_URL;
   const previousAuth = process.env.JIRA_AUTH_HEADER;

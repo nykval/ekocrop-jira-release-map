@@ -98,23 +98,12 @@ function chooseProject(issue, candidates, issuesByKey, parentByProject) {
     .sort((a, b) => relationPriority(b) - relationPriority(a) || candidateScore(b, issuesByKey) - candidateScore(a, issuesByKey));
   let selected = issue.parentKey ? candidates.get(issue.parentKey) : null;
   if (!selected) selected = linked[0] || null;
-  const seen = new Set();
-  while (selected && parentByProject.has(selected.id) && !seen.has(selected.id)) {
-    seen.add(selected.id);
-    selected = candidates.get(parentByProject.get(selected.id)) || selected;
-  }
   return selected;
 }
 
 function relationLabelsFor(issue, project, candidates, parentByProject) {
   const belongsToProject = candidate => {
-    const seen = new Set();
-    let current = candidate;
-    while (current && parentByProject.has(current.id) && !seen.has(current.id)) {
-      seen.add(current.id);
-      current = candidates.get(parentByProject.get(current.id)) || current;
-    }
-    return current?.id === project.id;
+    return candidate?.id === project.id;
   };
   return uniqueStrings(issue.links.flatMap(linkedKey => {
     const candidate = candidates.get(linkedKey);
@@ -126,6 +115,16 @@ function relationLabelsFor(issue, project, candidates, parentByProject) {
 
 function relationLabelFor(issue, project, candidates, parentByProject) {
   return relationLabelsFor(issue, project, candidates, parentByProject).join(", ");
+}
+
+function projectRelationLabelFor(project, parent) {
+  const labels = uniqueStrings([
+    project.relationTypes?.[parent.id],
+    parent.relationTypes?.[project.id],
+  ]);
+  if (labels.length) return labels.join(", ");
+  if (project.parentKey === parent.id) return "subtask";
+  return "";
 }
 
 function hasStructuralProjectRelation(issue, project, candidates, parentByProject) {
@@ -193,12 +192,18 @@ export function buildDiagramData(release, rawIssues, jiraBaseUrl = "https://dev.
     if (parent) parentByProject.set(issue.id, parent.id);
   }
 
-  const topLevelProjects = [...candidates.values()].filter(issue => !parentByProject.has(issue.id));
-  const taskBuckets = new Map(topLevelProjects.map(project => [project.id, []]));
+  const projects = [...candidates.values()];
+  const topLevelProjects = projects.filter(issue => !parentByProject.has(issue.id));
+  const childrenByProject = new Map(projects.map(project => [project.id, []]));
+  for (const project of projects) {
+    const parentId = parentByProject.get(project.id);
+    if (parentId && childrenByProject.has(parentId)) childrenByProject.get(parentId).push(project);
+  }
+  const taskBuckets = new Map(projects.map(project => [project.id, []]));
   const unassigned = [];
 
   for (const issue of issues) {
-    if (taskBuckets.has(issue.id)) continue;
+    if (candidates.has(issue.id)) continue;
     const project = chooseProject(issue, candidates, issuesByKey, parentByProject);
     if (project && taskBuckets.has(project.id)) {
       issue.relationLabel = relationLabelFor(issue, project, candidates, parentByProject);
@@ -207,22 +212,31 @@ export function buildDiagramData(release, rawIssues, jiraBaseUrl = "https://dev.
     else unassigned.push(issue);
   }
 
-  const visibleTopLevelProjects = topLevelProjects.filter(project => {
+  const isVisibleProject = project => {
     if (!project.external) return true;
-    return (taskBuckets.get(project.id) || []).some(issue => (
+    const hasVisibleTasks = (taskBuckets.get(project.id) || []).some(issue => (
       hasStructuralProjectRelation(issue, project, candidates, parentByProject)
     ));
-  });
-  const visibleProjectIds = new Set(visibleTopLevelProjects.map(project => project.id));
-  for (const project of topLevelProjects) {
+    return hasVisibleTasks || (childrenByProject.get(project.id) || []).some(isVisibleProject);
+  };
+  const visibleProjectIds = new Set(projects.filter(isVisibleProject).map(project => project.id));
+  for (const project of projects) {
     if (!visibleProjectIds.has(project.id)) unassigned.push(...(taskBuckets.get(project.id) || []));
   }
+  const visibleTopLevelProjects = topLevelProjects.filter(project => visibleProjectIds.has(project.id));
 
-  const groups = visibleTopLevelProjects.map(project => ({
+  const buildProjectGroup = project => ({
     group: project,
     tasks: taskBuckets.get(project.id) || [],
+    subgroups: (childrenByProject.get(project.id) || [])
+      .filter(child => visibleProjectIds.has(child.id))
+      .map(child => ({
+        ...buildProjectGroup(child),
+        relationLabel: projectRelationLabelFor(child, project),
+      })),
     synthetic: false,
-  }));
+  });
+  const groups = visibleTopLevelProjects.map(buildProjectGroup);
   const bugs = unassigned.filter(issue => ["Ошибка", "Bug"].includes(issue.taskType));
   const refactoring = unassigned.filter(issue => ["Рефакторинг", "Refactoring"].includes(issue.taskType));
   const optimization = unassigned.filter(issue => ["Оптимизация", "Optimization"].includes(issue.taskType));
@@ -244,19 +258,22 @@ export function buildDiagramData(release, rawIssues, jiraBaseUrl = "https://dev.
   }
   const realGroups = groups.filter(group => !group.synthetic);
   const serviceGroups = groups.filter(group => group.synthetic);
+  const totalTasks = group => (
+    group.tasks.length + (group.subgroups || []).reduce((count, subgroup) => count + totalTasks(subgroup), 0)
+  );
   const summary = {
     releaseIssues: issues.length,
     projectGroups: realGroups.length,
     serviceGroups: serviceGroups.length,
-    level2Tasks: groups.reduce((count, group) => count + group.tasks.length, 0),
+    level2Tasks: groups.reduce((count, group) => count + totalTasks(group), 0),
     level1ReleaseIssues: realGroups.length,
     unassigned: unassigned.length,
     unassignedTypes,
     ambiguousPairsIgnored: [],
     largestGroups: [...groups]
-      .sort((a, b) => b.tasks.length - a.tasks.length)
+      .sort((a, b) => totalTasks(b) - totalTasks(a))
       .slice(0, 10)
-      .map(group => ({id: group.group.id, count: group.tasks.length, summary: group.group.summary})),
+      .map(group => ({id: group.group.id, count: totalTasks(group), summary: group.group.summary})),
   };
 
   return {

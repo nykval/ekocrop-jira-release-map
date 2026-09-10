@@ -2141,6 +2141,28 @@ html&gt;body{padding:0}&lt;/style&gt;
         return {...node, foreignObject, bodyWidth, nodeHeight, baseCenterY: y};
       }
 
+      function groupTaskCount(group) {
+        return (group.tasks || []).length + (group.subgroups || []).reduce((count, subgroup) =&gt; (
+          count + groupTaskCount(subgroup)
+        ), 0);
+      }
+
+      function groupTasksForPriority(group) {
+        return [
+          ...(group.tasks || []),
+          ...(group.subgroups || []).flatMap(groupTasksForPriority),
+        ];
+      }
+
+      function setGroupTreeExpanded(group, shouldExpand) {
+        const id = group.group?.id;
+        if (id) {
+          if (shouldExpand) expanded.add(id);
+          else expanded.delete(id);
+        }
+        (group.subgroups || []).forEach(subgroup =&gt; setGroupTreeExpanded(subgroup, shouldExpand));
+      }
+
       function layout(width) {
         const compact = width &lt; 520;
         const rowGap = compact ? 10 : 12;
@@ -2153,13 +2175,18 @@ html&gt;body{padding:0}&lt;/style&gt;
         const projectX = compact ? 26 : trunkX + 20;
         const projectWidth = compact ? width - projectX - 8 : 220;
         const subtrunkX = compact ? projectX + 14 : projectX + projectWidth + 18;
-        const taskX = compact ? projectX + 128 : subtrunkX + 128;
+        const subprojectX = compact ? projectX + 86 : subtrunkX + 54;
+        const subprojectWidth = compact ? Math.max(120, width - subprojectX - 8) : 220;
+        const directTaskX = compact ? projectX + 128 : subtrunkX + 128;
+        const directTaskWidth = compact ? width - directTaskX - 8 : Math.max(82, width - directTaskX - 8);
+        const taskTrunkX = compact ? subprojectX + 14 : subprojectX + subprojectWidth + 18;
+        const taskX = compact ? subprojectX + 128 : taskTrunkX + 128;
         const taskWidth = compact ? width - taskX - 8 : Math.max(82, width - taskX - 8);
 
         let cursor = compact ? 112 : 20;
         const projectGroups = sortByPriority(
           data.groups.filter(item =&gt; !item.synthetic),
-          item =&gt; effectivePriority(item.group, item.tasks),
+          item =&gt; effectivePriority(item.group, groupTasksForPriority(item)),
         );
         const serviceGroupOrder = {
           &quot;group-bugs&quot;: 0,
@@ -2180,55 +2207,105 @@ html&gt;body{padding:0}&lt;/style&gt;
             cursor += compact ? 28 : 36;
           }
           const isExpanded = expanded.has(item.group.id);
-          const orderedTasks = sortByPriority(item.tasks, task =&gt; effectivePriority(task));
+          const orderedTasks = sortByPriority(item.tasks || [], task =&gt; effectivePriority(task));
+          const orderedSubgroups = sortByPriority(item.subgroups || [], subgroup =&gt; (
+            effectivePriority(subgroup.group, groupTasksForPriority(subgroup))
+          ));
           const visibleTasks = isExpanded ? orderedTasks : [];
+          const visibleSubgroups = isExpanded ? orderedSubgroups : [];
           const groupPriority = item.synthetic
             ? null
-            : effectivePriority(item.group, item.tasks);
-          const groupLabelParts = labelPartsFor(item.group, &quot;group&quot;, isExpanded, item.tasks.length);
+            : effectivePriority(item.group, groupTasksForPriority(item));
+          const totalCount = groupTaskCount(item);
+          const groupLabelParts = labelPartsFor(item.group, &quot;group&quot;, isExpanded, totalCount);
           const groupHeight = nodeHeightFor(groupLabelParts, projectWidth, groupPriority);
-          const taskLabelParts = visibleTasks.map(task =&gt; labelPartsFor(task, &quot;task&quot;));
-          const taskHeights = visibleTasks.map((task, index) =&gt; (
-            nodeHeightFor(taskLabelParts[index], taskWidth, effectivePriority(task))
-          ));
+          const hasVisibleSubgroups = visibleSubgroups.length &gt; 0;
+          const directTaskColumnWidth = hasVisibleSubgroups ? taskWidth : directTaskWidth;
+          const directTaskRows = visibleTasks.map(task =&gt; {
+            const labelParts = labelPartsFor(task, &quot;task&quot;);
+            return {
+              kind: &quot;task&quot;, task, labelParts, usesNestedTaskColumn: hasVisibleSubgroups,
+              height: nodeHeightFor(labelParts, directTaskColumnWidth, effectivePriority(task)),
+            };
+          });
+          const subgroupRows = visibleSubgroups.map(subgroup =&gt; {
+            const subIsExpanded = expanded.has(subgroup.group.id);
+            const subgroupTasks = subIsExpanded ? sortByPriority(subgroup.tasks || [], task =&gt; effectivePriority(task)) : [];
+            const subgroupPriority = effectivePriority(subgroup.group, groupTasksForPriority(subgroup));
+            const subgroupLabelParts = labelPartsFor(subgroup.group, &quot;group&quot;, subIsExpanded, groupTaskCount(subgroup));
+            const subgroupHeight = nodeHeightFor(subgroupLabelParts, subprojectWidth, subgroupPriority);
+            const taskRows = subgroupTasks.map(task =&gt; {
+              const labelParts = labelPartsFor(task, &quot;task&quot;);
+              return {kind: &quot;task&quot;, task, labelParts, height: nodeHeightFor(labelParts, taskWidth, effectivePriority(task))};
+            });
+            return {
+              kind: &quot;subgroup&quot;, subgroup, isExpanded: subIsExpanded,
+              subgroupPriority, subgroupLabelParts, subgroupHeight, taskRows,
+            };
+          });
+          const rows = [...subgroupRows, ...directTaskRows];
 
           if (compact) {
             const centerY = cursor + groupHeight / 2;
             let taskCursor = cursor + groupHeight + rowGap;
-            const taskYs = taskHeights.map(height =&gt; {
-              const taskY = taskCursor + height / 2;
-              taskCursor += height + rowGap;
-              return taskY;
+            rows.forEach(row =&gt; {
+              if (row.kind === &quot;task&quot;) {
+                row.y = taskCursor + row.height / 2;
+                taskCursor += row.height + rowGap;
+                return;
+              }
+              row.y = taskCursor + row.subgroupHeight / 2;
+              taskCursor += row.subgroupHeight + rowGap;
+              row.taskRows.forEach(taskRow =&gt; {
+                taskRow.y = taskCursor + taskRow.height / 2;
+                taskCursor += taskRow.height + rowGap;
+              });
             });
-            const firstTaskY = taskYs[0] ?? centerY;
-            const lastTaskY = taskYs[taskYs.length - 1] ?? centerY;
-            cursor = visibleTasks.length ? taskCursor - rowGap + groupGap : cursor + groupHeight + groupGap;
+            const allYs = rows.flatMap(row =&gt; row.kind === &quot;task&quot; ? [row.y] : [row.y, ...row.taskRows.map(taskRow =&gt; taskRow.y)]);
+            const rowYs = rows.map(row =&gt; row.y);
+            const firstTaskY = allYs[0] ?? centerY;
+            const lastTaskY = allYs[allYs.length - 1] ?? centerY;
+            const firstRowY = rowYs[0] ?? centerY;
+            const lastRowY = rowYs[rowYs.length - 1] ?? centerY;
+            cursor = rows.length ? taskCursor - rowGap + groupGap : cursor + groupHeight + groupGap;
             return {
-              ...item, isExpanded, visibleTasks, centerY, firstTaskY, lastTaskY,
-              taskYs, taskHeights, taskLabelParts, groupHeight, groupPriority, groupLabelParts,
+              ...item, isExpanded, visibleTasks, visibleSubgroups, rows, centerY, firstTaskY, lastTaskY,
+              firstRowY, lastRowY, groupHeight, groupPriority, groupLabelParts,
             };
           }
-          if (!visibleTasks.length) {
+          if (!rows.length) {
             const centerY = cursor + groupHeight / 2;
             cursor += groupHeight + groupGap;
             return {
-              ...item, isExpanded, visibleTasks, centerY, firstTaskY: centerY, lastTaskY: centerY,
-              taskYs: [], taskHeights, taskLabelParts, groupHeight, groupPriority, groupLabelParts,
+              ...item, isExpanded, visibleTasks, visibleSubgroups, rows, centerY, firstTaskY: centerY, lastTaskY: centerY,
+              firstRowY: centerY, lastRowY: centerY, groupHeight, groupPriority, groupLabelParts,
             };
           }
           let taskCursor = cursor;
-          const taskYs = taskHeights.map(height =&gt; {
-            const taskY = taskCursor + height / 2;
-            taskCursor += height + rowGap;
-            return taskY;
+          rows.forEach(row =&gt; {
+            if (row.kind === &quot;task&quot;) {
+              row.y = taskCursor + row.height / 2;
+              taskCursor += row.height + rowGap;
+              return;
+            }
+            row.y = taskCursor + row.subgroupHeight / 2;
+            taskCursor += row.subgroupHeight + rowGap;
+            row.taskRows.forEach(taskRow =&gt; {
+              taskRow.y = taskCursor + taskRow.height / 2;
+              taskCursor += taskRow.height + rowGap;
+            });
           });
-          const firstTaskY = taskYs[0];
-          const lastTaskY = taskYs[taskYs.length - 1];
-          const centerY = (firstTaskY + lastTaskY) / 2;
+          const allYs = rows.flatMap(row =&gt; row.kind === &quot;task&quot; ? [row.y] : [row.y, ...row.taskRows.map(taskRow =&gt; taskRow.y)]);
+          const rowYs = rows.map(row =&gt; row.y);
+          const firstTaskY = allYs[0];
+          const lastTaskY = allYs[allYs.length - 1];
+          const firstRowY = rowYs[0];
+          const lastRowY = rowYs[rowYs.length - 1];
+          const centerY = (firstRowY + lastRowY) / 2;
           cursor = taskCursor - rowGap + groupGap;
           return {
-            ...item, isExpanded, visibleTasks, centerY, firstTaskY, lastTaskY,
-            taskYs, taskHeights, taskLabelParts, groupHeight, groupPriority, groupLabelParts,
+            ...item, isExpanded, visibleTasks, visibleSubgroups, rows, centerY, firstTaskY, lastTaskY,
+            firstRowY, lastRowY, groupHeight, groupPriority, groupLabelParts,
           };
         });
         const naturalHeight = cursor + 12;
@@ -2240,7 +2317,12 @@ html&gt;body{padding:0}&lt;/style&gt;
             group.centerY += verticalOffset;
             group.firstTaskY += verticalOffset;
             group.lastTaskY += verticalOffset;
-            group.taskYs = group.taskYs.map(taskY =&gt; taskY + verticalOffset);
+            group.rows.forEach(row =&gt; {
+              row.y += verticalOffset;
+              if (row.kind === &quot;subgroup&quot;) row.taskRows.forEach(taskRow =&gt; {
+                taskRow.y += verticalOffset;
+              });
+            });
           });
         }
         const firstGroupY = groups[0]?.centerY || height / 2;
@@ -2249,7 +2331,8 @@ html&gt;body{padding:0}&lt;/style&gt;
 
         return {
           width, height, compact, groups, rootY, rootNodeHeight,
-          rootX, rootWidth, trunkX, projectX, projectWidth, subtrunkX, taskX, taskWidth,
+          rootX, rootWidth, trunkX, projectX, projectWidth, subtrunkX,
+          subprojectX, subprojectWidth, directTaskX, directTaskWidth, taskTrunkX, taskX, taskWidth,
         };
       }
 
@@ -2266,6 +2349,11 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (!line) return;
         line.setAttribute(&quot;y1&quot;, String(centerY));
         line.setAttribute(&quot;y2&quot;, String(centerY));
+      }
+
+      function setLineLabelY(label, centerY) {
+        if (!label) return;
+        label.setAttribute(&quot;y&quot;, String(centerY - 5));
       }
 
       function syncMovingNodes() {
@@ -2300,17 +2388,17 @@ html&gt;body{padding:0}&lt;/style&gt;
         const visibleGroupYs = [];
         const visibleTop = Math.max(0, -canvasRect.top);
         const visibleBottom = Math.min(frame.height, window.innerHeight - canvasRect.top);
+        const intersectsViewport = (top, bottom) =&gt; bottom &gt;= visibleTop &amp;&amp; top &lt;= visibleBottom;
         groups.forEach(entry =&gt; {
-          const {groupLayout, node, inbound, outbound} = entry;
-          let groupY = groupLayout.centerY;
-          if (groupLayout.visibleTasks.length) {
-            groupY = clamp(viewportCenterY, groupLayout.firstTaskY, groupLayout.lastTaskY);
-          }
-          if (
-            groupY + groupLayout.groupHeight / 2 &gt;= visibleTop
-            &amp;&amp; groupY - groupLayout.groupHeight / 2 &lt;= visibleBottom
-          ) {
+          const {groupLayout, node, inbound, outbound, branch, directRows, subgroupMotions} = entry;
+          const groupY = groupLayout.rows.length
+            ? clamp(viewportCenterY, groupLayout.firstTaskY, groupLayout.lastTaskY)
+            : groupLayout.centerY;
+          if (intersectsViewport(groupY - groupLayout.groupHeight / 2, groupY + groupLayout.groupHeight / 2)) {
             visibleGroupYs.push(groupY);
+          }
+          if (groupLayout.rows.length &amp;&amp; intersectsViewport(groupLayout.firstTaskY, groupLayout.lastTaskY)) {
+            visibleGroupYs.push(clamp(viewportCenterY, groupLayout.firstTaskY, groupLayout.lastTaskY));
           }
           setNodeCenter(node, groupY);
           setHorizontalLineY(inbound, groupY);
@@ -2323,6 +2411,30 @@ html&gt;body{padding:0}&lt;/style&gt;
           } else {
             setHorizontalLineY(outbound, groupY);
           }
+          if (branch) {
+            branch.setAttribute(&quot;y1&quot;, String(Math.min(groupY, directRows[0].y)));
+            branch.setAttribute(&quot;y2&quot;, String(Math.max(groupY, directRows[directRows.length - 1].y)));
+          }
+          subgroupMotions.forEach(subEntry =&gt; {
+            const {row, node: subgroupNode, inbound: subgroupInbound, label: subgroupLabel, outbound: subgroupOutbound, taskTrunk} = subEntry;
+            const subgroupY = row.taskRows.length
+              ? clamp(viewportCenterY, row.taskRows[0].y, row.taskRows[row.taskRows.length - 1].y)
+              : row.y;
+            setNodeCenter(subgroupNode, subgroupY);
+            setHorizontalLineY(subgroupInbound, subgroupY);
+            setLineLabelY(subgroupLabel, subgroupY);
+            if (subgroupOutbound) setHorizontalLineY(subgroupOutbound, subgroupY);
+            if (!taskTrunk) return;
+            if (frame.compact) {
+              taskTrunk.setAttribute(&quot;y1&quot;, String(Math.min(
+                subgroupY + row.subgroupHeight / 2,
+                row.taskRows[row.taskRows.length - 1].y,
+              )));
+            } else {
+              taskTrunk.setAttribute(&quot;y1&quot;, String(Math.min(subgroupY, row.taskRows[0].y)));
+              taskTrunk.setAttribute(&quot;y2&quot;, String(Math.max(subgroupY, row.taskRows[row.taskRows.length - 1].y)));
+            }
+          });
         });
         if (!frame.compact &amp;&amp; rootLines.trunk) {
           const connectedYs = visibleGroupYs.length ? visibleGroupYs : [releaseY];
@@ -2428,17 +2540,16 @@ html&gt;body{padding:0}&lt;/style&gt;
             width: frame.projectWidth,
             labelParts: groupLabelParts,
             ariaLabel: group.synthetic
-              ? `${group.summary}, служебная группа, ${groupLayout.tasks.length} задач`
-              : `${group.summary}, приоритет ${groupPriority}, уровень 1, ${groupLayout.tasks.length} задач`,
+              ? `${group.summary}, служебная группа, ${groupTaskCount(groupLayout)} задач`
+              : `${group.summary}, приоритет ${groupPriority}, уровень 1, ${groupTaskCount(groupLayout)} задач`,
             priority: groupPriority,
             kind: &quot;group&quot;,
             nodeHeight: groupLayout.groupHeight,
-            expandedState: groupLayout.tasks.length ? groupLayout.isExpanded : null,
+            expandedState: groupTaskCount(groupLayout) ? groupLayout.isExpanded : null,
             onActivate: event =&gt; {
               selectedId = group.id;
-              if (groupLayout.tasks.length) {
-                if (expanded.has(group.id)) expanded.delete(group.id);
-                else expanded.add(group.id);
+              if (groupTaskCount(groupLayout)) {
+                setGroupTreeExpanded(groupLayout, !expanded.has(group.id));
                 render();
               } else {
                 updatePressedStates();
@@ -2450,31 +2561,95 @@ html&gt;body{padding:0}&lt;/style&gt;
           const groupNode = addNode(svg, group, options);
 
           let outbound = null;
-          if (groupLayout.visibleTasks.length) {
+          let branch = null;
+          const directRows = groupLayout.rows.filter(row =&gt; row.kind === &quot;task&quot;);
+          if (groupLayout.rows.length) {
             if (frame.compact) {
               outbound = addLine(svg, frame.subtrunkX, groupLayout.centerY + groupLayout.groupHeight / 2, frame.subtrunkX, groupLayout.lastTaskY, 2, relationType);
             } else {
               outbound = addLine(svg, frame.projectX + frame.projectWidth, groupLayout.centerY, frame.subtrunkX, groupLayout.centerY, 2, relationType);
-              addLine(svg, frame.subtrunkX, groupLayout.firstTaskY, frame.subtrunkX, groupLayout.lastTaskY, 2, relationType);
+              if (directRows.length) {
+                branch = addLine(svg, frame.subtrunkX, directRows[0].y, frame.subtrunkX, directRows[directRows.length - 1].y, 2, relationType);
+              }
             }
           }
-          groupMotion.push({groupLayout, node: groupNode, inbound, outbound});
+          const subgroupMotions = [];
+          groupMotion.push({groupLayout, node: groupNode, inbound, outbound, branch, directRows, subgroupMotions});
 
-          groupLayout.visibleTasks.forEach((task, index) =&gt; {
-            const taskY = groupLayout.taskYs[index];
-            const taskPriority = effectivePriority(task);
-            addLine(svg, frame.subtrunkX, taskY, frame.taskX, taskY, 2, relationType);
-            addLineLabel(svg, frame.subtrunkX, frame.taskX, taskY, task.relationLabel);
-            addNode(svg, task, {
-              x: frame.taskX,
-              y: taskY,
-              width: frame.taskWidth,
-              labelParts: groupLayout.taskLabelParts[index],
-              ariaLabel: `${task.id}, ${task.summary}, приоритет ${taskPriority}, статус ${task.status}, уровень 2`,
-              priority: taskPriority,
-              kind: &quot;task&quot;,
-              nodeHeight: groupLayout.taskHeights[index],
-              onActivate: () =&gt; openDetails(task, 2, taskPriority),
+          groupLayout.rows.forEach(row =&gt; {
+            if (row.kind === &quot;task&quot;) {
+              const task = row.task;
+              const taskPriority = effectivePriority(task);
+              const nodeX = row.usesNestedTaskColumn ? frame.taskX : frame.directTaskX;
+              const nodeWidth = row.usesNestedTaskColumn ? frame.taskWidth : frame.directTaskWidth;
+              addLine(svg, frame.subtrunkX, row.y, nodeX, row.y, 2, relationType);
+              addLineLabel(svg, frame.subtrunkX, nodeX, row.y, task.relationLabel);
+              addNode(svg, task, {
+                x: nodeX,
+                y: row.y,
+                width: nodeWidth,
+                labelParts: row.labelParts,
+                ariaLabel: `${task.id}, ${task.summary}, приоритет ${taskPriority}, статус ${task.status}, уровень 2`,
+                priority: taskPriority,
+                kind: &quot;task&quot;,
+                nodeHeight: row.height,
+                onActivate: () =&gt; openDetails(task, 2, taskPriority),
+              });
+              return;
+            }
+
+            const subgroup = row.subgroup;
+            const subgroupNode = subgroup.group;
+            const subgroupInbound = addLine(svg, frame.subtrunkX, row.y, frame.subprojectX, row.y, 2, relationType);
+            const subgroupLabel = addLineLabel(svg, frame.subtrunkX, frame.subprojectX, row.y, subgroup.relationLabel);
+            const subgroupRenderedNode = addNode(svg, subgroupNode, {
+              x: frame.subprojectX,
+              y: row.y,
+              width: frame.subprojectWidth,
+              labelParts: row.subgroupLabelParts,
+              ariaLabel: `${subgroupNode.id}, ${subgroupNode.summary}, приоритет ${row.subgroupPriority}, уровень 2, ${groupTaskCount(subgroup)} задач`,
+              priority: row.subgroupPriority,
+              kind: &quot;group&quot;,
+              nodeHeight: row.subgroupHeight,
+              expandedState: groupTaskCount(subgroup) ? row.isExpanded : null,
+              onActivate: event =&gt; {
+                selectedId = subgroupNode.id;
+                if (groupTaskCount(subgroup)) {
+                  setGroupTreeExpanded(subgroup, !expanded.has(subgroupNode.id));
+                  render();
+                } else {
+                  updatePressedStates();
+                }
+                event.stopPropagation();
+              },
+              onInfo: () =&gt; openDetails(subgroupNode, 2, row.subgroupPriority),
+            });
+            if (!row.taskRows.length) return;
+            let subgroupOutbound = null;
+            let subgroupTaskTrunk = null;
+            if (frame.compact) {
+              subgroupTaskTrunk = addLine(svg, frame.taskTrunkX, row.y + row.subgroupHeight / 2, frame.taskTrunkX, row.taskRows[row.taskRows.length - 1].y, 3, relationType);
+            } else {
+              subgroupOutbound = addLine(svg, frame.subprojectX + frame.subprojectWidth, row.y, frame.taskTrunkX, row.y, 3, relationType);
+              subgroupTaskTrunk = addLine(svg, frame.taskTrunkX, row.y, frame.taskTrunkX, row.taskRows[row.taskRows.length - 1].y, 3, relationType);
+            }
+            subgroupMotions.push({row, node: subgroupRenderedNode, inbound: subgroupInbound, label: subgroupLabel, outbound: subgroupOutbound, taskTrunk: subgroupTaskTrunk});
+            row.taskRows.forEach(taskRow =&gt; {
+              const task = taskRow.task;
+              const taskPriority = effectivePriority(task);
+              addLine(svg, frame.taskTrunkX, taskRow.y, frame.taskX, taskRow.y, 3, relationType);
+              addLineLabel(svg, frame.taskTrunkX, frame.taskX, taskRow.y, task.relationLabel);
+              addNode(svg, task, {
+                x: frame.taskX,
+                y: taskRow.y,
+                width: frame.taskWidth,
+                labelParts: taskRow.labelParts,
+                ariaLabel: `${task.id}, ${task.summary}, приоритет ${taskPriority}, статус ${task.status}, уровень 3`,
+                priority: taskPriority,
+                kind: &quot;task&quot;,
+                nodeHeight: taskRow.height,
+                onActivate: () =&gt; openDetails(task, 3, taskPriority),
+              });
             });
           });
         });
@@ -3488,44 +3663,59 @@ html&gt;body{padding:0}&lt;/style&gt;
       let selected = (issue.parentKey && candidates.get(issue.parentKey)) || issue.links
         .map(key => candidates.get(key)).filter(Boolean)
         .sort((a, b) => relationPriority(b) - relationPriority(a) || score(b) - score(a))[0];
-      const seen = new Set();
-      while (selected && parentByProject.has(selected.id) && !seen.has(selected.id)) { seen.add(selected.id); selected = candidates.get(parentByProject.get(selected.id)) || selected; }
       return selected;
     };
-    const topProjects = [...candidates.values()].filter(issue => !parentByProject.has(issue.id));
-    const buckets = new Map(topProjects.map(project => [project.id, []]));
+    const projects = [...candidates.values()];
+    const topProjects = projects.filter(issue => !parentByProject.has(issue.id));
+    const childrenByProject = new Map(projects.map(project => [project.id, []]));
+    for (const project of projects) {
+      const parentId = parentByProject.get(project.id);
+      if (parentId && childrenByProject.has(parentId)) childrenByProject.get(parentId).push(project);
+    }
+    const buckets = new Map(projects.map(project => [project.id, []]));
     const unassigned = [];
     const relationLabelsFor = (issue, project) => unique(issue.links.flatMap(linkedKey => {
-      let candidate = candidates.get(linkedKey);
-      const linkedCandidate = candidate;
-      const seen = new Set();
-      while (candidate && parentByProject.has(candidate.id) && !seen.has(candidate.id)) {
-        seen.add(candidate.id);
-        candidate = candidates.get(parentByProject.get(candidate.id)) || candidate;
-      }
+      const candidate = candidates.get(linkedKey);
       if (candidate?.id !== project.id) return [];
-      const labels = issue.relationTypes[linkedKey] || linkedCandidate?.relationTypes?.[issue.id] || [];
+      const labels = issue.relationTypes[linkedKey] || candidate?.relationTypes?.[issue.id] || [];
       return unique(labels).length || linkedKey !== issue.parentKey ? labels : ["subtask"];
     }));
+    const projectRelationLabelFor = (project, parent) => {
+      const labels = unique([project.relationTypes?.[parent.id], parent.relationTypes?.[project.id]]);
+      if (labels.length) return labels.join(", ");
+      if (project.parentKey === parent.id) return "subtask";
+      return "";
+    };
     const hasStructuralRelation = (issue, project) => relationLabelsFor(issue, project).some(label => (
       ["subtask", "subtasks-custom-link", "epic", "ссылка на эпик", "epics-custom-link"].includes(label.toLowerCase())
     ));
     for (const issue of issues) {
-      if (buckets.has(issue.id)) continue;
+      if (candidates.has(issue.id)) continue;
       const project = chooseProject(issue);
       if (project && buckets.has(project.id)) {
         issue.relationLabel = relationLabelsFor(issue, project).join(", ");
         buckets.get(project.id).push(issue);
       } else unassigned.push(issue);
     }
-    const visibleTopProjects = topProjects.filter(project => (
-      !project.external || (buckets.get(project.id) || []).some(issue => hasStructuralRelation(issue, project))
-    ));
-    const visibleProjectIds = new Set(visibleTopProjects.map(project => project.id));
-    for (const project of topProjects) {
+    const isVisibleProject = project => (
+      !project.external
+      || (buckets.get(project.id) || []).some(issue => hasStructuralRelation(issue, project))
+      || (childrenByProject.get(project.id) || []).some(isVisibleProject)
+    );
+    const visibleProjectIds = new Set(projects.filter(isVisibleProject).map(project => project.id));
+    for (const project of projects) {
       if (!visibleProjectIds.has(project.id)) unassigned.push(...(buckets.get(project.id) || []));
     }
-    const groups = visibleTopProjects.map(project => ({group: project, tasks: buckets.get(project.id), synthetic: false}));
+    const visibleTopProjects = topProjects.filter(project => visibleProjectIds.has(project.id));
+    const buildProjectGroup = project => ({
+      group: project,
+      tasks: buckets.get(project.id),
+      subgroups: (childrenByProject.get(project.id) || [])
+        .filter(child => visibleProjectIds.has(child.id))
+        .map(child => ({...buildProjectGroup(child), relationLabel: projectRelationLabelFor(child, project)})),
+      synthetic: false,
+    });
+    const groups = visibleTopProjects.map(buildProjectGroup);
     const bugs = unassigned.filter(issue => ["Ошибка", "Bug"].includes(issue.taskType));
     const refactoring = unassigned.filter(issue => ["Рефакторинг", "Refactoring"].includes(issue.taskType));
     const optimization = unassigned.filter(issue => ["Оптимизация", "Optimization"].includes(issue.taskType));
@@ -3540,9 +3730,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     if (other.length) groups.push(service("group-other", "Без проекта", "Группа", other));
     const realGroups = groups.filter(group => !group.synthetic);
     const serviceGroups = groups.filter(group => group.synthetic);
+    const totalTasks = group => group.tasks.length + (group.subgroups || []).reduce((sum, subgroup) => sum + totalTasks(subgroup), 0);
     const unassignedTypes = {};
     for (const issue of unassigned) unassignedTypes[issue.taskType] = (unassignedTypes[issue.taskType] || 0) + 1;
-    return {data: {release: {id: `release-${release}`, summary: `Релиз EkoCrop ${release}`, taskType: "Релиз", status: "Загружен", url: null, external: false, synthetic: true}, groups, summary: {releaseIssues: issues.length, projectGroups: realGroups.length, serviceGroups: serviceGroups.length, level2Tasks: groups.reduce((sum, group) => sum + group.tasks.length, 0), level1ReleaseIssues: realGroups.length, unassigned: unassigned.length, unassignedTypes, ambiguousPairsIgnored: [], largestGroups: [...groups].sort((a, b) => b.tasks.length - a.tasks.length).slice(0, 10).map(group => ({id: group.group.id, count: group.tasks.length, summary: group.group.summary}))}}, componentsByIssue: Object.fromEntries(issues.filter(issue => issue.components.length).map(issue => [issue.id, issue.components]))};
+    return {data: {release: {id: `release-${release}`, summary: `Релиз EkoCrop ${release}`, taskType: "Релиз", status: "Загружен", url: null, external: false, synthetic: true}, groups, summary: {releaseIssues: issues.length, projectGroups: realGroups.length, serviceGroups: serviceGroups.length, level2Tasks: groups.reduce((sum, group) => sum + totalTasks(group), 0), level1ReleaseIssues: realGroups.length, unassigned: unassigned.length, unassignedTypes, ambiguousPairsIgnored: [], largestGroups: [...groups].sort((a, b) => totalTasks(b) - totalTasks(a)).slice(0, 10).map(group => ({id: group.group.id, count: totalTasks(group), summary: group.group.summary}))}}, componentsByIssue: Object.fromEntries(issues.filter(issue => issue.components.length).map(issue => [issue.id, issue.components]))};
   }
 
   csvFile.addEventListener("change", async () => {
