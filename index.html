@@ -1287,6 +1287,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       align-items: center;
     }
     #jira-release-10-hierarchy .jrh-node-main {
+      position: relative;
       height: 100%;
       justify-content: flex-start;
       gap: 7px;
@@ -1320,9 +1321,10 @@ html&gt;body{padding:0}&lt;/style&gt;
       box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green) 55%, var(--background));
     }
     #jira-release-10-hierarchy .jrh-node-main[data-marked=&quot;true&quot;] {
-      background: color-mix(in srgb, var(--green) 12%, var(--background));
-      border-color: color-mix(in srgb, var(--green) 56%, var(--border));
-      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green) 42%, transparent);
+      background: light-dark(rgb(220 248 231), rgb(28 67 44));
+      color: var(--foreground);
+      border-color: color-mix(in srgb, var(--green) 68%, var(--border));
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green) 52%, transparent);
     }
     #jira-release-10-hierarchy .jrh-node-main[data-node-kind=&quot;release&quot;][data-marked=&quot;true&quot;] {
       background: var(--green);
@@ -1373,29 +1375,6 @@ html&gt;body{padding:0}&lt;/style&gt;
     #jira-release-10-hierarchy .jrh-status-review { color: var(--blue); }
     #jira-release-10-hierarchy .jrh-status-done { color: var(--green); }
     #jira-release-10-hierarchy .jrh-status-blocked { color: var(--red); }
-    #jira-release-10-hierarchy .jrh-mark-button {
-      flex: 0 0 25px;
-      width: 25px;
-      height: 25px;
-      margin-left: auto;
-      border: 1px solid color-mix(in srgb, var(--green) 38%, var(--border));
-      border-radius: 999px;
-      background: var(--background);
-      color: var(--muted-foreground);
-      font-size: 14px;
-      font-weight: 800;
-      line-height: 1;
-      cursor: pointer;
-    }
-    #jira-release-10-hierarchy .jrh-mark-button:hover,
-    #jira-release-10-hierarchy .jrh-mark-button[aria-pressed=&quot;true&quot;] {
-      background: var(--green);
-      color: var(--primary-foreground);
-      border-color: var(--green);
-    }
-    #jira-release-10-hierarchy .jrh-node-main .jrh-mark-button + .jrh-status-badge {
-      margin-left: 0;
-    }
     @media (max-width: 620px) {
       #jira-release-10-hierarchy .jrh-status-badge { max-width: 30%; padding-inline: 5px; font-size: 8px; }
     }
@@ -1480,8 +1459,10 @@ html&gt;body{padding:0}&lt;/style&gt;
       background: color-mix(in srgb, var(--foreground) 24%, transparent);
     }
     #jira-release-10-hierarchy .jrh-dialog-content {
+      position: relative;
       display: grid;
       gap: 8px;
+      padding-bottom: 50px;
     }
     #jira-release-10-hierarchy .jrh-dialog-top {
       display: flex;
@@ -1560,6 +1541,27 @@ html&gt;body{padding:0}&lt;/style&gt;
     #jira-release-10-hierarchy .jrh-detail-glyph {
       color: var(--muted-foreground);
     }
+    #jira-release-10-hierarchy .jrh-dialog-mark-button {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      min-height: 34px;
+      padding: 7px 14px;
+      border: 1px solid color-mix(in srgb, var(--green) 42%, var(--border));
+      border-radius: 999px;
+      background: var(--background);
+      color: var(--muted-foreground);
+      font-size: 14px;
+      font-weight: 750;
+      line-height: 1;
+      cursor: pointer;
+    }
+    #jira-release-10-hierarchy .jrh-dialog-mark-button:hover,
+    #jira-release-10-hierarchy .jrh-dialog-mark-button[aria-pressed=&quot;true&quot;] {
+      background: var(--green);
+      color: var(--primary-foreground);
+      border-color: var(--green);
+    }
     #jira-release-10-hierarchy .jrh-components-value {
       align-items: flex-start;
     }
@@ -1607,6 +1609,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         &lt;div class=&quot;jrh-dialog-summary&quot; data-dialog-summary&gt;&lt;/div&gt;
         &lt;dl class=&quot;jrh-dialog-meta&quot; data-dialog-meta&gt;&lt;/dl&gt;
         &lt;a class=&quot;btn btn-primary jrh-dialog-link&quot; data-dialog-link target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Открыть задачу в Jira ↗&lt;/a&gt;
+        &lt;button type=&quot;button&quot; class=&quot;jrh-dialog-mark-button&quot; data-dialog-mark aria-pressed=&quot;false&quot;&gt;Отметить&lt;/button&gt;
       &lt;/div&gt;
     &lt;/div&gt;
   &lt;/dialog&gt;
@@ -1624,11 +1627,13 @@ html&gt;body{padding:0}&lt;/style&gt;
       const dialogMeta = root.querySelector(&quot;[data-dialog-meta]&quot;);
       const dialogLink = root.querySelector(&quot;[data-dialog-link]&quot;);
       const dialogClose = root.querySelector(&quot;[data-dialog-close]&quot;);
+      const dialogMark = root.querySelector(&quot;[data-dialog-mark]&quot;);
       const svgNamespace = &quot;http://www.w3.org/2000/svg&quot;;
       const xhtmlNamespace = &quot;http://www.w3.org/1999/xhtml&quot;;
       const expanded = new Set();
       const markedStorageKey = &quot;ekocrop-release-map-marked&quot;;
       const marked = new Set(loadMarked());
+      let dialogItemId = &quot;&quot;;
       let selectedId = data.release.id;
       let lastWidth = 0;
       let lastViewportHeight = 0;
@@ -1660,11 +1665,11 @@ html&gt;body{padding:0}&lt;/style&gt;
         for (const button of root.querySelectorAll(&quot;[data-node-id]&quot;)) {
           button.dataset.marked = String(marked.has(button.dataset.nodeId));
         }
-        for (const button of root.querySelectorAll(&quot;[data-mark-node-id]&quot;)) {
-          const isMarked = marked.has(button.dataset.markNodeId);
-          button.setAttribute(&quot;aria-pressed&quot;, String(isMarked));
-          button.setAttribute(&quot;aria-label&quot;, isMarked ? &quot;Снять отметку&quot; : &quot;Отметить&quot;);
-          button.textContent = isMarked ? &quot;✓&quot; : &quot;○&quot;;
+        if (dialogMark) {
+          const isMarked = marked.has(dialogItemId);
+          dialogMark.disabled = !dialogItemId;
+          dialogMark.setAttribute(&quot;aria-pressed&quot;, String(isMarked));
+          dialogMark.textContent = isMarked ? &quot;Снять отметку&quot; : &quot;Отметить&quot;;
         }
         window.parent?.postMessage({type: &quot;jira-mark-count&quot;, count: marked.size}, &quot;*&quot;);
       }
@@ -1962,6 +1967,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
       function openDetails(item, level, displayedPriority = null) {
         selectedId = item.id;
+        dialogItemId = item.id;
         dialogTitle.textContent = item.synthetic ? item.summary : item.id;
         dialogSummary.textContent = item.summary;
         const priority = item.synthetic ? null : (displayedPriority || item.priority);
@@ -1976,6 +1982,7 @@ html&gt;body{padding:0}&lt;/style&gt;
           dialogLink.textContent = &quot;Открыть задачу в Jira ↗&quot;;
         }
         updatePressedStates();
+        updateMarkStates();
         if (!dialog.open) dialog.showModal();
       }
 
@@ -2086,26 +2093,6 @@ html&gt;body{padding:0}&lt;/style&gt;
           copy.appendChild(short);
         }
         button.appendChild(copy);
-
-        if (kind !== &quot;release&quot;) {
-          const markButton = document.createElementNS(xhtmlNamespace, &quot;span&quot;);
-          markButton.setAttribute(&quot;role&quot;, &quot;button&quot;);
-          markButton.setAttribute(&quot;tabindex&quot;, &quot;0&quot;);
-          markButton.setAttribute(&quot;class&quot;, &quot;jrh-mark-button&quot;);
-          markButton.dataset.markNodeId = item.id;
-          markButton.addEventListener(&quot;click&quot;, event =&gt; {
-            event.stopPropagation();
-            toggleMarked(item.id);
-          });
-          markButton.addEventListener(&quot;keydown&quot;, event =&gt; {
-            event.stopPropagation();
-            if (event.key === &quot;Enter&quot; || event.key === &quot; &quot;) {
-              event.preventDefault();
-              toggleMarked(item.id);
-            }
-          });
-          button.appendChild(markButton);
-        }
 
         if (kind === &quot;task&quot; &amp;&amp; String(item.status || &quot;&quot;).trim()) {
           const status = String(item.status).trim();
@@ -2503,6 +2490,9 @@ html&gt;body{padding:0}&lt;/style&gt;
       }
 
       dialogClose.addEventListener(&quot;click&quot;, () =&gt; dialog.close());
+      dialogMark.addEventListener(&quot;click&quot;, () =&gt; {
+        toggleMarked(dialogItemId);
+      });
       dialog.addEventListener(&quot;close&quot;, () =&gt; {
         const button = [...root.querySelectorAll(`button[data-node-id=&quot;${selectedId}&quot;]`)]
           .find(candidate =&gt; candidate.getClientRects().length &gt; 0);
