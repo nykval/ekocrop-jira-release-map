@@ -78,10 +78,10 @@ test("изменение названия требует вход, подтве�
     return new Response("accepted", {status: 200});
   };
   try {
-    const request = (summary = "Новое название") => new Request("https://map.example/api/issue-summary", {
+    const request = (summary = "Новое название", previousSummary = "Старое название") => new Request("https://map.example/api/issue-summary", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({issueKey: "DEVELOP-5761", summary, previousSummary: "Старое название"}),
+      body: JSON.stringify({issueKey: "DEVELOP-5761", summary, previousSummary}),
     });
     const unauthorized = await workerImpl.fetch(request(), env);
     assert.equal(unauthorized.status, 401);
@@ -114,6 +114,24 @@ test("изменение названия требует вход, подтве�
     assert.equal((await ready.json()).status, "ready");
     const overrides = await worker.fetch(new Request("https://map.example/api/summary-overrides"), env);
     assert.deepEqual((await overrides.json()).overrides["DEVELOP-5761"].summary, "Новое название");
+
+    const second = await worker.fetch(request("Ещё новее", "Новое название"), env);
+    assert.equal(second.status, 202);
+    const secondId = (await second.json()).id;
+    const secondOutbound = JSON.parse(sent[1].options.body);
+    const secondCallback = await worker.fetch(new Request(secondOutbound.change.callbackUrl, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        requestId: secondId,
+        callbackToken: secondOutbound.change.callbackToken,
+        issueKey: "DEVELOP-5761",
+        summary: "Ещё новее",
+      }),
+    }), env);
+    assert.equal(secondCallback.status, 200);
+    const updatedOverrides = await worker.fetch(new Request("https://map.example/api/summary-overrides"), env);
+    assert.deepEqual((await updatedOverrides.json()).overrides["DEVELOP-5761"].previousSummaries, ["Старое название", "Новое название"]);
   } finally {
     globalThis.fetch = originalFetch;
   }

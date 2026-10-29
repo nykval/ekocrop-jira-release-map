@@ -3160,7 +3160,9 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   function applySummaryOverrides(result) {
     for (const [issueKey, override] of Object.entries(summaryOverrides)) {
-      updateIssueSummary(result, issueKey, override.summary, override.previousSummary);
+      for (const previousSummary of override.previousSummaries || [override.previousSummary]) {
+        updateIssueSummary(result, issueKey, override.summary, previousSummary);
+      }
     }
     return result;
   }

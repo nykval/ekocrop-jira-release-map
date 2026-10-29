@@ -587,7 +587,19 @@ async function confirmSummaryEdit(request, env) {
   job.status = "ready";
   job.completedAt = Date.now();
   delete job.callbackToken;
-  await env.JOBS.put(`${SUMMARY_OVERRIDE_PREFIX}${job.issueKey}`, JSON.stringify({summary: job.summary, previousSummary: job.previousSummary, updatedAt: job.completedAt}));
+  const overrideKey = `${SUMMARY_OVERRIDE_PREFIX}${job.issueKey}`;
+  const previousOverrideRaw = await env.JOBS.get(overrideKey);
+  const previousOverride = previousOverrideRaw ? JSON.parse(previousOverrideRaw) : null;
+  const previousSummaries = previousOverride?.summary === job.previousSummary
+    ? [...(previousOverride.previousSummaries || [previousOverride.previousSummary]), job.previousSummary]
+    : [job.previousSummary];
+  const uniquePreviousSummaries = [...new Set(previousSummaries.filter(value => typeof value === "string" && value))];
+  await env.JOBS.put(overrideKey, JSON.stringify({
+    summary: job.summary,
+    previousSummary: uniquePreviousSummaries[0],
+    previousSummaries: uniquePreviousSummaries,
+    updatedAt: job.completedAt,
+  }));
   await env.JOBS.put(`${SUMMARY_JOB_PREFIX}${id}`, JSON.stringify(job), {expirationTtl: JOB_TTL_SECONDS});
   return json({ok: true, status: "ready"});
 }
