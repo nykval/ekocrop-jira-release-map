@@ -2,6 +2,8 @@ const DEFAULT_RELEASES = Array.from({length: 9}, (_, index) => `${index + 6}.0`)
 const JOB_TTL_SECONDS = 30 * 60;
 const CLAIM_RETRY_MS = 3 * 60 * 1000;
 const SNAPSHOT_PREFIX = "snapshot:release:";
+const SUMMARY_JOB_PREFIX = "summary-job:";
+const SUMMARY_OVERRIDE_PREFIX = "summary-override:";
 
 const issueTypeRanks = {Epic: 5, Проект: 4, Project: 4, История: 3, Story: 3};
 
@@ -443,7 +445,7 @@ export function buildDiagramData(release, rawIssues, jiraBaseUrl = "https://dev.
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "https://nykval.github.io",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Accept",
+  "Access-Control-Allow-Headers": "Content-Type, Accept, Authorization",
   Vary: "Origin",
 };
 
@@ -464,6 +466,145 @@ async function readPayload(request) {
   const length = Number(request.headers.get("content-length") || 0);
   if (length > 50 * 1024 * 1024) throw new Error("Тело запроса больше 50 МБ");
   return request.json();
+}
+
+function sameSecret(received, expected) {
+  const left = new TextEncoder().encode(received || "");
+  const right = new TextEncoder().encode(expected || "");
+  let difference = left.length ^ right.length;
+  for (let index = 0; index < Math.max(left.length, right.length); index += 1) {
+    difference |= (left[index] || 0) ^ (right[index] || 0);
+  }
+  return difference === 0 && right.length > 0;
+}
+
+const SESSION_SECONDS = 7 * 24 * 60 * 60;
+const LOGIN_WINDOW_SECONDS = 15 * 60;
+const LOGIN_ATTEMPTS = 5;
+
+async function tokenDigest(token) {
+  const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token));
+  return [...new Uint8Array(bytes)].map(byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function bearerToken(request) {
+  return request.headers.get("Authorization")?.match(/^Bearer ([0-9a-f]{48})$/i)?.[1] || "";
+}
+
+async function authenticated(request, env) {
+  if (!env.JOBS || !env.APP_PASSWORD) return false;
+  const token = bearerToken(request);
+  if (!token) return false;
+  return Boolean(await env.JOBS.get(`auth:session:${await tokenDigest(token)}`));
+}
+
+async function login(request, env) {
+  if (!env.JOBS || !env.APP_PASSWORD || !env.APP_EMAIL) return json({error: "Вход ещё не настроен"}, 503);
+  if (Number(request.headers.get("content-length") || 0) > 2048) return json({error: "Слишком большой запрос"}, 413);
+  let payload;
+  try { payload = await request.json(); } catch { return json({error: "Некорректный запрос"}, 400); }
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const throttleKey = `auth:attempts:${await tokenDigest(ip)}`;
+  const failures = Number(await env.JOBS.get(throttleKey) || 0);
+  if (failures >= LOGIN_ATTEMPTS) return json({error: "Слишком много попыток. Повторите через 15 минут"}, 429);
+  const email = typeof payload?.email === "string" ? payload.email.trim().toLowerCase() : "";
+  const password = typeof payload?.password === "string" ? payload.password : "";
+  if (!sameSecret(email, env.APP_EMAIL.toLowerCase()) || !sameSecret(password, env.APP_PASSWORD)) {
+    await env.JOBS.put(throttleKey, String(failures + 1), {expirationTtl: LOGIN_WINDOW_SECONDS});
+    return json({error: "Неверная почта или пароль"}, 401);
+  }
+  await env.JOBS.delete(throttleKey);
+  const token = randomToken();
+  await env.JOBS.put(`auth:session:${await tokenDigest(token)}`, email, {expirationTtl: SESSION_SECONDS});
+  return json({ok: true, email, token});
+}
+
+async function logout(request, env) {
+  const token = bearerToken(request);
+  if (token && env.JOBS) await env.JOBS.delete(`auth:session:${await tokenDigest(token)}`);
+  return json({ok: true});
+}
+
+async function requestSummaryEdit(request, env) {
+  if (!env.JOBS || !env.JIRA_SUMMARY_WEBHOOK_URL) {
+    return json({error: "Редактирование задач пока не настроено"}, 503);
+  }
+  const body = await request.text();
+  if (body.length > 4096) return json({error: "Слишком большой запрос"}, 413);
+  let payload;
+  try { payload = JSON.parse(body); } catch { return json({error: "Некорректный JSON"}, 400); }
+  const issueKey = text(payload.issueKey);
+  const summary = text(payload.summary);
+  const previousSummary = text(payload.previousSummary);
+  if (!/^(DEVELOP|PROJECTS)-[1-9][0-9]*$/.test(issueKey)) return json({error: "Недопустимый ключ задачи"}, 400);
+  if (!summary || summary.length > 255 || /[\r\n]/.test(summary)) return json({error: "Название должно содержать от 1 до 255 символов в одной строке"}, 400);
+  if (!previousSummary || previousSummary.length > 255) return json({error: "Неизвестно текущее название задачи"}, 400);
+  if (summary === previousSummary) return json({error: "Название не изменилось"}, 400);
+
+  const id = crypto.randomUUID();
+  const callbackToken = randomToken();
+  const callbackUrl = `${new URL(request.url).origin}/api/issue-summary-callback`;
+  const job = {id, issueKey, summary, previousSummary, callbackToken, status: "pending", createdAt: Date.now()};
+  await env.JOBS.put(`${SUMMARY_JOB_PREFIX}${id}`, JSON.stringify(job), {expirationTtl: JOB_TTL_SECONDS});
+  let jiraResponse;
+  try {
+    jiraResponse = await fetch(env.JIRA_SUMMARY_WEBHOOK_URL, {
+      method: "POST",
+      headers: {"Content-Type": "application/json", Accept: "application/json"},
+      body: JSON.stringify({
+        issues: [issueKey],
+        change: {summary, requestId: id, callbackToken, callbackUrl},
+      }),
+    });
+  } catch {
+    await env.JOBS.delete(`${SUMMARY_JOB_PREFIX}${id}`);
+    return json({error: "Не удалось связаться с автоматизацией Jira"}, 502);
+  }
+  if (!jiraResponse.ok) {
+    await env.JOBS.delete(`${SUMMARY_JOB_PREFIX}${id}`);
+    return json({error: `Jira не приняла запрос (HTTP ${jiraResponse.status})`}, 502);
+  }
+  return json({id, status: "pending"}, 202);
+}
+
+async function confirmSummaryEdit(request, env) {
+  requireBindings(env);
+  const payload = await readPayload(request);
+  const id = text(payload.requestId);
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return json({error: "Некорректный запрос"}, 400);
+  const raw = await env.JOBS.get(`${SUMMARY_JOB_PREFIX}${id}`);
+  if (!raw) return json({error: "Запрос не найден или устарел"}, 404);
+  const job = JSON.parse(raw);
+  if (!sameSecret(text(payload.callbackToken), job.callbackToken)) return json({error: "Неверный callback token"}, 403);
+  if (job.status === "ready") return json({ok: true, status: "ready"});
+  if (text(payload.issueKey) !== job.issueKey || text(payload.summary) !== job.summary) {
+    return json({error: "Jira сообщила неожиданный результат"}, 409);
+  }
+  job.status = "ready";
+  job.completedAt = Date.now();
+  delete job.callbackToken;
+  await env.JOBS.put(`${SUMMARY_OVERRIDE_PREFIX}${job.issueKey}`, JSON.stringify({summary: job.summary, previousSummary: job.previousSummary, updatedAt: job.completedAt}));
+  await env.JOBS.put(`${SUMMARY_JOB_PREFIX}${id}`, JSON.stringify(job), {expirationTtl: JOB_TTL_SECONDS});
+  return json({ok: true, status: "ready"});
+}
+
+async function summaryEditStatus(id, env) {
+  requireBindings(env);
+  const raw = await env.JOBS.get(`${SUMMARY_JOB_PREFIX}${id}`);
+  if (!raw) return json({error: "Запрос не найден или устарел"}, 404);
+  const job = JSON.parse(raw);
+  return json({id, status: job.status, issueKey: job.issueKey, summary: job.status === "ready" ? job.summary : undefined});
+}
+
+async function summaryOverrides(env) {
+  if (!env.JOBS) return json({overrides: {}});
+  const listed = await env.JOBS.list({prefix: SUMMARY_OVERRIDE_PREFIX, limit: 1000});
+  const overrides = {};
+  await Promise.all((listed.keys || []).map(async item => {
+    const raw = await env.JOBS.get(item.name);
+    if (raw) overrides[item.name.slice(SUMMARY_OVERRIDE_PREFIX.length)] = JSON.parse(raw);
+  }));
+  return json({overrides});
 }
 
 function requireBindings(env) {
@@ -648,20 +789,34 @@ export default {
       if (request.method === "OPTIONS" && url.pathname.startsWith("/api/")) {
         return new Response(null, {status: 204, headers: CORS_HEADERS});
       }
-      if (request.method === "GET" && url.pathname === "/api/releases") {
-        return json({releases: await availableReleases(env), mode: env.JOBS ? "jira-snapshot" : env.JIRA_POLL_TOKEN ? "jira-polling" : "not-configured"});
-      }
       if (request.method === "GET" && url.pathname === "/api/health") {
         return json({ok: true, platform: "cloudflare-workers", integration: env.JOBS ? "jira-snapshot" : env.JIRA_POLL_TOKEN ? "jira-polling" : "not-configured", storage: env.JOBS ? "ready" : "not-configured"});
       }
-      if (request.method === "POST" && url.pathname === "/api/diagram-jobs") return startJob(request, env);
+      if (request.method === "POST" && url.pathname === "/api/issue-summary-callback") return confirmSummaryEdit(request, env);
       if (request.method === "POST" && url.pathname === "/api/jira-snapshot") return acceptSnapshot(request, env);
       if (request.method === "POST" && url.pathname === "/api/jira-poll") return claimJob(request, env);
+      if (request.method === "POST" && url.pathname === "/api/jira-callback") return acceptCallback(request, env);
+      if (request.method === "POST" && url.pathname === "/api/auth/login") return login(request, env);
+      if (request.method === "POST" && url.pathname === "/api/auth/logout") return logout(request, env);
+      if (!url.pathname.startsWith("/api/") && (request.method === "GET" || request.method === "HEAD")) {
+        return Response.redirect("https://nykval.github.io/ekocrop-jira-release-map/", 302);
+      }
+      const isAuthenticated = await authenticated(request, env);
+      if (!isAuthenticated) {
+        return json({error: "Требуется вход в аккаунт"}, 401);
+      }
+      if (request.method === "GET" && url.pathname === "/api/auth/me") return json({email: env.APP_EMAIL});
+      if (request.method === "GET" && url.pathname === "/api/releases") {
+        return json({releases: await availableReleases(env), mode: env.JOBS ? "jira-snapshot" : env.JIRA_POLL_TOKEN ? "jira-polling" : "not-configured"});
+      }
+      if (request.method === "POST" && url.pathname === "/api/issue-summary") return requestSummaryEdit(request, env);
+      if (request.method === "GET" && url.pathname === "/api/summary-overrides") return summaryOverrides(env);
+      const summaryJobMatch = url.pathname.match(/^\/api\/issue-summary\/([0-9a-f-]{36})$/i);
+      if (request.method === "GET" && summaryJobMatch) return summaryEditStatus(summaryJobMatch[1], env);
+      if (request.method === "POST" && url.pathname === "/api/diagram-jobs") return startJob(request, env);
       if (request.method === "POST" && url.pathname === "/api/import-csv") return importCsv(request, env);
       const jobMatch = url.pathname.match(/^\/api\/diagram-jobs\/([0-9a-f-]+)$/i);
       if (request.method === "GET" && jobMatch) return jobStatus(jobMatch[1], env);
-      if (request.method === "POST" && url.pathname === "/api/jira-callback") return acceptCallback(request, env);
-      if (request.method === "GET" || request.method === "HEAD") return env.ASSETS.fetch(request);
       return json({error: "Method not allowed"}, 405);
     } catch (error) {
       return json({error: error.message || "Внутренняя ошибка"}, 500);

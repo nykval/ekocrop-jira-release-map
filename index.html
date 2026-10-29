@@ -251,8 +251,24 @@
   outline-offset: 2px;
 }
 </style>
+<style>.app-header{position:relative}.logout-button{position:absolute;right:2rem;top:1.25rem;border:1px solid var(--app-border);border-radius:9px;background:var(--app-soft);color:inherit;padding:.5rem .75rem;font:inherit;font-size:.84rem;cursor:pointer}@media(max-width:680px){.logout-button{right:1rem;top:1rem}}body:not(.is-authenticated)>header,body:not(.is-authenticated)>main{display:none}#login-gate{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;overflow:auto;padding:24px;background:#f3f7f4;color:#1b2920}body.is-authenticated #login-gate{display:none}.login-card{width:min(100%,400px);padding:32px;border:1px solid #e0e9e2;border-radius:20px;background:#fff;box-shadow:0 16px 48px #17341b14}.login-card img{display:block;max-width:128px;height:40px;object-fit:contain;object-position:left center;margin-bottom:24px}.login-card h1{margin:0 0 8px;font-size:25px}.login-card p{margin:0 0 24px;color:#607066;line-height:1.5}.login-card label{display:block;margin:16px 0 7px;font-size:14px;font-weight:600}.login-card input{width:100%;height:46px;border:1px solid #c9d7cd;border-radius:10px;padding:0 13px;font:inherit}.login-card input:focus{outline:2px solid #159447;outline-offset:1px}.login-card button{width:100%;height:46px;margin-top:24px;border:0;border-radius:10px;background:#138642;color:#fff;font:inherit;font-weight:650;cursor:pointer}.login-card button:disabled{opacity:.6;cursor:wait}.login-card [role="alert"]{min-height:22px;margin-top:14px;color:#b3261e;font-size:14px}</style>
 </head>
 <body>
+<div id="login-gate">
+  <div class="login-card">
+    <img src="ekoniva-logo.png" alt="EKONIVA">
+    <h1>Вход в центр аналитики</h1>
+    <p>Введите почту и пароль, чтобы открыть карту релизов.</p>
+    <form id="login-form">
+      <label for="login-email">Почта</label>
+      <input id="login-email" name="email" type="email" autocomplete="username" value="a.skorokirzha@iotos.ru" required>
+      <label for="login-password">Пароль</label>
+      <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+      <button type="submit">Войти</button>
+      <div id="login-error" role="alert" aria-live="polite"></div>
+    </form>
+  </div>
+</div>
 <header class="app-header">
   <div class="app-brand">
     <img class="app-brand-logo" src="ekoniva-logo.png" alt="EKONIVA">
@@ -261,6 +277,7 @@
       <span class="app-brand-subtitle">Релизы, связи и продуктовые показатели</span>
     </span>
   </div>
+  <button class="logout-button" type="button" data-logout>Выйти</button>
   <nav class="section-tabs" role="tablist" aria-label="Разделы аналитики">
     <button class="section-tab" type="button" role="tab" aria-selected="true" aria-controls="release-dashboard-view" data-section-tab="release-dashboard">Дашборд релиза</button>
     <button class="section-tab" type="button" role="tab" aria-selected="false" aria-controls="release-map-view" data-section-tab="release-map">Дерево релиза</button>
@@ -1478,6 +1495,16 @@ html&gt;body{padding:0}&lt;/style&gt;
       padding-bottom: 8px;
       border-bottom: 1px solid var(--border);
     }
+    #jira-release-10-hierarchy .jrh-summary-row {display:flex;align-items:flex-start;gap:8px}
+    #jira-release-10-hierarchy .jrh-summary-row .jrh-dialog-summary {flex:1;min-width:0}
+    #jira-release-10-hierarchy .jrh-summary-editor {display:grid;gap:8px;padding:10px 0}
+    #jira-release-10-hierarchy .jrh-summary-editor[hidden],
+    #jira-release-10-hierarchy [data-summary-code-wrap][hidden],
+    #jira-release-10-hierarchy [data-summary-edit][hidden] {display:none}
+    #jira-release-10-hierarchy .jrh-summary-editor label {font-size:.83rem;color:var(--muted-foreground)}
+    #jira-release-10-hierarchy .jrh-summary-editor input {width:100%;box-sizing:border-box;padding:9px 10px;border:1px solid var(--border);border-radius:8px;background:var(--background);color:var(--foreground);font:inherit}
+    #jira-release-10-hierarchy .jrh-summary-actions {display:flex;gap:8px}
+    #jira-release-10-hierarchy .jrh-summary-status {min-height:1.2em;font-size:.82rem}
     #jira-release-10-hierarchy .jrh-dialog-meta {
       display: grid;
       grid-template-columns: minmax(108px, 140px) minmax(0, 1fr);
@@ -1606,7 +1633,19 @@ html&gt;body{padding:0}&lt;/style&gt;
           &lt;span class=&quot;jrh-dialog-title&quot; data-dialog-title&gt;&lt;/span&gt;
           &lt;button type=&quot;button&quot; class=&quot;btn btn-ghost&quot; data-dialog-close&gt;Закрыть&lt;/button&gt;
         &lt;/div&gt;
-        &lt;div class=&quot;jrh-dialog-summary&quot; data-dialog-summary&gt;&lt;/div&gt;
+        &lt;div class=&quot;jrh-summary-row&quot;&gt;
+          &lt;div class=&quot;jrh-dialog-summary&quot; data-dialog-summary&gt;&lt;/div&gt;
+          &lt;button type=&quot;button&quot; class=&quot;btn btn-ghost&quot; data-summary-edit&gt;Изменить&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;jrh-summary-editor&quot; data-summary-editor hidden&gt;
+          &lt;label for=&quot;jrh-summary-input&quot;&gt;Новое название задачи&lt;/label&gt;
+          &lt;input id=&quot;jrh-summary-input&quot; data-summary-input maxlength=&quot;255&quot; autocomplete=&quot;off&quot;&gt;
+          &lt;div class=&quot;jrh-summary-actions&quot;&gt;
+            &lt;button type=&quot;button&quot; class=&quot;btn btn-primary&quot; data-summary-save&gt;Сохранить&lt;/button&gt;
+            &lt;button type=&quot;button&quot; class=&quot;btn btn-ghost&quot; data-summary-cancel&gt;Отмена&lt;/button&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;jrh-summary-status&quot; data-summary-status role=&quot;status&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;
         &lt;dl class=&quot;jrh-dialog-meta&quot; data-dialog-meta&gt;&lt;/dl&gt;
         &lt;a class=&quot;btn btn-primary jrh-dialog-link&quot; data-dialog-link target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Открыть задачу в Jira ↗&lt;/a&gt;
         &lt;button type=&quot;button&quot; class=&quot;jrh-dialog-mark-button&quot; data-dialog-mark aria-pressed=&quot;false&quot;&gt;Отметить&lt;/button&gt;
@@ -1624,6 +1663,12 @@ html&gt;body{padding:0}&lt;/style&gt;
       const dialog = root.querySelector(&quot;[data-dialog]&quot;);
       const dialogTitle = root.querySelector(&quot;[data-dialog-title]&quot;);
       const dialogSummary = root.querySelector(&quot;[data-dialog-summary]&quot;);
+      const summaryEdit = root.querySelector(&quot;[data-summary-edit]&quot;);
+      const summaryEditor = root.querySelector(&quot;[data-summary-editor]&quot;);
+      const summaryInput = root.querySelector(&quot;[data-summary-input]&quot;);
+      const summarySave = root.querySelector(&quot;[data-summary-save]&quot;);
+      const summaryCancel = root.querySelector(&quot;[data-summary-cancel]&quot;);
+      const summaryStatus = root.querySelector(&quot;[data-summary-status]&quot;);
       const dialogMeta = root.querySelector(&quot;[data-dialog-meta]&quot;);
       const dialogLink = root.querySelector(&quot;[data-dialog-link]&quot;);
       const dialogClose = root.querySelector(&quot;[data-dialog-close]&quot;);
@@ -1634,6 +1679,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       const markedStorageKey = &quot;ekocrop-release-map-marked&quot;;
       const marked = new Set(loadMarked());
       let dialogItemId = &quot;&quot;;
+      let dialogItem = null;
       let selectedId = data.release.id;
       let lastWidth = 0;
       let lastViewportHeight = 0;
@@ -1968,8 +2014,12 @@ html&gt;body{padding:0}&lt;/style&gt;
       function openDetails(item, level, displayedPriority = null) {
         selectedId = item.id;
         dialogItemId = item.id;
+        dialogItem = item;
         dialogTitle.textContent = item.synthetic ? item.summary : item.id;
         dialogSummary.textContent = item.summary;
+        summaryEdit.hidden = item.synthetic || !/^(DEVELOP|PROJECTS)-[1-9][0-9]*$/.test(item.id);
+        summaryEditor.hidden = true;
+        summaryStatus.textContent = &quot;&quot;;
         const priority = item.synthetic ? null : (displayedPriority || item.priority);
         renderDialogDetails(item, priority);
         if (item.url) {
@@ -2664,6 +2714,55 @@ html&gt;body{padding:0}&lt;/style&gt;
         scheduleMotionSync();
       }
 
+      let summaryRequestSequence = 0;
+      const pendingSummaryRequests = new Map();
+      function requestSummaryEdit(issueKey, summary, previousSummary) {
+        const requestId = ++summaryRequestSequence;
+        const result = new Promise((resolve, reject) =&gt; pendingSummaryRequests.set(requestId, {resolve, reject}));
+        window.parent.postMessage({type: &quot;jira-summary-request&quot;, requestId, issueKey, summary, previousSummary}, &quot;*&quot;);
+        return result;
+      }
+      summaryEdit.addEventListener(&quot;click&quot;, () =&gt; {
+        if (!dialogItem) return;
+        summaryInput.value = dialogItem.summary;
+        summaryStatus.textContent = &quot;&quot;;
+        summaryEditor.hidden = false;
+        summaryInput.focus();
+        summaryInput.select();
+      });
+      summaryCancel.addEventListener(&quot;click&quot;, () =&gt; { summaryEditor.hidden = true; });
+      summarySave.addEventListener(&quot;click&quot;, async () =&gt; {
+        const item = dialogItem;
+        if (!item) return;
+        const nextSummary = summaryInput.value.trim();
+        if (!nextSummary || nextSummary.length &gt; 255 || /[\r\n]/.test(nextSummary)) {
+          summaryStatus.textContent = &quot;Введите название длиной до 255 символов в одной строке&quot;;
+          return;
+        }
+        if (nextSummary === item.summary) { summaryEditor.hidden = true; return; }
+        summarySave.disabled = true;
+        summaryCancel.disabled = true;
+        summaryStatus.textContent = &quot;Отправляем изменение в Jira…&quot;;
+        try {
+          await requestSummaryEdit(item.id, nextSummary, item.summary);
+          const updateGroup = group =&gt; {
+            if (group.group?.id === item.id) group.group.summary = nextSummary;
+            for (const task of group.tasks || []) if (task.id === item.id) task.summary = nextSummary;
+            for (const subgroup of group.subgroups || []) updateGroup(subgroup);
+          };
+          data.groups.forEach(updateGroup);
+          item.summary = nextSummary;
+          dialogSummary.textContent = nextSummary;
+          summaryEditor.hidden = true;
+          window.parent.postMessage({type: &quot;jira-summary-updated&quot;, issueKey: item.id, summary: nextSummary}, &quot;*&quot;);
+          render();
+        } catch (error) {
+          summaryStatus.textContent = error.message || &quot;Ошибка сохранения&quot;;
+        } finally {
+          summarySave.disabled = false;
+          summaryCancel.disabled = false;
+        }
+      });
       dialogClose.addEventListener(&quot;click&quot;, () =&gt; dialog.close());
       dialogMark.addEventListener(&quot;click&quot;, () =&gt; {
         toggleMarked(dialogItemId);
@@ -2682,6 +2781,18 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (Math.abs(window.innerHeight - lastViewportHeight) &gt; 1) render();
       }, {passive: true});
       window.addEventListener(&quot;message&quot;, event =&gt; {
+        if (event.source === window.parent &amp;&amp; event.data?.type === &quot;jira-summary-progress&quot;) {
+          if (pendingSummaryRequests.has(event.data.requestId)) summaryStatus.textContent = &quot;Ждём подтверждения от Jira…&quot;;
+          return;
+        }
+        if (event.source === window.parent &amp;&amp; event.data?.type === &quot;jira-summary-response&quot;) {
+          const pending = pendingSummaryRequests.get(event.data.requestId);
+          if (!pending) return;
+          pendingSummaryRequests.delete(event.data.requestId);
+          if (event.data.ok) pending.resolve();
+          else pending.reject(new Error(event.data.error || &quot;Ошибка сохранения&quot;));
+          return;
+        }
         if (event.data?.type === &quot;jira-clear-marks&quot;) {
           clearMarked();
           return;
@@ -2965,9 +3076,55 @@ html&gt;body{padding:0}&lt;/style&gt;
   const WORKER_API_ORIGIN = "https://ekocrop-jira-release-map.skorokirzhaboy.workers.dev";
   const sameOriginApiHosts = new Set(["localhost", "127.0.0.1", "::1", "ekocrop-jira-release-map.skorokirzhaboy.workers.dev"]);
   const apiUrl = path => `${sameOriginApiHosts.has(location.hostname) ? "" : WORKER_API_ORIGIN}${path}`;
+  const tokenStorageKey = "ekocrop-auth-token";
+  let authToken = sessionStorage.getItem(tokenStorageKey) || "";
+  const loginForm = document.querySelector("#login-form");
+  const loginError = document.querySelector("#login-error");
+  function showLogin() {
+    authToken = "";
+    sessionStorage.removeItem(tokenStorageKey);
+    document.body.classList.remove("is-authenticated");
+    loginForm.elements.namedItem("password").value = "";
+  }
+  async function apiFetch(path, options = {}) {
+    const headers = new Headers(options.headers);
+    if (authToken) headers.set("Authorization", `Bearer ${authToken}`);
+    const response = await fetch(apiUrl(path), {...options, headers});
+    if (response.status === 401) showLogin();
+    return response;
+  }
+  loginForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    const button = loginForm.querySelector("button");
+    button.disabled = true;
+    loginError.textContent = "";
+    try {
+      const response = await fetch(apiUrl("/api/auth/login"), {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          email: loginForm.elements.namedItem("email").value,
+          password: loginForm.elements.namedItem("password").value,
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Не удалось войти");
+      authToken = result.token;
+      sessionStorage.setItem(tokenStorageKey, authToken);
+      loginForm.elements.namedItem("password").value = "";
+      await boot();
+    } catch (error) {
+      loginError.textContent = error.message || "Не удалось войти";
+    } finally {
+      button.disabled = false;
+    }
+  });
   const tabs = [...document.querySelectorAll("[data-section-tab]")];
   const views = [...document.querySelectorAll("[data-section-view]")];
   const appHeader = document.querySelector(".app-header");
+  document.querySelector("[data-logout]").addEventListener("click", async () => {
+    try { await apiFetch("/api/auth/logout", {method: "POST"}); } finally { showLogin(); }
+  });
   const form = document.querySelector("[data-release-form]");
   const select = document.querySelector("[data-release-select]");
   const submit = document.querySelector("[data-release-submit]");
@@ -2986,6 +3143,34 @@ html&gt;body{padding:0}&lt;/style&gt;
   let baselineCsvText = "";
   let baselineExportMeta = null;
   let currentVisualizationResult = null;
+  let summaryOverrides = {};
+
+  function updateIssueSummary(result, issueKey, summary, previousSummary = null) {
+    if (!result?.data?.groups) return;
+    const updateItem = item => {
+      if (item?.id === issueKey && (previousSummary === null || item.summary === previousSummary)) item.summary = summary;
+    };
+    const updateGroup = group => {
+      updateItem(group.group);
+      for (const task of group.tasks || []) updateItem(task);
+      for (const subgroup of group.subgroups || []) updateGroup(subgroup);
+    };
+    result.data.groups.forEach(updateGroup);
+  }
+
+  function applySummaryOverrides(result) {
+    for (const [issueKey, override] of Object.entries(summaryOverrides)) {
+      updateIssueSummary(result, issueKey, override.summary, override.previousSummary);
+    }
+    return result;
+  }
+
+  async function loadSummaryOverrides() {
+    try {
+      const response = await apiFetch("/api/summary-overrides", {headers: {Accept: "application/json"}});
+      if (response.ok) summaryOverrides = (await response.json()).overrides || {};
+    } catch {}
+  }
 
   function syncStickyOffsets() {
     document.documentElement.style.setProperty("--app-header-height", `${appHeader.offsetHeight}px`);
@@ -3346,6 +3531,46 @@ html&gt;body{padding:0}&lt;/style&gt;
   });
 
   window.addEventListener("message", event => {
+    if (event.source === diagram.contentWindow && event.data?.type === "jira-summary-request") {
+      const {requestId, issueKey, summary, previousSummary} = event.data;
+      const reply = response => diagram.contentWindow?.postMessage({type: "jira-summary-response", requestId, ...response}, "*");
+      (async () => {
+        try {
+          if (!/^(DEVELOP|PROJECTS)-[1-9][0-9]*$/.test(issueKey) || typeof summary !== "string" || typeof previousSummary !== "string") {
+            throw new Error("Некорректный запрос");
+          }
+          const response = await apiFetch("/api/issue-summary", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({issueKey, summary, previousSummary}),
+          });
+          const payload = await response.json();
+          if (!response.ok) {
+            if (response.status === 401) { reply({ok: false, error: "Сеанс завершён. Войдите снова"}); return; }
+            reply({ok: false, error: payload.error || "Jira не приняла изменение"});
+            return;
+          }
+          diagram.contentWindow?.postMessage({type: "jira-summary-progress", requestId}, "*");
+          for (let attempt = 0; attempt < 45; attempt += 1) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            const statusResponse = await apiFetch(`/api/issue-summary/${encodeURIComponent(payload.id)}`);
+            if (!statusResponse.ok) throw new Error("Не удалось проверить результат изменения");
+            const status = await statusResponse.json();
+            if (status.status === "ready") { reply({ok: true}); return; }
+          }
+          throw new Error("Jira пока не подтвердила изменение. Проверьте журнал правила автоматизации");
+        } catch (error) { reply({ok: false, error: error.message || "Ошибка сохранения"}); }
+      })();
+      return;
+    }
+    if (event.source === diagram.contentWindow && event.data?.type === "jira-summary-updated") {
+      const {issueKey, summary} = event.data;
+      if (/^(DEVELOP|PROJECTS)-[1-9][0-9]*$/.test(issueKey) && typeof summary === "string" && currentVisualizationResult) {
+        updateIssueSummary(currentVisualizationResult, issueKey, summary);
+        renderDashboard(currentVisualizationResult);
+      }
+      return;
+    }
     if (event.data?.type !== "jira-mark-count") return;
     const count = Number(event.data.count || 0);
     clearMarks.disabled = count === 0;
@@ -3379,6 +3604,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     const raw = await response.text();
     let payload = {};
     try { payload = raw ? JSON.parse(raw) : {}; } catch {}
+    if (response.status === 401) throw new Error("Сеанс завершён. Войдите снова");
     if (!response.ok) throw new Error(payload.error || (response.status === 404
       ? "Локальный сервер не поддерживает импорт CSV. Перезапустите его после обновления проекта"
       : `HTTP ${response.status}`));
@@ -3388,7 +3614,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   async function loadReleases() {
     try {
-      const payload = await json(await fetch(apiUrl("/api/releases"), {headers: {Accept: "application/json"}}));
+      const payload = await json(await apiFetch("/api/releases", {headers: {Accept: "application/json"}}));
       select.replaceChildren();
       const placeholder = document.createElement("option");
       placeholder.value = "";
@@ -3771,7 +3997,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   async function waitForJob(id) {
     for (let attempt = 0; attempt < 600; attempt += 1) {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      const job = await json(await fetch(apiUrl(`/api/diagram-jobs/${encodeURIComponent(id)}`), {
+      const job = await json(await apiFetch(`/api/diagram-jobs/${encodeURIComponent(id)}`, {
         headers: {Accept: "application/json"},
       }));
       if (job.status === "ready") return job.result;
@@ -3790,7 +4016,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     select.disabled = true;
     submit.disabled = true;
     if (preparedCsvResult && preparedCsvRelease === release) {
-      const result = preparedCsvResult;
+      const result = applySummaryOverrides(preparedCsvResult);
       renderDashboard(result);
       diagramShell.hidden = false;
       diagram.contentWindow.postMessage({type: "jira-diagram-data", payload: result}, "*");
@@ -3803,7 +4029,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     }
     if (baselineCsvText) {
       try {
-        const result = diagramFromCsv(baselineCsvText, release);
+        const result = applySummaryOverrides(diagramFromCsv(baselineCsvText, release));
         preparedCsvResult = result;
         preparedCsvRelease = release;
         renderDashboard(result);
@@ -3822,12 +4048,12 @@ html&gt;body{padding:0}&lt;/style&gt;
     }
     setStatus(`Отправляем запрос для релиза ${release}…`);
     try {
-      const job = await json(await fetch(apiUrl("/api/diagram-jobs"), {
+      const job = await json(await apiFetch("/api/diagram-jobs", {
         method: "POST",
         headers: {"Content-Type": "application/json", Accept: "application/json"},
         body: JSON.stringify({release}),
       }));
-      const result = await waitForJob(job.id);
+      const result = applySummaryOverrides(await waitForJob(job.id));
       renderDashboard(result);
       diagramShell.hidden = false;
       diagram.contentWindow.postMessage({type: "jira-diagram-data", payload: result}, "*");
@@ -3843,9 +4069,23 @@ html&gt;body{padding:0}&lt;/style&gt;
   });
 
   async function boot() {
+    if (!authToken) return;
+    try {
+      const response = await apiFetch("/api/auth/me");
+      if (!response.ok) throw new Error("Не удалось проверить вход");
+      document.body.classList.add("is-authenticated");
+      syncStickyOffsets();
+    } catch (error) {
+      showLogin();
+      loginError.textContent = error.message || "Не удалось проверить вход";
+      return;
+    }
     select.disabled = true;
     syncSubmitState();
+    await loadSummaryOverrides();
+    if (!authToken) return;
     const loadedFromCsv = await loadBaselineCsv();
+    if (!authToken) return;
     if (!loadedFromCsv) await loadReleases();
     syncSubmitState();
   }

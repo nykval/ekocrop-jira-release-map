@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import worker, {buildDiagramData, jiraCsvRelease, jiraCsvToIssues} from "./src/worker.mjs";
+import workerImpl, {buildDiagramData, jiraCsvRelease, jiraCsvToIssues} from "./src/worker.mjs";
 
 const sampleIssues = [
   {key: "PROJECTS-1", summary: "[EkoCrop] Проект", issueType: "Проект", priority: "High", linkedKeys: ["DEVELOP-1"]},
@@ -17,6 +17,107 @@ class MemoryKV {
     return {keys: [...this.values.keys()].filter(key => key.startsWith(prefix)).slice(0, limit).map(name => ({name}))};
   }
 }
+
+const sessions = new WeakMap();
+const worker = {
+  async fetch(request, env) {
+    if (!env.JOBS) env.JOBS = new MemoryKV();
+    env.APP_EMAIL ||= "user@example.test";
+    env.APP_PASSWORD ||= "test-password";
+    let token = sessions.get(env);
+    if (!token) {
+      const response = await workerImpl.fetch(new Request("https://map.example/api/auth/login", {
+        method: "POST", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({email: env.APP_EMAIL, password: env.APP_PASSWORD}),
+      }), env);
+      assert.equal(response.status, 200);
+      token = (await response.json()).token;
+      sessions.set(env, token);
+    }
+    const headers = new Headers(request.headers);
+    headers.set("Authorization", `Bearer ${token}`);
+    return workerImpl.fetch(new Request(request, {headers}), env);
+  },
+};
+
+test("вход защищает API, а выход завершает сеанс на GitHub Pages", async () => {
+  const env = {
+    JOBS: new MemoryKV(), APP_EMAIL: "user@example.test", APP_PASSWORD: "test-password",
+  };
+  const home = new Request("https://map.example/");
+  assert.equal((await workerImpl.fetch(home, env)).headers.get("Location"), "https://nykval.github.io/ekocrop-jira-release-map/");
+  assert.equal((await workerImpl.fetch(new Request("https://map.example/api/releases"), env)).status, 401);
+  const loginRequest = password => new Request("https://map.example/api/auth/login", {
+    method: "POST", headers: {"Content-Type": "application/json", "CF-Connecting-IP": "192.0.2.1"},
+    body: JSON.stringify({email: "USER@example.test", password}),
+  });
+  assert.equal((await workerImpl.fetch(loginRequest("wrong"), env)).status, 401);
+  const loginResponse = await workerImpl.fetch(loginRequest("test-password"), env);
+  assert.equal(loginResponse.status, 200);
+  const {token} = await loginResponse.json();
+  const authorization = `Bearer ${token}`;
+  assert.equal((await workerImpl.fetch(new Request("https://map.example/api/auth/me", {headers: {Authorization: authorization}}), env)).status, 200);
+  const loggedOut = await workerImpl.fetch(new Request("https://map.example/api/auth/logout", {
+    method: "POST", headers: {Authorization: authorization},
+  }), env);
+  assert.equal(loggedOut.status, 200);
+  assert.equal((await workerImpl.fetch(new Request("https://map.example/api/auth/me", {headers: {Authorization: authorization}}), env)).status, 401);
+});
+
+test("изменение названия требует вход, подтверждение Jira и сохраняет поправку для CSV", async () => {
+  const JOBS = new MemoryKV();
+  const env = {
+    JOBS,
+    JIRA_SUMMARY_WEBHOOK_URL: "https://jira.example.test/hooks/summary",
+    ASSETS: {fetch: () => new Response("asset")},
+  };
+  const originalFetch = globalThis.fetch;
+  const sent = [];
+  globalThis.fetch = async (url, options) => {
+    sent.push({url, options});
+    return new Response("accepted", {status: 200});
+  };
+  try {
+    const request = (summary = "Новое название") => new Request("https://map.example/api/issue-summary", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({issueKey: "DEVELOP-5761", summary, previousSummary: "Старое название"}),
+    });
+    const unauthorized = await workerImpl.fetch(request(), env);
+    assert.equal(unauthorized.status, 401);
+    assert.equal(sent.length, 0);
+    const invalid = await worker.fetch(request(""), env);
+    assert.equal(invalid.status, 400);
+    assert.equal(sent.length, 0);
+
+    const accepted = await worker.fetch(request(), env);
+    assert.equal(accepted.status, 202);
+    const {id} = await accepted.json();
+    assert.equal(sent.length, 1);
+    assert.equal(sent[0].url, env.JIRA_SUMMARY_WEBHOOK_URL);
+    const outbound = JSON.parse(sent[0].options.body);
+    assert.deepEqual(outbound.issues, ["DEVELOP-5761"]);
+    assert.equal(outbound.change.summary, "Новое название");
+    assert.equal(outbound.change.callbackUrl, "https://map.example/api/issue-summary-callback");
+
+    const pending = await worker.fetch(new Request(`https://map.example/api/issue-summary/${id}`), env);
+    assert.equal((await pending.json()).status, "pending");
+    const callback = (token, summary = "Новое название") => new Request(outbound.change.callbackUrl, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({requestId: id, callbackToken: token, issueKey: "DEVELOP-5761", summary}),
+    });
+    assert.equal((await worker.fetch(callback("wrong"), env)).status, 403);
+    assert.equal((await worker.fetch(callback(outbound.change.callbackToken, "Не то название"), env)).status, 409);
+    assert.equal((await worker.fetch(callback(outbound.change.callbackToken), env)).status, 200);
+    const ready = await worker.fetch(new Request(`https://map.example/api/issue-summary/${id}`), env);
+    assert.equal((await ready.json()).status, "ready");
+    const overrides = await worker.fetch(new Request("https://map.example/api/summary-overrides"), env);
+    assert.deepEqual((await overrides.json()).overrides["DEVELOP-5761"].summary, "Новое название");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
 
 test("Jira сохраняет периодический снимок через согласованный callback, а страница читает его из KV", async () => {
   const JOBS = new MemoryKV();

@@ -1,12 +1,14 @@
-# Карта релизов EkoCrop — Cloudflare Workers
+# Карта релизов EkoCrop — GitHub Pages и Cloudflare Worker
 
-Полноценное веб-приложение: базовый снимок задач хранится в CSV внутри репозитория, а Cloudflare Worker может принимать изменения из Jira Automation между ручными недельными выгрузками. Пользователь открывает публичный адрес, выбирает найденный релиз EkoCrop и строит интерактивную диаграмму.
+**[Открыть сайт](https://nykval.github.io/ekocrop-jira-release-map/)** — адрес остаётся на GitHub Pages, включая форму входа.
 
-Главная страница репозитория содержит `index.html`, поэтому при публикации сайта открывается непосредственно диаграмма. Этот README отображается только при просмотре исходного кода на GitHub.
+Веб-приложение: базовый снимок задач хранится в CSV внутри репозитория, а Cloudflare Worker может принимать изменения из Jira Automation между ручными недельными выгрузками. Для доступа к карте релизов нужен вход в аккаунт.
+
+GitHub Pages показывает интерфейс и форму входа. Браузер обращается к Cloudflare Worker в фоне для проверки пароля, получения данных из Worker и изменения задач. Исходный CSV, встроенные в HTML данные и история Git в публичном репозитории остаются открытыми; форма входа ограничивает работу через интерфейс и защищает операции Worker, но не скрывает эти файлы.
 
 ## Публикация веб-приложения
 
-GitHub хранит исходный код и CSV-базу. GitHub Pages может открывать `index.html` напрямую из корня репозитория. Cloudflare Worker может публиковать ту же страницу из папки `public` и принимать callback Jira.
+GitHub хранит исходный код и CSV-базу. GitHub Pages публикует корневой `index.html`. Cloudflare Worker обслуживает API, проверяет вход и принимает callback Jira. Секрет `APP_PASSWORD` задаётся только в настройках Worker; почта единственного пользователя задана в `wrangler.jsonc` как `APP_EMAIL`. Пароль не записывается в репозиторий. После входа браузер хранит ключ сеанса в текущей вкладке и передаёт его Worker при запросах; ключ действителен до семи дней или до выхода.
 
 ## Еженедельная ручная выгрузка CSV
 
@@ -15,14 +17,9 @@ GitHub хранит исходный код и CSV-базу. GitHub Pages мож
 - `data/jira.csv` — полный экспорт всех задач Jira.
 - `data/last-export.json` — дата и счетчики последней выгрузки.
 
-Если публикуете через Cloudflare Worker и сознательно хотите отдавать CSV из Worker, положите тот же файл также в:
-
-- `public/data/jira.csv`
-- `public/data/last-export.json`
-
 Для GitHub Pages по адресу `https://nykval.github.io/ekocrop-jira-release-map/` достаточно корневой папки `data`.
 
-Приложение при открытии сначала ищет `data/jira.csv`. Если файл найден, список релизов строится из колонки `Исправить в версиях`, а Worker для открытия страницы не обязателен.
+После проверки входа приложение ищет `data/jira.csv`. Если файл найден, список релизов строится из колонки `Исправить в версиях`. Worker нужен для проверки входа и серверных действий.
 
 ### Формат `jira.csv`
 
@@ -68,9 +65,9 @@ GitHub хранит исходный код и CSV-базу. GitHub Pages мож
 1. В Cloudflare откройте **Workers & Pages → Create → Import a repository** и выберите этот репозиторий.
 2. Build command: `npm run deploy`. Для первого подключения можно использовать стандартные настройки Cloudflare Workers.
 3. Создайте Workers KV namespace, например `ekocrop-jira-jobs`, и добавьте к Worker binding с именем `JOBS`.
-4. Нажмите Deploy. Пользовательский адрес будет иметь вид `https://ekocrop-jira-release-map.<поддомен>.workers.dev`.
+4. Задайте секрет `APP_PASSWORD` и нажмите Deploy. Адрес Worker вида `https://ekocrop-jira-release-map.<поддомен>.workers.dev` используется страницей GitHub Pages для запросов API.
 
-В `wrangler.jsonc` уже настроены Worker, статические файлы и API. После подключения GitHub обновления ветки `main` публикуются автоматически.
+В `wrangler.jsonc` уже настроены Worker и API. После подключения GitHub обновления ветки `main` публикуются автоматически. GitHub Pages должен оставаться включённым.
 
 ### Обязательные параметры сервера
 
@@ -91,6 +88,40 @@ KV постоянно хранит последний успешно приня�
 3. Откройте адрес, который покажет Wrangler.
 
 ## Автоматизация Jira для изменений
+
+### Изменение названия из карточки задачи
+
+Карточка диаграммы отправляет в Worker ключ задачи и новое название. Worker принимает запрос после входа пользователя и вызывает отдельное правило Jira Automation. Секретный URL правила хранится в настройках Worker, а не в HTML. Интерфейс показывает новое название только после обратного подтверждения Jira. После подтверждения Worker сохраняет поправку в KV, чтобы она отображалась поверх старой CSV-выгрузки до следующего экспорта.
+
+Создайте правило Jira Automation с областью действия для проектов `DEVELOP` и `PROJECTS`:
+
+1. Триггер **Входящий веб-хук** → **Задачи, указанные в тексте запроса HTTP (метод POST) веб-хука**. Скопируйте выданный Jira URL.
+2. Действие **Редактировать задачу**. В «Дополнительные поля» вставьте:
+
+   ```json
+   {"fields":{"summary":{{webhookData.change.summary.asJsonString}}}}
+   ```
+
+   Не выбирайте другие поля для изменения: правило должно менять только название. Ключ `change` выбран намеренно: у некоторых версий Jira Automation вложенный ключ `data` некорректно доступен через `webhookData`.
+3. Действие **Повторно получить данные задачи** (*Re-fetch issue data*), чтобы следующее действие увидело новое название.
+4. Действие **Отправить веб-запрос**: метод `POST`, URL `https://ekocrop-jira-release-map.skorokirzhaboy.workers.dev/api/issue-summary-callback`, заголовок `Content-Type: application/json`, тело «Пользовательские данные»:
+
+   ```json
+   {
+     "requestId": "{{webhookData.change.requestId}}",
+     "callbackToken": "{{webhookData.change.callbackToken}}",
+     "issueKey": "{{issue.key}}",
+     "summary": {{issue.summary.asJsonString}}
+   }
+   ```
+
+5. Включите правило. В Cloudflare Worker задайте секрет `JIRA_SUMMARY_WEBHOOK_URL` (URL из шага 1). Право на редактирование названия определяется входом в сайт. Не добавляйте секреты в Git.
+
+Worker посылает Jira тело вида `{"issues":["DEVELOP-5761"],"change":{"summary":"Новое название","requestId":"…","callbackToken":"…","callbackUrl":"…"}}`. HTTP-ответ от входящего webhook означает лишь принятие запроса. Успех в карточке показывается после callback из шага 4. Если callback не пришёл за 45 секунд, проверьте журнал выполнения правила Jira.
+
+Документация Atlassian: [входящие webhook и `webhookData`](https://support.atlassian.com/jira/kb/use-incoming-webhooks-with-smart-values-in-automation-for-jira/), [редактирование полей JSON](https://confluence.atlassian.com/automation/advanced-field-editing-using-json-993924663.html), [JSON-функции smart values](https://confluence.atlassian.com/automation/json-functions-993924865.html).
+
+### Синхронизация изменений между выгрузками
 
 Новая целевая схема: полный снимок лежит в CSV, а Jira Automation отправляет в Worker только изменения между недельными выгрузками.
 
@@ -164,6 +195,8 @@ Worker сам оставляет только версии, названия к�
 ## API
 
 - `GET /api/health` — состояние опубликованного сервиса.
+- `POST /api/auth/login` — проверка почты и пароля, выдача ключа сеанса.
+- `GET /api/auth/me`, `POST /api/auth/logout` — проверка и завершение сеанса.
 - `GET /api/releases` — список доступных релизов.
 - `POST /api/jira-callback` — согласованный публичный адрес: принимает полный периодический снимок Jira без дополнительного токена; также совместим со старым callback разовых запросов с `requestId` и `callbackToken`.
 - `POST /api/jira-snapshot` — дополнительный совместимый адрес для приёма полного снимка (в Jira использовать его не требуется).
@@ -176,7 +209,7 @@ Worker сам оставляет только версии, названия к�
 
 ## GitHub Pages и Render
 
-GitHub Pages можно отключить в **Settings → Pages → Build and deployment → Source → None**. Render после успешного перехода также можно удалить. Рабочий адрес приложения выдаёт Cloudflare Workers.
+GitHub Pages остаётся основным адресом приложения: `https://nykval.github.io/ekocrop-jira-release-map/`. Cloudflare Worker выполняет серверные запросы в фоне. Render после перехода на эту схему можно удалить.
 
 ## Проверка
 
