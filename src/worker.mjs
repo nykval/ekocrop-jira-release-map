@@ -550,7 +550,11 @@ async function requestSummaryEdit(request, env) {
   try {
     jiraResponse = await fetch(env.JIRA_SUMMARY_WEBHOOK_URL, {
       method: "POST",
-      headers: {"Content-Type": "application/json", Accept: "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...(env.JIRA_SUMMARY_WEBHOOK_TOKEN ? {"X-Automation-Webhook-Token": env.JIRA_SUMMARY_WEBHOOK_TOKEN} : {}),
+      },
       body: JSON.stringify({
         issues: [issueKey],
         change: {summary, requestId: id, callbackToken, callbackUrl},
