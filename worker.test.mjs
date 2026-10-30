@@ -98,11 +98,11 @@ test("изменение названия требует вход, подтве�
     const outbound = JSON.parse(sent[0].options.body);
     assert.deepEqual(outbound.issues, ["DEVELOP-5761"]);
     assert.equal(outbound.change.summary, "Новое название");
-    assert.equal(outbound.change.callbackUrl, "https://map.example/api/issue-summary-callback");
+    assert.equal(outbound.change.callbackUrl, "https://jira-to-telegram.skorokirzhaboy.workers.dev/");
 
     const pending = await worker.fetch(new Request(`https://map.example/api/issue-summary/${id}`), env);
     assert.equal((await pending.json()).status, "pending");
-    const callback = (token, summary = "Новое название") => new Request(outbound.change.callbackUrl, {
+    const callback = (token, summary = "Новое название") => new Request("https://map.example/api/issue-summary-callback", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({requestId: id, callbackToken: token, issueKey: "DEVELOP-5761", summary}),

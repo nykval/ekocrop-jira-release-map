@@ -104,7 +104,7 @@ KV постоянно хранит последний успешно приня�
 
    Не выбирайте другие поля для изменения: правило должно менять только название. Ключ `change` выбран намеренно: у некоторых версий Jira Automation вложенный ключ `data` некорректно доступен через `webhookData`.
 3. Действие **Повторно получить данные задачи** (*Re-fetch issue data*), чтобы следующее действие увидело новое название.
-4. Действие **Отправить веб-запрос**: метод `POST`, URL `https://ekocrop-jira-release-map.skorokirzhaboy.workers.dev/api/issue-summary-callback`, заголовок `Content-Type: application/json`, тело «Пользовательские данные»:
+4. Действие **Отправить веб-запрос**: метод `POST`, URL `https://jira-to-telegram.skorokirzhaboy.workers.dev/`, заголовок `Content-Type: application/json`, тело «Пользовательские данные»:
 
    ```json
    {
@@ -117,7 +117,7 @@ KV постоянно хранит последний успешно приня�
 
 5. Включите правило. В Cloudflare Worker задайте секрет `JIRA_SUMMARY_WEBHOOK_URL` (URL из шага 1). Если триггер Jira отдельно показывает секретный токен, задайте его вторым секретом Worker с именем `JIRA_SUMMARY_WEBHOOK_TOKEN`; Worker передаст его в заголовке `X-Automation-Webhook-Token`. Право на редактирование названия определяется входом в сайт. Не добавляйте секреты в Git.
 
-Worker посылает Jira тело вида `{"issues":["DEVELOP-5761"],"change":{"summary":"Новое название","requestId":"…","callbackToken":"…","callbackUrl":"…"}}`. HTTP-ответ от входящего webhook означает лишь принятие запроса. Успех в карточке показывается после callback из шага 4. Если callback не пришёл за 45 секунд, проверьте журнал выполнения правила Jira.
+Worker посылает Jira тело вида `{"issues":["DEVELOP-5761"],"change":{"summary":"Новое название","requestId":"…","callbackToken":"…","callbackUrl":"https://jira-to-telegram.skorokirzhaboy.workers.dev/"}}`. Воркер `jira-to-telegram` пересылает подтверждение в Worker карты релизов через внутреннее соединение Cloudflare; обычные уведомления обрабатываются как раньше. HTTP-ответ от входящего webhook означает лишь принятие запроса. Успех в карточке показывается после callback из шага 4. Если callback не пришёл за 45 секунд, проверьте журнал выполнения правила Jira.
 
 Документация Atlassian: [входящие webhook и `webhookData`](https://support.atlassian.com/jira/kb/use-incoming-webhooks-with-smart-values-in-automation-for-jira/), [редактирование полей JSON](https://confluence.atlassian.com/automation/advanced-field-editing-using-json-993924663.html), [JSON-функции smart values](https://confluence.atlassian.com/automation/json-functions-993924865.html).
 

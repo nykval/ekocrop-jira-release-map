@@ -543,7 +543,7 @@ async function requestSummaryEdit(request, env) {
 
   const id = crypto.randomUUID();
   const callbackToken = randomToken();
-  const callbackUrl = `${new URL(request.url).origin}/api/issue-summary-callback`;
+  const callbackUrl = "https://jira-to-telegram.skorokirzhaboy.workers.dev/";
   const job = {id, issueKey, summary, previousSummary, callbackToken, status: "pending", createdAt: Date.now()};
   await env.JOBS.put(`${SUMMARY_JOB_PREFIX}${id}`, JSON.stringify(job), {expirationTtl: JOB_TTL_SECONDS});
   let jiraResponse;
