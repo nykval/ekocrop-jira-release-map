@@ -503,7 +503,7 @@ async function login(request, env) {
   if (Number(request.headers.get("content-length") || 0) > 2048) return json({error: "Слишком большой запрос"}, 413);
   let payload;
   try { payload = await request.json(); } catch { return json({error: "Некорректный запрос"}, 400); }
-  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const ip = env.CLIENT_IP || request.headers.get("CF-Connecting-IP") || "unknown";
   const throttleKey = `auth:attempts:${await tokenDigest(ip)}`;
   const failures = Number(await env.JOBS.get(throttleKey) || 0);
   if (failures >= LOGIN_ATTEMPTS) return json({error: "Слишком много попыток. Повторите через 15 минут"}, 429);
@@ -543,7 +543,7 @@ async function requestSummaryEdit(request, env) {
 
   const id = crypto.randomUUID();
   const callbackToken = randomToken();
-  const callbackUrl = "https://jira-to-telegram.skorokirzhaboy.workers.dev/";
+  const callbackUrl = env.JIRA_SUMMARY_CALLBACK_URL || "https://jira-to-telegram.skorokirzhaboy.workers.dev/";
   const job = {id, issueKey, summary, previousSummary, callbackToken, status: "pending", createdAt: Date.now()};
   await env.JOBS.put(`${SUMMARY_JOB_PREFIX}${id}`, JSON.stringify(job), {expirationTtl: JOB_TTL_SECONDS});
   let jiraResponse;
@@ -624,7 +624,7 @@ async function summaryOverrides(env) {
 }
 
 function requireBindings(env) {
-  if (!env.JOBS) throw new Error("Cloudflare KV binding JOBS не настроен");
+  if (!env.JOBS) throw new Error("Хранилище заданий не настроено");
 }
 
 async function startJob(request, env) {
@@ -806,7 +806,7 @@ export default {
         return new Response(null, {status: 204, headers: CORS_HEADERS});
       }
       if (request.method === "GET" && url.pathname === "/api/health") {
-        return json({ok: true, platform: "cloudflare-workers", integration: env.JOBS ? "jira-snapshot" : env.JIRA_POLL_TOKEN ? "jira-polling" : "not-configured", storage: env.JOBS ? "ready" : "not-configured"});
+        return json({ok: true, platform: env.PLATFORM || "cloudflare-workers", integration: env.JOBS ? "jira-snapshot" : env.JIRA_POLL_TOKEN ? "jira-polling" : "not-configured", storage: env.JOBS ? "ready" : "not-configured"});
       }
       if (request.method === "POST" && url.pathname === "/api/issue-summary-callback") return confirmSummaryEdit(request, env);
       if (request.method === "POST" && url.pathname === "/api/jira-snapshot") return acceptSnapshot(request, env);
